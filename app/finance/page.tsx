@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import LoginModal from "@/components/LoginModal";
@@ -33,7 +33,6 @@ function FinanceContent() {
 
   const [quoteDownPayment, setQuoteDownPayment] = useState(0);
   const [quoteTenure, setQuoteTenure] = useState(5);
-  const formRef = useRef<HTMLElement>(null);
 
   // EMI calculator modal
   const [showEmi, setShowEmi] = useState(false);
@@ -256,6 +255,251 @@ function FinanceContent() {
     }
   }
 
+  function renderSelectedBankForm(bank: BankOffer) {
+    return (
+      <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-semibold text-blue-600">Bank Consultant Form</p>
+            <h2 className="mt-1 text-xl font-bold text-slate-900">
+              Request Consultation with {bank.bank}
+            </h2>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setEmiPrice("");
+              setEmiDown("");
+              setEmiTenure("5");
+              setShowEmi(true);
+            }}
+            className="flex items-center gap-2 rounded-xl border border-blue-200 bg-blue-50 px-4 py-2.5 text-sm font-semibold text-blue-700 transition hover:bg-blue-100"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 13h.01M13 13h.01M5 3h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2z" />
+            </svg>
+            Calculate EMI
+          </button>
+        </div>
+        <p className="mt-2 text-sm text-slate-600">
+          Fill out this form and our team will connect you with {bank.bank} loan guidance.
+        </p>
+
+        <div className="mt-6 grid gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-5 lg:grid-cols-2">
+          <div>
+            <label className="mb-1.5 block text-sm font-semibold text-slate-700">
+              Selected Vehicle
+            </label>
+            <select
+              value={selectedCarId}
+              onChange={(e) => {
+                setSelectedCarId(e.target.value);
+                setError("");
+                setSuccess("");
+              }}
+              className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm"
+            >
+              <option value="">Choose an EV model</option>
+              {allModels.map((model) => (
+                <option key={model.id} value={model.id}>
+                  {model.brand} {model.model}
+                </option>
+              ))}
+            </select>
+            {selectedModel ? (
+              <p className="mt-2 text-xs text-slate-600">
+                Vehicle price: GBP {selectedModel.price.toLocaleString()}
+              </p>
+            ) : (
+              <p className="mt-2 text-xs text-amber-700">
+                Select a vehicle to generate your bank quotation.
+              </p>
+            )}
+          </div>
+
+          <div>
+            <label className="mb-1.5 block text-sm font-semibold text-slate-700">
+              Loan tenure
+            </label>
+            <select
+              value={quoteTenure}
+              onChange={(e) => setQuoteTenure(Number(e.target.value))}
+              className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm"
+            >
+              {[1, 2, 3, 4, 5, 6, 7].map((year) => (
+                <option key={year} value={year}>
+                  {year} {year === 1 ? "year" : "years"}
+                </option>
+              ))}
+            </select>
+            {quoteTenure > (bank.maxTenureYears || quoteTenure) ? (
+              <p className="mt-2 text-xs text-amber-700">
+                {bank.bank} supports up to {bank.maxTenureYears} years.
+                Quotation uses that maximum tenure.
+              </p>
+            ) : null}
+          </div>
+
+          <div className="lg:col-span-2">
+            <label className="mb-1.5 block text-sm font-semibold text-slate-700">
+              Down payment
+            </label>
+            <input
+              type="range"
+              min={0}
+              max={selectedVehiclePrice}
+              step={500}
+              value={clampedDownPayment}
+              onChange={(e) => setQuoteDownPayment(Number(e.target.value))}
+              disabled={!selectedModel}
+              className="w-full"
+            />
+            <div className="mt-2 flex items-center justify-between text-xs text-slate-600">
+              <span>GBP 0</span>
+              <span className="font-semibold text-slate-900">
+                GBP {clampedDownPayment.toLocaleString()}
+              </span>
+              <span>GBP {selectedVehiclePrice.toLocaleString()}</span>
+            </div>
+          </div>
+        </div>
+
+        {selectedModel ? (
+          <div className="mt-4 rounded-2xl border border-blue-100 bg-blue-50 p-5">
+            <p className="text-sm font-semibold text-blue-700">Loan Quotation</p>
+            <h3 className="mt-1 text-lg font-bold text-slate-900">
+              {selectedModel.brand} {selectedModel.model} with {bank.bank}
+            </h3>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="rounded-xl bg-white p-3">
+                <p className="text-xs text-slate-500">Loan amount</p>
+                <p className="mt-1 text-sm font-bold text-slate-900">
+                  GBP {Math.round(quoteLoanAmount).toLocaleString()}
+                </p>
+              </div>
+              <div className="rounded-xl bg-blue-600 p-3">
+                <p className="text-xs text-blue-100">Monthly EMI</p>
+                <p className="mt-1 text-sm font-bold text-white">
+                  GBP {Math.round(quoteMonthlyEmi).toLocaleString()}
+                </p>
+              </div>
+              <div className="rounded-xl bg-white p-3">
+                <p className="text-xs text-slate-500">Total interest</p>
+                <p className="mt-1 text-sm font-bold text-slate-900">
+                  GBP {Math.round(quoteTotalInterest).toLocaleString()}
+                </p>
+              </div>
+              <div className="rounded-xl bg-white p-3">
+                <p className="text-xs text-slate-500">Total payable</p>
+                <p className="mt-1 text-sm font-bold text-slate-900">
+                  GBP {Math.round(quoteTotalPayable).toLocaleString()}
+                </p>
+              </div>
+            </div>
+          </div>
+        ) : null}
+
+        {!authLoading && !isLoggedIn ? (
+          <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-5">
+            <p className="text-sm font-semibold text-amber-900">Login required</p>
+            <p className="mt-1 text-sm text-amber-800">
+              Please log in to request finance consultation with {bank.bank}.
+            </p>
+            <button
+              type="button"
+              onClick={() => setShowLoginModal(true)}
+              className="mt-4 rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+            >
+              Log in to continue
+            </button>
+          </div>
+        ) : (
+          <form onSubmit={submitBankConsultation} className="mt-6 grid gap-4 sm:grid-cols-2">
+            <div>
+              <label className="mb-1.5 block text-sm font-semibold text-slate-700">Full name</label>
+              <input
+                type="text"
+                required
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1.5 block text-sm font-semibold text-slate-700">Email</label>
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1.5 block text-sm font-semibold text-slate-700">Phone</label>
+              <input
+                type="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1.5 block text-sm font-semibold text-slate-700">Preferred date</label>
+              <input
+                type="date"
+                value={preferredDate}
+                onChange={(e) => setPreferredDate(e.target.value)}
+                className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1.5 block text-sm font-semibold text-slate-700">Preferred time</label>
+              <input
+                type="time"
+                value={preferredTime}
+                onChange={(e) => setPreferredTime(e.target.value)}
+                className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm"
+              />
+            </div>
+
+            <div className="sm:col-span-2">
+              <label className="mb-1.5 block text-sm font-semibold text-slate-700">Additional notes</label>
+              <textarea
+                rows={3}
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm"
+              />
+            </div>
+
+            {error ? (
+              <p className="sm:col-span-2 rounded-xl bg-red-50 px-4 py-2 text-sm text-red-600">{error}</p>
+            ) : null}
+
+            {success ? (
+              <p className="sm:col-span-2 rounded-xl bg-green-50 px-4 py-2 text-sm text-green-700">{success}</p>
+            ) : null}
+
+            <div className="sm:col-span-2">
+              <button
+                type="submit"
+                disabled={submitting || authLoading || !isLoggedIn}
+                className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {submitting ? "Submitting..." : `Submit for ${bank.bank}`}
+              </button>
+            </div>
+          </form>
+        )}
+      </div>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-slate-50 text-slate-900">
       <Navbar />
@@ -324,9 +568,6 @@ function FinanceContent() {
                     setSelectedBank(offer);
                     setSuccess("");
                     setError("");
-                    setTimeout(() => {
-                      formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-                    }, 50);
                   }}
                   className={`mt-5 w-full rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
                     selectedBank?.id === offer.id
@@ -336,252 +577,11 @@ function FinanceContent() {
                 >
                   {selectedBank?.id === offer.id ? "Selected Bank" : "Select Bank"}
                 </button>
+
+                {selectedBank?.id === offer.id ? renderSelectedBankForm(offer) : null}
               </article>
             ))}
           </div>
-
-          {selectedBank ? (
-            <section ref={formRef} className="mt-10 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-              <div className="flex flex-wrap items-start justify-between gap-4">
-                <div>
-                  <p className="text-sm font-semibold text-blue-600">Bank Consultant Form</p>
-                  <h2 className="mt-1 text-2xl font-bold text-slate-900">
-                    Request Consultation with {selectedBank.bank}
-                  </h2>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setEmiPrice("");
-                    setEmiDown("");
-                    setEmiTenure("5");
-                    setShowEmi(true);
-                  }}
-                  className="flex items-center gap-2 rounded-xl border border-blue-200 bg-blue-50 px-4 py-2.5 text-sm font-semibold text-blue-700 transition hover:bg-blue-100"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 13h.01M13 13h.01M5 3h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2z" />
-                  </svg>
-                  Calculate EMI
-                </button>
-              </div>
-              <p className="mt-2 text-sm text-slate-600">
-                Fill out this form and our team will connect you with {selectedBank.bank} loan guidance.
-              </p>
-
-              <div className="mt-6 grid gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-5 lg:grid-cols-2">
-                <div>
-                  <label className="mb-1.5 block text-sm font-semibold text-slate-700">
-                    Selected Vehicle
-                  </label>
-                  <select
-                    value={selectedCarId}
-                    onChange={(e) => {
-                      setSelectedCarId(e.target.value);
-                      setError("");
-                      setSuccess("");
-                    }}
-                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm"
-                  >
-                    <option value="">Choose an EV model</option>
-                    {allModels.map((model) => (
-                      <option key={model.id} value={model.id}>
-                        {model.brand} {model.model}
-                      </option>
-                    ))}
-                  </select>
-                  {selectedModel ? (
-                    <p className="mt-2 text-xs text-slate-600">
-                      Vehicle price: GBP {selectedModel.price.toLocaleString()}
-                    </p>
-                  ) : (
-                    <p className="mt-2 text-xs text-amber-700">
-                      Select a vehicle to generate your bank quotation.
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <label className="mb-1.5 block text-sm font-semibold text-slate-700">
-                    Loan tenure
-                  </label>
-                  <select
-                    value={quoteTenure}
-                    onChange={(e) => setQuoteTenure(Number(e.target.value))}
-                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm"
-                  >
-                    {[1, 2, 3, 4, 5, 6, 7].map((year) => (
-                      <option key={year} value={year}>
-                        {year} {year === 1 ? "year" : "years"}
-                      </option>
-                    ))}
-                  </select>
-                  {quoteTenure > (selectedBank.maxTenureYears || quoteTenure) ? (
-                    <p className="mt-2 text-xs text-amber-700">
-                      {selectedBank.bank} supports up to {selectedBank.maxTenureYears} years.
-                      Quotation uses that maximum tenure.
-                    </p>
-                  ) : null}
-                </div>
-
-                <div className="lg:col-span-2">
-                  <label className="mb-1.5 block text-sm font-semibold text-slate-700">
-                    Down payment
-                  </label>
-                  <input
-                    type="range"
-                    min={0}
-                    max={selectedVehiclePrice}
-                    step={500}
-                    value={clampedDownPayment}
-                    onChange={(e) => setQuoteDownPayment(Number(e.target.value))}
-                    disabled={!selectedModel}
-                    className="w-full"
-                  />
-                  <div className="mt-2 flex items-center justify-between text-xs text-slate-600">
-                    <span>GBP 0</span>
-                    <span className="font-semibold text-slate-900">
-                      GBP {clampedDownPayment.toLocaleString()}
-                    </span>
-                    <span>GBP {selectedVehiclePrice.toLocaleString()}</span>
-                  </div>
-                </div>
-              </div>
-
-              {selectedModel ? (
-                <div className="mt-4 rounded-2xl border border-blue-100 bg-blue-50 p-5">
-                  <p className="text-sm font-semibold text-blue-700">Loan Quotation</p>
-                  <h3 className="mt-1 text-lg font-bold text-slate-900">
-                    {selectedModel.brand} {selectedModel.model} with {selectedBank.bank}
-                  </h3>
-                  <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                    <div className="rounded-xl bg-white p-3">
-                      <p className="text-xs text-slate-500">Loan amount</p>
-                      <p className="mt-1 text-sm font-bold text-slate-900">
-                        GBP {Math.round(quoteLoanAmount).toLocaleString()}
-                      </p>
-                    </div>
-                    <div className="rounded-xl bg-blue-600 p-3">
-                      <p className="text-xs text-blue-100">Monthly EMI</p>
-                      <p className="mt-1 text-sm font-bold text-white">
-                        GBP {Math.round(quoteMonthlyEmi).toLocaleString()}
-                      </p>
-                    </div>
-                    <div className="rounded-xl bg-white p-3">
-                      <p className="text-xs text-slate-500">Total interest</p>
-                      <p className="mt-1 text-sm font-bold text-slate-900">
-                        GBP {Math.round(quoteTotalInterest).toLocaleString()}
-                      </p>
-                    </div>
-                    <div className="rounded-xl bg-white p-3">
-                      <p className="text-xs text-slate-500">Total payable</p>
-                      <p className="mt-1 text-sm font-bold text-slate-900">
-                        GBP {Math.round(quoteTotalPayable).toLocaleString()}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ) : null}
-
-              {!authLoading && !isLoggedIn ? (
-                <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-5">
-                  <p className="text-sm font-semibold text-amber-900">Login required</p>
-                  <p className="mt-1 text-sm text-amber-800">
-                    Please log in to request finance consultation with {selectedBank.bank}.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => setShowLoginModal(true)}
-                    className="mt-4 rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
-                  >
-                    Log in to continue
-                  </button>
-                </div>
-              ) : (
-              <form onSubmit={submitBankConsultation} className="mt-6 grid gap-4 sm:grid-cols-2">
-                <div>
-                  <label className="mb-1.5 block text-sm font-semibold text-slate-700">Full name</label>
-                  <input
-                    type="text"
-                    required
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm"
-                  />
-                </div>
-
-                <div>
-                  <label className="mb-1.5 block text-sm font-semibold text-slate-700">Email</label>
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm"
-                  />
-                </div>
-
-                <div>
-                  <label className="mb-1.5 block text-sm font-semibold text-slate-700">Phone</label>
-                  <input
-                    type="tel"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm"
-                  />
-                </div>
-
-                <div>
-                  <label className="mb-1.5 block text-sm font-semibold text-slate-700">Preferred date</label>
-                  <input
-                    type="date"
-                    value={preferredDate}
-                    onChange={(e) => setPreferredDate(e.target.value)}
-                    className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm"
-                  />
-                </div>
-
-                <div>
-                  <label className="mb-1.5 block text-sm font-semibold text-slate-700">Preferred time</label>
-                  <input
-                    type="time"
-                    value={preferredTime}
-                    onChange={(e) => setPreferredTime(e.target.value)}
-                    className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm"
-                  />
-                </div>
-
-                <div className="sm:col-span-2">
-                  <label className="mb-1.5 block text-sm font-semibold text-slate-700">Additional notes</label>
-                  <textarea
-                    rows={3}
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
-                    className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm"
-                  />
-                </div>
-
-                {error ? (
-                  <p className="sm:col-span-2 rounded-xl bg-red-50 px-4 py-2 text-sm text-red-600">{error}</p>
-                ) : null}
-
-                {success ? (
-                  <p className="sm:col-span-2 rounded-xl bg-green-50 px-4 py-2 text-sm text-green-700">{success}</p>
-                ) : null}
-
-                <div className="sm:col-span-2">
-                  <button
-                    type="submit"
-                    disabled={submitting || authLoading || !isLoggedIn}
-                    className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
-                  >
-                    {submitting ? "Submitting..." : `Submit for ${selectedBank.bank}`}
-                  </button>
-                </div>
-              </form>
-              )}
-            </section>
-          ) : null}
 
           {!loading && offers.length === 0 ? (
             <p className="mt-6 text-sm text-slate-500">No bank offers are available right now.</p>
