@@ -25,7 +25,7 @@ export default function BankPopup({
         </div>
 
         <div className="mt-6 overflow-hidden rounded-2xl border border-slate-200">
-          {offer.terms.map((term) => (
+          {offer.terms?.map((term) => (
             <div key={term.label} className="grid grid-cols-[0.9fr_1.1fr] border-b border-slate-100 p-4 text-sm last:border-b-0">
               <div className="font-medium text-slate-600">{term.label}</div>
               <div>{term.value}</div>

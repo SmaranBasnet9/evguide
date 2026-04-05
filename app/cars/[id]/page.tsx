@@ -1,7 +1,67 @@
-import { useParams } from "next/navigation";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
+import EVReviewsSection from "@/components/EVReviewsSection";
+import ApprovedFeedbackStories from "@/components/ApprovedFeedbackStories";
+import { getReviewsForModel } from "@/data/evReviews";
+import { getApprovedReviewsForCar, reviewToEVReview } from "@/lib/reviews";
+import { getApprovedFeedbackStoriesForModel } from "@/lib/feedback";
+import { createClient } from "@/lib/supabase/server";
 import { evModels } from "@/data/evModels";
+import type { EVModel } from "@/types";
+
+type DbEV = {
+  id: string;
+  brand: string;
+  model: string;
+  hero_image: string;
+  price: number;
+  motor_capacity_kw: number;
+  torque_nm: number;
+  ground_clearance_mm: number;
+  tyre_size: string;
+  battery_kwh: number;
+  range_km: number;
+  drive: string;
+  charging_standard: string;
+  fast_charge_time: string;
+  adas: string;
+  warranty: string;
+  seats: number;
+  boot_litres: number;
+  top_speed_kph: number;
+  acceleration: string;
+  description: string;
+  best_for: string;
+  loved_reason: string;
+};
+
+function mapDbEV(item: DbEV): EVModel {
+  return {
+    id: item.id,
+    brand: item.brand,
+    model: item.model,
+    heroImage: item.hero_image,
+    price: item.price,
+    motorCapacityKw: item.motor_capacity_kw,
+    torqueNm: item.torque_nm,
+    groundClearanceMm: item.ground_clearance_mm,
+    tyreSize: item.tyre_size,
+    batteryKWh: item.battery_kwh,
+    rangeKm: item.range_km,
+    drive: item.drive,
+    chargingStandard: item.charging_standard,
+    fastChargeTime: item.fast_charge_time,
+    adas: item.adas,
+    warranty: item.warranty,
+    seats: item.seats,
+    bootLitres: item.boot_litres,
+    topSpeedKph: item.top_speed_kph,
+    acceleration: item.acceleration,
+    description: item.description,
+    bestFor: item.best_for,
+    lovedReason: item.loved_reason,
+  };
+}
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -15,7 +75,21 @@ export async function generateStaticParams() {
 
 export default async function CarDetailsPage({ params }: Props) {
   const { id } = await params;
-  const model = evModels.find(m => m.id === id);
+  let model = evModels.find((m) => m.id === id) ?? null;
+
+  // Support EVs sourced from database (compare page can load DB IDs).
+  if (!model) {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("ev_models")
+      .select("*")
+      .eq("id", id)
+      .maybeSingle();
+
+    if (data) {
+      model = mapDbEV(data as DbEV);
+    }
+  }
 
   if (!model) {
     return (
@@ -23,7 +97,7 @@ export default async function CarDetailsPage({ params }: Props) {
         <Navbar />
         <div className="mx-auto max-w-7xl px-6 py-14 text-center">
           <h1 className="text-4xl font-bold">Vehicle not found</h1>
-          <p className="mt-4 text-slate-600">The EV model you're looking for doesn't exist.</p>
+          <p className="mt-4 text-slate-600">The EV model you are looking for does not exist.</p>
           <Link href="/compare" className="mt-6 inline-block text-blue-600 hover:underline">
             Back to Compare
           </Link>
@@ -31,6 +105,12 @@ export default async function CarDetailsPage({ params }: Props) {
       </main>
     );
   }
+
+  const approvedReviews = await getApprovedReviewsForCar(id, model.brand, model.model, 6);
+  const reviews = approvedReviews.length > 0
+    ? approvedReviews.map(reviewToEVReview)
+    : getReviewsForModel(id);
+  const feedbackStories = await getApprovedFeedbackStoriesForModel(model.brand, model.model, 6);
 
   return (
     <main className="min-h-screen bg-slate-50 text-slate-900">
@@ -67,6 +147,13 @@ export default async function CarDetailsPage({ params }: Props) {
                   Finance This EV
                 </Link>
               </div>
+
+              <a
+                href={`/api/vehicle-manual/${model.id}`}
+                className="mt-4 inline-flex w-full items-center justify-center rounded-2xl border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-900 transition hover:bg-slate-50"
+              >
+                Download Vehicle Manual
+              </a>
             </div>
           </div>
         </div>
@@ -199,6 +286,14 @@ export default async function CarDetailsPage({ params }: Props) {
               </dl>
             </div>
           </div>
+        </div>
+      </section>
+
+      <EVReviewsSection modelName={`${model.brand} ${model.model}`} reviews={reviews} />
+
+      <section className="border-t border-slate-200 bg-white">
+        <div className="mx-auto max-w-7xl px-6 py-14">
+          <ApprovedFeedbackStories stories={feedbackStories} models={evModels} />
         </div>
       </section>
 

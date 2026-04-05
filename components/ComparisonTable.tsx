@@ -65,9 +65,9 @@ export default function ComparisonTable({
             {showCatalogueA && (
               <div className="mt-4 grid gap-4 sm:grid-cols-2">
                 {brandModelsA.map(model => (
-                  <Link key={model.id} href={`/models/${model.id}`} className="block">
-                    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 hover:bg-slate-100 transition-colors">
-                      <h4 className="font-semibold">{model.model}</h4>
+                  <Link key={model.id} href={`/models/${model.id}`} className="block text-slate-900">
+                    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 transition-colors hover:bg-slate-100">
+                      <h4 className="font-semibold text-slate-900">{model.model}</h4>
                       <p className="text-sm text-slate-600">£{model.price.toLocaleString()}</p>
                       <p className="text-sm text-slate-600">{model.rangeKm} km range</p>
                       <span className="mt-2 inline-block text-xs text-blue-600 hover:underline">
@@ -103,9 +103,9 @@ export default function ComparisonTable({
             {showCatalogueB && (
               <div className="mt-4 grid gap-4 sm:grid-cols-2">
                 {brandModelsB.map(model => (
-                  <Link key={model.id} href={`/models/${model.id}`} className="block">
-                    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 hover:bg-slate-100 transition-colors">
-                      <h4 className="font-semibold">{model.model}</h4>
+                  <Link key={model.id} href={`/models/${model.id}`} className="block text-slate-900">
+                    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 transition-colors hover:bg-slate-100">
+                      <h4 className="font-semibold text-slate-900">{model.model}</h4>
                       <p className="text-sm text-slate-600">£{model.price.toLocaleString()}</p>
                       <p className="text-sm text-slate-600">{model.rangeKm} km range</p>
                       <span className="mt-2 inline-block text-xs text-blue-600 hover:underline">

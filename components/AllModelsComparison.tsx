@@ -1,70 +1,56 @@
-import { EVModel } from "@/types";
+import Link from "next/link";
+import Image from "next/image";
 import { evModels } from "@/data/evModels";
+import type { EVModel } from "@/types";
 
-function winnerClass(values: number[], index: number, lowerBetter = false) {
-  const value = values[index];
-  const others = values.filter((_, i) => i !== index);
-  const isBest = lowerBetter 
-    ? others.every(other => value <= other)
-    : others.every(other => value >= other);
-  return isBest ? "font-semibold text-emerald-600" : "text-slate-900";
-}
+type Props = {
+  models?: EVModel[];
+};
 
-export default function AllModelsComparison() {
-  const specs = [
-    { label: "Price", key: "price", lowerBetter: true, format: (v: number) => `£${v.toLocaleString()}` },
-    { label: "Range", key: "rangeKm", lowerBetter: false, format: (v: number) => `${v} km` },
-    { label: "Battery", key: "batteryKWh", lowerBetter: false, format: (v: number) => `${v} kWh` },
-    { label: "Torque", key: "torqueNm", lowerBetter: false, format: (v: number) => `${v} Nm` },
-    { label: "Ground Clearance", key: "groundClearanceMm", lowerBetter: false, format: (v: number) => `${v} mm` },
-  ];
-
-  const brands = [...new Set(evModels.map(m => m.brand))];
+export default function AllModelsComparison({ models }: Props) {
+  const source = models && models.length > 0 ? models : evModels;
+  const popular = source.slice(0, 10);
 
   return (
-    <section className="border-t border-slate-200 bg-slate-50">
+    <section className="border-t border-slate-200 bg-white">
       <div className="mx-auto max-w-7xl px-6 py-14">
-        <h2 className="text-3xl font-bold">Compare All EV Brands & Models</h2>
-        <p className="mt-2 text-slate-600">Side-by-side comparison of all available electric vehicles</p>
+        <h2 className="text-3xl font-bold text-slate-900">Popular EVs Comparison</h2>
+        <p className="mt-2 text-slate-600">
+          Quick-start with popular electric vehicles and jump directly into side-by-side comparison.
+        </p>
 
-        {brands.map(brand => {
-          const brandModels = evModels.filter(m => m.brand === brand);
-          return (
-            <div key={brand} className="mt-12">
-              <h3 className="text-2xl font-bold text-blue-600">{brand}</h3>
-              <div className="mt-6 overflow-x-auto">
-                <table className="w-full border-collapse border border-slate-200 bg-white rounded-lg">
-                  <thead>
-                    <tr className="bg-slate-50">
-                      <th className="border border-slate-200 p-4 text-left font-semibold">Model</th>
-                      {specs.map(spec => (
-                        <th key={spec.key} className="border border-slate-200 p-4 text-center font-semibold">{spec.label}</th>
-                      ))}
-                      <th className="border border-slate-200 p-4 text-center font-semibold">ADAS</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {brandModels.map(model => (
-                      <tr key={model.id} className="hover:bg-slate-50">
-                        <td className="border border-slate-200 p-4 font-medium">{model.model}</td>
-                        {specs.map(spec => {
-                          const values = brandModels.map(m => (m as any)[spec.key]);
-                          const index = brandModels.indexOf(model);
-                          return (
-                            <td key={spec.key} className={`border border-slate-200 p-4 text-center ${winnerClass(values, index, spec.lowerBetter)}`}>
-                              {spec.format((model as any)[spec.key])}
-                            </td>
-                          );
-                        })}
-                        <td className="border border-slate-200 p-4 text-center">{model.adas}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+        <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {popular.map((model) => (
+            <article
+              key={model.id}
+              className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+            >
+              <Image
+                src={model.heroImage}
+                alt={`${model.brand} ${model.model}`}
+                width={1200}
+                height={675}
+                unoptimized
+                className="h-44 w-full object-cover"
+              />
+              <div className="p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">2026 {model.brand}</p>
+                <h3 className="mt-1 text-lg font-bold text-slate-900">{model.model}</h3>
+                <p className="mt-1 text-sm text-slate-600">{model.bestFor}</p>
+                <div className="mt-3 flex items-center justify-between text-sm">
+                  <span className="font-semibold text-slate-900">£{model.price.toLocaleString()}</span>
+                  <span className="text-slate-600">{model.rangeKm} km</span>
+                </div>
+                <Link
+                  href={`/cars/${model.id}`}
+                  className="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800"
+                >
+                  Start with this EV
+                </Link>
               </div>
-            </div>
-          );
-        })}
+            </article>
+          ))}
+        </div>
       </div>
     </section>
   );

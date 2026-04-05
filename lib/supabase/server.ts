@@ -22,18 +22,12 @@ export async function createClient() {
 // This function is used to get the list of tables in the public schema
 // and their row security settings
 export async function getPublicSchemaTables() {
-  const result = await db
-    .select(
-      schemaname,
-      tablename,
-      rowsecurity
-    )
-    .from(pg_tables)
-    .where(
-      and(
-        eq(schemaname, "public"),
-        eq(tablename, "ev_models")
-      )
-    );
-  return result;
+  const client = await createClient();
+  const { data, error } = await client
+    .from("information_schema.tables")
+    .select("table_schema, table_name")
+    .eq("table_schema", "public")
+    .eq("table_name", "ev_models");
+  if (error) throw error;
+  return data;
 }

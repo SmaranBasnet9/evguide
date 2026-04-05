@@ -45,7 +45,7 @@ export default function SignupPage() {
     <main className="min-h-screen bg-slate-50 px-6 py-16 text-slate-900">
       <div className="mx-auto w-full max-w-md rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
         <h1 className="text-3xl font-bold">Create account</h1>
-        <p className="mt-2 text-sm text-slate-600">Sign up as a user, admin role can be granted later.</p>
+        <p className="mt-2 text-sm text-slate-600">Sign up to get started.</p>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-5">
           <div>

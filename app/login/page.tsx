@@ -1,12 +1,13 @@
 "use client";
 
-import { FormEvent, useState } from "react";
-import { useRouter } from "next/navigation";
+import { FormEvent, Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const supabase = createClient();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -29,7 +30,12 @@ export default function LoginPage() {
       return;
     }
 
-    router.push("/");
+    const nextPath = searchParams.get("next");
+    if (nextPath && nextPath.startsWith("/")) {
+      router.push(nextPath);
+    } else {
+      router.push("/");
+    }
     router.refresh();
   };
 
@@ -83,5 +89,13 @@ export default function LoginPage() {
         </p>
       </div>
     </main>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<main className="min-h-screen bg-slate-50 px-6 py-16 text-slate-900" />}>
+      <LoginForm />
+    </Suspense>
   );
 }

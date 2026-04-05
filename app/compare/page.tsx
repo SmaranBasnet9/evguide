@@ -1,24 +1,125 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import type { Dispatch, SetStateAction } from "react";
+import { Suspense, useState, useRef, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import CompareHero from "@/components/CompareHero";
 import ComparisonTable from "@/components/ComparisonTable";
 import ComparisonConsultationForm from "@/components/ComparisonConsultationForm";
 import AllModelsComparison from "@/components/AllModelsComparison";
 import { evModels } from "@/data/evModels";
+import type { EVModel } from "@/types";
+
+type DbEV = {
+  id: string;
+  brand: string;
+  model: string;
+  hero_image: string;
+  price: number;
+  motor_capacity_kw: number;
+  torque_nm: number;
+  ground_clearance_mm: number;
+  tyre_size: string;
+  battery_kwh: number;
+  range_km: number;
+  drive: string;
+  charging_standard: string;
+  fast_charge_time: string;
+  adas: string;
+  warranty: string;
+  seats: number;
+  boot_litres: number;
+  top_speed_kph: number;
+  acceleration: string;
+  description: string;
+  best_for: string;
+  loved_reason: string;
+};
+
+function mapDbEV(item: DbEV): EVModel {
+  return {
+    id: item.id,
+    brand: item.brand,
+    model: item.model,
+    heroImage: item.hero_image,
+    price: item.price,
+    motorCapacityKw: item.motor_capacity_kw,
+    torqueNm: item.torque_nm,
+    groundClearanceMm: item.ground_clearance_mm,
+    tyreSize: item.tyre_size,
+    batteryKWh: item.battery_kwh,
+    rangeKm: item.range_km,
+    drive: item.drive,
+    chargingStandard: item.charging_standard,
+    fastChargeTime: item.fast_charge_time,
+    adas: item.adas,
+    warranty: item.warranty,
+    seats: item.seats,
+    bootLitres: item.boot_litres,
+    topSpeedKph: item.top_speed_kph,
+    acceleration: item.acceleration,
+    description: item.description,
+    bestFor: item.best_for,
+    lovedReason: item.loved_reason,
+  };
+}
 
 export default function ComparePage() {
-  const [selectedA, setSelectedA] = useState<string>("");
-  const [selectedB, setSelectedB] = useState<string>("");
+  return (
+    <Suspense>
+      <ComparePageInner />
+    </Suspense>
+  );
+}
+
+function ComparePageInner() {
+  const searchParams = useSearchParams();
+  const [models, setModels] = useState<EVModel[]>(evModels);
+  const [selectedA, setSelectedA] = useState<string>(() => {
+    const carA = searchParams.get("carA");
+    return carA && evModels.some((m) => m.id === carA) ? carA : "";
+  });
+  const [selectedB, setSelectedB] = useState<string>(() => {
+    const carB = searchParams.get("carB");
+    return carB && evModels.some((m) => m.id === carB) ? carB : "";
+  });
   const [showComparison, setShowComparison] = useState<boolean>(false);
   const comparisonRef = useRef<HTMLDivElement>(null);
 
-  const modelA = evModels.find(m => m.id === selectedA) ?? null;
-  const modelB = evModels.find(m => m.id === selectedB) ?? null;
+  const modelA = models.find(m => m.id === selectedA) ?? null;
+  const modelB = models.find(m => m.id === selectedB) ?? null;
 
   const isCompareDisabled = !selectedA || !selectedB || selectedA === selectedB;
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function loadModels() {
+      try {
+        const res = await fetch("/api/evs", { cache: "no-store" });
+        if (!res.ok) return;
+        const payload = await res.json();
+        if (!mounted || !Array.isArray(payload?.data)) return;
+
+        const mapped = payload.data
+          .filter((item: Partial<DbEV>) => item?.id && item?.brand && item?.model)
+          .map((item: DbEV) => mapDbEV(item));
+
+        if (mapped.length > 0) {
+          setModels(mapped);
+        }
+      } catch {
+        // Keep static fallback data if API fetch fails.
+      }
+    }
+
+    loadModels();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const handleCompare = (): void => {
     if (!isCompareDisabled) {
@@ -40,28 +141,28 @@ export default function ComparePage() {
     <main className="min-h-screen bg-slate-50 text-slate-900">
       <Navbar />
       <CompareHero
-        models={evModels}
+        models={models}
         selectedA={selectedA}
         selectedB={selectedB}
         onSelectA={setSelectedA}
         onSelectB={setSelectedB}
       />
       
-      <section className="bg-white border-b border-slate-200">
+      <section className="border-b border-slate-200 bg-gradient-to-r from-slate-100 to-blue-50">
         <div className="mx-auto max-w-7xl px-6 py-6">
           <button
             onClick={handleCompare}
             disabled={isCompareDisabled}
-            className={`rounded-2xl px-8 py-3 text-sm font-semibold text-white transition-colors ${
+            className={`rounded-2xl px-8 py-3 text-sm font-semibold text-white transition-all ${
               isCompareDisabled
-                ? "bg-slate-400 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700"
+                ? "cursor-not-allowed bg-slate-400"
+                : "bg-blue-600 shadow-lg shadow-blue-300/40 hover:-translate-y-0.5 hover:bg-blue-700"
             }`}
           >
             Compare Now
           </button>
           {isCompareDisabled && (
-            <p className="mt-2 text-sm text-slate-600">
+            <p className="mt-2 text-sm font-medium text-slate-700">
               Please select 2 different vehicles to compare
             </p>
           )}
@@ -74,10 +175,31 @@ export default function ComparePage() {
             <ComparisonTable modelA={modelA} modelB={modelB} />
           </div>
           <ComparisonConsultationForm modelA={modelA} modelB={modelB} />
+          <section className="border-t border-slate-200 bg-slate-50">
+            <div className="mx-auto max-w-7xl px-6 py-10">
+              <h3 className="text-2xl font-bold text-slate-900">Continue Comparing</h3>
+              <p className="mt-2 text-slate-600">
+                You can compare another pair right away or pick from popular EV options below.
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowComparison(false);
+                  setSelectedA("");
+                  setSelectedB("");
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
+                className="mt-5 rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800"
+              >
+                Compare Another Pair
+              </button>
+            </div>
+          </section>
         </>
       )}
       
-      <AllModelsComparison />
+      <AllModelsComparison models={models} />
+      <Footer />
     </main>
   );
 }

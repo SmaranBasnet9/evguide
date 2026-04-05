@@ -1,24 +1,30 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { createAdminClient } from "@/lib/supabase/admin";
+
+export async function GET() {
+  try {
+    const supabase = createAdminClient();
+
+    const { data, error } = await supabase
+      .from("ev_models")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+
+    return NextResponse.json({ data });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Unexpected error";
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
+}
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-    if (!supabaseUrl || !anonKey) {
-      return NextResponse.json(
-        {
-          error:
-            "Missing Supabase environment variables. Check NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.",
-        },
-        { status: 500 }
-      );
-    }
-
-    const supabase = createClient(supabaseUrl, anonKey);
+    const supabase = createAdminClient();
 
     const { data, error } = await supabase
       .from("ev_models")
@@ -27,8 +33,21 @@ export async function POST(request: Request) {
         model: body.model,
         hero_image: body.hero_image,
         price: body.price,
+        motor_capacity_kw: body.motor_capacity_kw,
+        torque_nm: body.torque_nm,
+        ground_clearance_mm: body.ground_clearance_mm,
+        tyre_size: body.tyre_size,
         battery_kwh: body.battery_kwh,
         range_km: body.range_km,
+        drive: body.drive,
+        charging_standard: body.charging_standard,
+        fast_charge_time: body.fast_charge_time,
+        adas: body.adas,
+        warranty: body.warranty,
+        seats: body.seats,
+        boot_litres: body.boot_litres,
+        top_speed_kph: body.top_speed_kph,
+        acceleration: body.acceleration,
         description: body.description,
         best_for: body.best_for,
         loved_reason: body.loved_reason,
@@ -41,7 +60,8 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ success: true, data }, { status: 201 });
-  } catch {
-    return NextResponse.json({ error: "Invalid request payload." }, { status: 400 });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Unexpected error";
+    return NextResponse.json({ error: message }, { status: 400 });
   }
 }

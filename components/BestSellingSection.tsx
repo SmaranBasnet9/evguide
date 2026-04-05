@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { EVModel } from "@/types";
+import Image from "next/image";
 
 type BestSellingSectionProps = {
   models: EVModel[];
@@ -83,9 +84,12 @@ export default function BestSellingSection({
                 className="group overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-2 hover:shadow-xl"
               >
                 <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-100">
-                  <img
+                  <Image
                     src={model.heroImage}
                     alt={`${model.brand} ${model.model}`}
+                    fill
+                    sizes="(min-width: 1280px) 25vw, (min-width: 640px) 50vw, 100vw"
+                    unoptimized
                     className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                   />
 

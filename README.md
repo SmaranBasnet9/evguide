@@ -26,6 +26,19 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 2. Fill all required keys.
 3. Restart the development server after any env changes.
 
+## Admin Login DB Setup (Supabase)
+
+1. Open Supabase SQL Editor.
+2. Run [Documentation/supabase-admin-auth.sql](Documentation/supabase-admin-auth.sql).
+3. Create your admin account from the app signup page (or Supabase Auth users).
+4. Promote that account:
+
+```sql
+select public.promote_user_to_admin('admin@example.com');
+```
+
+5. Use `/admin-login` to sign in as admin.
+
 ## Health Check
 
 Use the health endpoint to verify configuration and service connectivity:

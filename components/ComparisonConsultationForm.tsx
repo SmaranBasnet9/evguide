@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
+import LoginModal from "@/components/LoginModal";
 import type { EVModel } from "@/types";
 
 interface FormData {
@@ -19,6 +21,7 @@ interface Props {
 }
 
 export default function ComparisonConsultationForm({ modelA, modelB }: Props) {
+  const supabase = useMemo(() => createClient(), []);
   const [formData, setFormData] = useState<FormData>({
     fullName: "",
     email: "",
@@ -31,6 +34,41 @@ export default function ComparisonConsultationForm({ modelA, modelB }: Props) {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
+  const [serverError, setServerError] = useState("");
+  const [authLoading, setAuthLoading] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function loadAuth() {
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        if (mounted) {
+          setIsLoggedIn(Boolean(user));
+        }
+      } finally {
+        if (mounted) {
+          setAuthLoading(false);
+        }
+      }
+    }
+
+    loadAuth();
+
+    const { data: subscription } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsLoggedIn(Boolean(session?.user));
+      setAuthLoading(false);
+    });
+
+    return () => {
+      mounted = false;
+      subscription.subscription.unsubscribe();
+    };
+  }, [supabase]);
 
   const validateEmail = (email: string) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -46,13 +84,23 @@ export default function ComparisonConsultationForm({ modelA, modelB }: Props) {
     }));
 
     if (errors[name]) {
-      const { [name]: removed, ...rest } = errors;
-      setErrors(rest);
+      setErrors((prev) => {
+        const next = { ...prev };
+        delete next[name];
+        return next;
+      });
     }
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!isLoggedIn) {
+      setServerError("Please log in to request consultation.");
+      setShowLoginModal(true);
+      return;
+    }
+
     const newErrors: Record<string, string> = {};
 
     if (!formData.fullName.trim()) newErrors.fullName = "Full name is required";
@@ -62,17 +110,31 @@ export default function ComparisonConsultationForm({ modelA, modelB }: Props) {
     if (!formData.consent) newErrors.consent = "You must agree to be contacted";
 
     setErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) return;
 
-    if (Object.keys(newErrors).length === 0) {
-      console.log("Consultation request:", {
-        ...formData,
-        vehicleA: modelA.id,
-        vehicleB: modelB.id,
-        comparison: `${modelA.brand} ${modelA.model} vs ${modelB.brand} ${modelB.model}`,
-      });
-      setSubmitted(true);
-      setTimeout(() => setSubmitted(false), 5000);
+    setServerError("");
+    const res = await fetch("/api/consultations", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        full_name: formData.fullName,
+        email: formData.email,
+        phone: formData.phone,
+        sector: "vehicle",
+        ev_model_label: `${modelA.brand} ${modelA.model} vs ${modelB.brand} ${modelB.model}`,
+        preferred_time: formData.preferredContactTime ?? null,
+        notes: formData.message || null,
+      }),
+    });
+
+    if (!res.ok) {
+      const data = await res.json();
+      setServerError(data.error ?? "Something went wrong. Please try again.");
+      return;
     }
+
+    setSubmitted(true);
+    setTimeout(() => setSubmitted(false), 5000);
   };
 
   return (
@@ -105,6 +167,20 @@ export default function ComparisonConsultationForm({ modelA, modelB }: Props) {
                   <h3 className="text-2xl font-bold text-emerald-900 mt-2">Request Sent!</h3>
                   <p className="text-emerald-800 mt-2">Our team will contact you soon.</p>
                 </div>
+              ) : !authLoading && !isLoggedIn ? (
+                <div className="rounded-2xl border border-amber-200 bg-amber-50 p-8">
+                  <h3 className="text-2xl font-bold text-amber-900">Login required</h3>
+                  <p className="mt-2 text-sm text-amber-800">
+                    Please log in to request EV comparison consultation.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setShowLoginModal(true)}
+                    className="mt-4 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"
+                  >
+                    Log in to continue
+                  </button>
+                </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-5">
                   {[
@@ -120,7 +196,7 @@ export default function ComparisonConsultationForm({ modelA, modelB }: Props) {
                         id={field.id}
                         name={field.id}
                         type={field.type}
-                        value={formData[field.id as keyof FormData] || ""}
+                        value={(formData[field.id as keyof FormData] as string) || ""}
                         onChange={handleChange}
                         className={`w-full rounded-lg border px-4 py-3 focus:outline-none ${
                           errors[field.id] ? "border-red-500 bg-red-50" : "border-slate-300 focus:border-blue-600"
@@ -199,6 +275,12 @@ export default function ComparisonConsultationForm({ modelA, modelB }: Props) {
                   </div>
                   {errors.consent && <p className="text-red-600 text-sm">{errors.consent}</p>}
 
+                  {serverError && (
+                    <p className="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+                      {serverError}
+                    </p>
+                  )}
+
                   <button
                     type="submit"
                     className="w-full rounded-lg bg-blue-600 px-6 py-3 text-lg font-bold text-white hover:bg-blue-700 transition-colors"
@@ -229,6 +311,17 @@ export default function ComparisonConsultationForm({ modelA, modelB }: Props) {
           </div>
         </div>
       </div>
+
+      <LoginModal
+        open={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+        onSuccess={() => {
+          setIsLoggedIn(true);
+          setServerError("");
+        }}
+        title="Comparison Consultation Access"
+        description="Sign in to request expert help for your EV comparison."
+      />
     </section>
   );
 }
