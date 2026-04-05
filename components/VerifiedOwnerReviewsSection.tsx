@@ -20,8 +20,8 @@ export default function VerifiedOwnerReviewsSection({ reviews }: Props) {
             <p className="mt-2 text-sm text-slate-600">Approved reviews submitted by verified users.</p>
           </div>
 
-          <Link href="/reviews-lab" className="text-sm font-semibold text-blue-600 hover:underline">
-            View review lab →
+          <Link href="/appointment" className="text-sm font-semibold text-blue-600 hover:underline">
+            View all reviews →
           </Link>
         </div>
 
