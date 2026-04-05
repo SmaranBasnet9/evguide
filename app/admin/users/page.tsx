@@ -14,12 +14,17 @@ async function getUsers() {
 
   const roleMap = new Map((profiles ?? []).map((p) => [p.id, p.role]));
 
-  return authData.users.map((u) => ({
-    id: u.id,
-    email: u.email ?? "—",
-    created_at: u.created_at,
-    role: roleMap.get(u.id) ?? "user",
-  }));
+  return authData.users.map((u) => {
+    const metaName = typeof u.user_metadata?.full_name === "string" ? u.user_metadata.full_name : null;
+
+    return {
+      id: u.id,
+      name: metaName ?? "—",
+      email: u.email ?? "—",
+      created_at: u.created_at,
+      role: roleMap.get(u.id) ?? "user",
+    };
+  });
 }
 
 async function getCurrentUserId() {
@@ -64,6 +69,7 @@ export default async function AdminUsersPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-slate-100 bg-slate-50 text-left">
+                  <th className="px-6 py-3 font-semibold text-slate-600">Name</th>
                   <th className="px-6 py-3 font-semibold text-slate-600">Email</th>
                   <th className="px-6 py-3 font-semibold text-slate-600">Joined</th>
                   <th className="px-6 py-3 font-semibold text-slate-600">Role</th>
@@ -73,6 +79,7 @@ export default async function AdminUsersPage() {
               <tbody>
                 {admins.map((u) => (
                   <tr key={u.id} className="border-b border-slate-100 last:border-b-0">
+                    <td className="px-6 py-4 font-medium text-slate-900">{u.name}</td>
                     <td className="px-6 py-4 font-medium text-slate-900">{u.email}</td>
                     <td className="px-6 py-4 text-slate-500">{formatDate(u.created_at)}</td>
                     <td className="px-6 py-4">
@@ -107,6 +114,7 @@ export default async function AdminUsersPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-slate-100 bg-slate-50 text-left">
+                  <th className="px-6 py-3 font-semibold text-slate-600">Name</th>
                   <th className="px-6 py-3 font-semibold text-slate-600">Email</th>
                   <th className="px-6 py-3 font-semibold text-slate-600">Joined</th>
                   <th className="px-6 py-3 font-semibold text-slate-600">Role</th>
@@ -116,6 +124,7 @@ export default async function AdminUsersPage() {
               <tbody>
                 {regularUsers.map((u) => (
                   <tr key={u.id} className="border-b border-slate-100 last:border-b-0">
+                    <td className="px-6 py-4 font-medium text-slate-900">{u.name}</td>
                     <td className="px-6 py-4 font-medium text-slate-900">{u.email}</td>
                     <td className="px-6 py-4 text-slate-500">{formatDate(u.created_at)}</td>
                     <td className="px-6 py-4">

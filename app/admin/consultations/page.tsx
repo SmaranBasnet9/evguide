@@ -36,6 +36,84 @@ export default async function AdminConsultationsPage() {
   if (profile?.role !== "admin") redirect("/");
 
   const rows = await getConsultations();
+  const financeRows = rows.filter((row) => row.sector === "bank");
+  const automobileRows = rows.filter((row) => row.sector === "vehicle");
+  const otherRows = rows.filter((row) => row.sector !== "bank" && row.sector !== "vehicle");
+
+  function renderTable(sectionRows: ConsultationRow[]) {
+    return (
+      <div className="overflow-x-auto rounded-2xl border border-slate-200">
+        <table className="min-w-full divide-y divide-slate-100 text-sm">
+          <thead className="bg-slate-50 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+            <tr>
+              <th className="px-4 py-3">Name / Email</th>
+              <th className="px-4 py-3">Selection</th>
+              <th className="px-4 py-3">Phone</th>
+              <th className="px-4 py-3">Preferred time</th>
+              <th className="px-4 py-3">Notes</th>
+              <th className="px-4 py-3">Submitted</th>
+              <th className="px-4 py-3">Status</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-100 bg-white">
+            {sectionRows.map((row) => {
+              const evLabel =
+                row.ev_model_label ||
+                (Array.isArray(row.ev_models) && row.ev_models[0]
+                  ? `${row.ev_models[0].brand} ${row.ev_models[0].model}`
+                  : null);
+
+              return (
+                <tr key={row.id} className="hover:bg-slate-50">
+                  <td className="px-4 py-3">
+                    <p className="font-medium text-slate-900">{row.full_name}</p>
+                    <p className="text-slate-500">{row.email}</p>
+                  </td>
+                  <td className="px-4 py-3 text-slate-700">
+                    {row.sector === "bank" ? row.bank_name : evLabel ?? "-"}
+                  </td>
+                  <td className="px-4 py-3 text-slate-500">{row.phone ?? "-"}</td>
+                  <td className="px-4 py-3 text-slate-500">
+                    {row.preferred_time
+                      ? new Date(row.preferred_time).toLocaleString("en-GB", {
+                          dateStyle: "medium",
+                          timeStyle: "short",
+                        })
+                      : "-"}
+                  </td>
+                  <td className="max-w-xs px-4 py-3 text-slate-500">
+                    <p className="line-clamp-2">{row.notes ?? "-"}</p>
+                  </td>
+                  <td className="px-4 py-3 text-slate-500">
+                    {new Date(row.created_at).toLocaleDateString("en-GB", {
+                      dateStyle: "medium",
+                    })}
+                  </td>
+                  <td className="px-4 py-3">
+                    <AdminConsultationStatusButton
+                      id={row.id}
+                      initialStatus={row.status}
+                    />
+                    <AdminConsultationForwardButton
+                      id={row.id}
+                      sector={row.sector}
+                      bankName={row.bank_name}
+                      applicantName={row.full_name}
+                      applicantEmail={row.email}
+                      applicantPhone={row.phone}
+                      selectedVehicle={evLabel}
+                      preferredTime={row.preferred_time}
+                      notes={row.notes}
+                    />
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -51,85 +129,50 @@ export default async function AdminConsultationsPage() {
           No consultation requests yet.
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-2xl border border-slate-200">
-          <table className="min-w-full divide-y divide-slate-100 text-sm">
-            <thead className="bg-slate-50 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
-              <tr>
-                <th className="px-4 py-3">Name / Email</th>
-                <th className="px-4 py-3">Sector</th>
-                <th className="px-4 py-3">Selection</th>
-                <th className="px-4 py-3">Phone</th>
-                <th className="px-4 py-3">Preferred time</th>
-                <th className="px-4 py-3">Notes</th>
-                <th className="px-4 py-3">Submitted</th>
-                <th className="px-4 py-3">Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100 bg-white">
-              {rows.map((row) => {
-                const evLabel =
-                  row.ev_model_label ||
-                  (Array.isArray(row.ev_models) && row.ev_models[0]
-                    ? `${row.ev_models[0].brand} ${row.ev_models[0].model}`
-                    : null);
+        <div className="space-y-8">
+          <section>
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-slate-900">Finance Consultations</h2>
+              <span className="rounded-full bg-purple-100 px-3 py-1 text-xs font-semibold text-purple-700">
+                {financeRows.length} requests
+              </span>
+            </div>
+            {financeRows.length > 0 ? (
+              renderTable(financeRows)
+            ) : (
+              <div className="rounded-2xl border border-dashed border-slate-200 py-10 text-center text-sm text-slate-400">
+                No finance consultations yet.
+              </div>
+            )}
+          </section>
 
-                return (
-                  <tr key={row.id} className="hover:bg-slate-50">
-                    <td className="px-4 py-3">
-                      <p className="font-medium text-slate-900">{row.full_name}</p>
-                      <p className="text-slate-500">{row.email}</p>
-                    </td>
-                    <td className="px-4 py-3 capitalize">
-                      <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
-                        row.sector === "bank"
-                          ? "bg-purple-100 text-purple-700"
-                          : "bg-blue-100 text-blue-700"
-                      }`}>
-                        {row.sector === "bank" ? "🏦 Bank" : "⚡ Vehicle"}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-slate-700">
-                      {row.sector === "bank" ? row.bank_name : evLabel ?? "—"}
-                    </td>
-                    <td className="px-4 py-3 text-slate-500">{row.phone ?? "—"}</td>
-                    <td className="px-4 py-3 text-slate-500">
-                      {row.preferred_time
-                        ? new Date(row.preferred_time).toLocaleString("en-GB", {
-                            dateStyle: "medium",
-                            timeStyle: "short",
-                          })
-                        : "—"}
-                    </td>
-                    <td className="max-w-xs px-4 py-3 text-slate-500">
-                      <p className="line-clamp-2">{row.notes ?? "—"}</p>
-                    </td>
-                    <td className="px-4 py-3 text-slate-500">
-                      {new Date(row.created_at).toLocaleDateString("en-GB", {
-                        dateStyle: "medium",
-                      })}
-                    </td>
-                    <td className="px-4 py-3">
-                      <AdminConsultationStatusButton
-                        id={row.id}
-                        initialStatus={row.status}
-                      />
-                      <AdminConsultationForwardButton
-                        id={row.id}
-                        sector={row.sector}
-                        bankName={row.bank_name}
-                        applicantName={row.full_name}
-                        applicantEmail={row.email}
-                        applicantPhone={row.phone}
-                        selectedVehicle={evLabel}
-                        preferredTime={row.preferred_time}
-                        notes={row.notes}
-                      />
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+          <section>
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-slate-900">Automobile Consultations</h2>
+              <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">
+                {automobileRows.length} requests
+              </span>
+            </div>
+            {automobileRows.length > 0 ? (
+              renderTable(automobileRows)
+            ) : (
+              <div className="rounded-2xl border border-dashed border-slate-200 py-10 text-center text-sm text-slate-400">
+                No automobile consultations yet.
+              </div>
+            )}
+          </section>
+
+          {otherRows.length > 0 ? (
+            <section>
+              <div className="mb-3 flex items-center justify-between">
+                <h2 className="text-lg font-semibold text-slate-900">Other Consultations</h2>
+                <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
+                  {otherRows.length} requests
+                </span>
+              </div>
+              {renderTable(otherRows)}
+            </section>
+          ) : null}
         </div>
       )}
     </div>

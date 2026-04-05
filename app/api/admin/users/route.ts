@@ -21,12 +21,17 @@ export async function GET() {
 
     const roleMap = new Map(profiles.map((p) => [p.id, p.role]));
 
-    const users = authData.users.map((u) => ({
-      id: u.id,
-      email: u.email,
-      created_at: u.created_at,
-      role: roleMap.get(u.id) ?? "user",
-    }));
+    const users = authData.users.map((u) => {
+      const metaName = typeof u.user_metadata?.full_name === "string" ? u.user_metadata.full_name : null;
+
+      return {
+        id: u.id,
+        name: metaName ?? null,
+        email: u.email,
+        created_at: u.created_at,
+        role: roleMap.get(u.id) ?? "user",
+      };
+    });
 
     return NextResponse.json({ users });
   } catch (err) {
