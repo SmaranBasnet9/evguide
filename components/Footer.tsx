@@ -13,8 +13,6 @@ export default function Footer() {
           <Link href="/">Home</Link>
           <Link href="/compare">Compare</Link>
           <Link href="/finance">Finance</Link>
-          <Link href="/blog">Blog</Link>
-          <Link href="/assistant">Consultation</Link>
           <Link href="/appointment">Reviews</Link>
           <Link href="/login">Sign In</Link>
           <Link href="/signup">Sign Up</Link>
