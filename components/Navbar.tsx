@@ -6,7 +6,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
 const NAV_LINKS = [
-  { href: "/blog", label: "Blog" },
+  { href: "/vehicles", label: "All Vehicles" },
   { href: "/assistant", label: "Consultation" },
 ];
 
@@ -124,16 +124,16 @@ export default function Navbar() {
           {/* Right — CTAs + auth */}
           <div className="hidden items-center gap-2.5 md:flex">
             <Link
-              href="/blog"
+              href="/compare"
               className="inline-flex h-10 items-center rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 shadow-sm transition-all duration-200 hover:-translate-y-px hover:border-slate-300 hover:shadow-md active:translate-y-0"
             >
-              Read Blog
+              Compare EVs
             </Link>
             <Link
-              href="/assistant"
+              href="/finance"
               className="inline-flex h-10 items-center rounded-xl bg-blue-600 px-4 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-px hover:bg-blue-700 hover:shadow-md active:translate-y-0"
             >
-              Get Consultation
+              Check EMI
             </Link>
 
             {isLoggedIn ? (
@@ -251,18 +251,18 @@ export default function Navbar() {
 
             <div className="mt-3 grid grid-cols-2 gap-2 border-t border-slate-100 pt-3">
               <Link
-                href="/blog"
+                href="/compare"
                 onClick={() => setMenuOpen(false)}
                 className="rounded-xl border border-slate-200 py-2.5 text-center text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
               >
-                Read Blog
+                Compare EVs
               </Link>
               <Link
-                href="/assistant"
+                href="/finance"
                 onClick={() => setMenuOpen(false)}
                 className="rounded-xl bg-blue-600 py-2.5 text-center text-sm font-semibold text-white transition-colors hover:bg-blue-700"
               >
-                Get Consultation
+                Check EMI
               </Link>
             </div>
           </div>

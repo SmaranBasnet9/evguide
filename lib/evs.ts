@@ -1,20 +1,33 @@
 import { createClient } from "@/lib/supabase/server";
 
-export async function getTopSellingEVs() {
-  const supabase = await createClient();
+type DbEV = {
+  id: string;
+  brand: string;
+  model: string;
+  hero_image: string;
+  price: number;
+  motor_capacity_kw: number;
+  torque_nm: number;
+  ground_clearance_mm: number;
+  tyre_size: string;
+  battery_kwh: number;
+  range_km: number;
+  drive: string;
+  charging_standard: string;
+  fast_charge_time: string;
+  adas: string;
+  warranty: string;
+  seats: number;
+  boot_litres: number;
+  top_speed_kph: number;
+  acceleration: string;
+  description: string;
+  best_for: string;
+  loved_reason: string;
+};
 
-  const { data, error } = await supabase
-    .from("ev_models")
-    .select("*")
-    .order("created_at", { ascending: false })
-    .limit(10);
-
-  if (error) {
-    console.error("Error fetching EVs:", error);
-    return [];
-  }
-
-  return data.map((item) => ({
+function mapDbEV(item: DbEV) {
+  return {
     id: item.id,
     brand: item.brand,
     model: item.model,
@@ -38,5 +51,38 @@ export async function getTopSellingEVs() {
     description: item.description,
     bestFor: item.best_for,
     lovedReason: item.loved_reason,
-  }));
+  };
+}
+
+export async function getAllEVs() {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("ev_models")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching all EVs:", error);
+    return [];
+  }
+
+  return (data ?? []).map((item) => mapDbEV(item as DbEV));
+}
+
+export async function getTopSellingEVs() {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("ev_models")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .limit(10);
+
+  if (error) {
+    console.error("Error fetching EVs:", error);
+    return [];
+  }
+
+  return data.map((item) => mapDbEV(item as DbEV));
 }
