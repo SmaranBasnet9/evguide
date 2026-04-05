@@ -13,7 +13,6 @@ export default function Footer() {
           <Link href="/">Home</Link>
           <Link href="/compare">Compare</Link>
           <Link href="/finance">Finance</Link>
-          <Link href="/blog">Blog</Link>
         </div>
 
         <p className="mt-6 text-xs text-slate-400">

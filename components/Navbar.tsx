@@ -8,8 +8,6 @@ import { createClient } from "@/lib/supabase/client";
 const NAV_LINKS = [
   { href: "/compare", label: "Compare" },
   { href: "/finance", label: "Finance" },
-  { href: "/blog", label: "Blog" },
-  { href: "/appointment", label: "Reviews" },
 ];
 
 export default function Navbar() {
