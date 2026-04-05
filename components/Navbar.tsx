@@ -125,7 +125,7 @@ export default function Navbar() {
           <div className="hidden items-center gap-2.5 md:flex">
             <Link
               href="/compare"
-              className="inline-flex h-10 items-center rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 shadow-sm transition-all duration-200 hover:-translate-y-px hover:border-slate-300 hover:shadow-md active:translate-y-0"
+              className="inline-flex h-10 items-center rounded-xl bg-blue-600 px-4 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-px hover:bg-blue-700 hover:shadow-md active:translate-y-0"
             >
               Compare EVs
             </Link>
@@ -253,7 +253,7 @@ export default function Navbar() {
               <Link
                 href="/compare"
                 onClick={() => setMenuOpen(false)}
-                className="rounded-xl border border-slate-200 py-2.5 text-center text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
+                className="rounded-xl bg-blue-600 py-2.5 text-center text-sm font-semibold text-white transition-colors hover:bg-blue-700"
               >
                 Compare EVs
               </Link>
