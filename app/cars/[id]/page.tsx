@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import EVReviewsSection from "@/components/EVReviewsSection";
 import ApprovedFeedbackStories from "@/components/ApprovedFeedbackStories";
@@ -120,9 +121,16 @@ export default async function CarDetailsPage({ params }: Props) {
       <section className="bg-white border-b border-slate-200">
         <div className="mx-auto max-w-7xl px-6 py-14">
           <div className="grid gap-8 lg:grid-cols-2">
-            {/* Image Placeholder */}
-            <div className="aspect-video rounded-3xl bg-gradient-to-br from-blue-100 to-slate-200 flex items-center justify-center">
-              <span className="text-slate-500 text-lg">{model.brand} {model.model}</span>
+            {/* Vehicle Image */}
+            <div className="relative aspect-video overflow-hidden rounded-3xl bg-slate-100">
+              <Image
+                src={model.heroImage}
+                alt={`${model.brand} ${model.model}`}
+                fill
+                unoptimized
+                sizes="(min-width: 1024px) 50vw, 100vw"
+                className="object-cover"
+              />
             </div>
             
             {/* Details */}
@@ -289,7 +297,7 @@ export default async function CarDetailsPage({ params }: Props) {
         </div>
       </section>
 
-      <EVReviewsSection modelName={`${model.brand} ${model.model}`} reviews={reviews} />
+      <EVReviewsSection modelId={model.id} modelName={`${model.brand} ${model.model}`} reviews={reviews} />
 
       <section className="border-t border-slate-200 bg-white">
         <div className="mx-auto max-w-7xl px-6 py-14">

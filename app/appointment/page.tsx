@@ -2,8 +2,9 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import VerifiedOwnerReviewsSection from "@/components/VerifiedOwnerReviewsSection";
 import ApprovedFeedbackStories from "@/components/ApprovedFeedbackStories";
-import { getLatestApprovedReviews } from "@/lib/reviews";
-import { getApprovedFeedbackStories } from "@/lib/feedback";
+import { getApprovedReviewsForCar, getLatestApprovedReviews } from "@/lib/reviews";
+import { getApprovedFeedbackStories, getApprovedFeedbackStoriesForModel } from "@/lib/feedback";
+import { createClient } from "@/lib/supabase/server";
 import { evModels } from "@/data/evModels";
 
 export const metadata = {
@@ -12,11 +13,75 @@ export const metadata = {
     "Read verified EV owner reviews and real-world feedback from drivers across the UK.",
 };
 
-export default async function ReviewsPage() {
-  const [reviews, stories] = await Promise.all([
-    getLatestApprovedReviews(12),
-    getApprovedFeedbackStories(9),
+type ReviewsPageProps = {
+  searchParams: Promise<{
+    car?: string;
+  }>;
+};
+
+type VehicleForReviews = {
+  id: string;
+  brand: string;
+  model: string;
+};
+
+async function getVehicleForReviews(id: string): Promise<VehicleForReviews | null> {
+  const staticModel = evModels.find((item) => item.id === id);
+  if (staticModel) {
+    return { id: staticModel.id, brand: staticModel.brand, model: staticModel.model };
+  }
+
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("ev_models")
+    .select("id, brand, model")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (!data) return null;
+
+  return {
+    id: data.id,
+    brand: data.brand,
+    model: data.model,
+  };
+}
+
+export default async function ReviewsPage({ searchParams }: ReviewsPageProps) {
+  const { car } = await searchParams;
+  const selectedVehicle = car ? await getVehicleForReviews(car) : null;
+
+  const [latestReviews, allStories] = await Promise.all([
+    getLatestApprovedReviews(30),
+    getApprovedFeedbackStories(18),
   ]);
+
+  let reviews = latestReviews.slice(0, 12);
+  let stories = allStories.slice(0, 9);
+  let relatedReviews = latestReviews.slice(12, 20);
+
+  if (selectedVehicle) {
+    const [selectedReviews, selectedStories] = await Promise.all([
+      getApprovedReviewsForCar(selectedVehicle.id, selectedVehicle.brand, selectedVehicle.model, 24),
+      getApprovedFeedbackStoriesForModel(selectedVehicle.brand, selectedVehicle.model, 12),
+    ]);
+
+    reviews = selectedReviews.length > 0 ? selectedReviews : latestReviews.slice(0, 12);
+    stories = selectedStories.length > 0 ? selectedStories : allStories.slice(0, 9);
+    relatedReviews = latestReviews
+      .filter((review) => review.carId !== selectedVehicle.id)
+      .filter((review) => {
+        const brand = (review.brand ?? "").toLowerCase();
+        return brand === selectedVehicle.brand.toLowerCase();
+      })
+      .slice(0, 8);
+
+    if (relatedReviews.length === 0) {
+      relatedReviews = latestReviews
+        .filter((review) => review.carId !== selectedVehicle.id)
+        .slice(0, 8);
+    }
+  }
 
   const modelList = evModels.map(({ id, brand, model }) => ({ id, brand, model }));
 
@@ -29,11 +94,14 @@ export default async function ReviewsPage() {
         <div className="mx-auto max-w-7xl px-6 py-16">
           <p className="text-sm font-semibold text-blue-600">EV Guide Reviews</p>
           <h1 className="mt-2 text-4xl font-bold text-slate-900">
-            Real stories from real EV owners
+            {selectedVehicle
+              ? `${selectedVehicle.brand} ${selectedVehicle.model} reviews`
+              : "Real stories from real EV owners"}
           </h1>
           <p className="mt-4 max-w-2xl text-slate-600">
-            Verified reviews and honest experiences from drivers who made the switch
-            to electric. No advertising, no bias - just real-world insight.
+            {selectedVehicle
+              ? "Read complete owner reviews for this vehicle, then explore related owner feedback to compare real-world experiences."
+              : "Verified reviews and honest experiences from drivers who made the switch to electric. No advertising, no bias - just real-world insight."}
           </p>
 
           {/* Stats strip */}
@@ -57,6 +125,21 @@ export default async function ReviewsPage() {
 
       {/* Verified DB reviews */}
       <VerifiedOwnerReviewsSection reviews={reviews} />
+
+      {selectedVehicle ? (
+        <section className="border-t border-slate-200 bg-white">
+          <div className="mx-auto max-w-7xl px-6 py-14">
+            <p className="text-sm font-semibold text-blue-600">Related Reviews</p>
+            <h2 className="mt-2 text-3xl font-bold text-slate-900">
+              More owner experiences you may like
+            </h2>
+            <p className="mt-2 text-sm text-slate-600">
+              Similar EV feedback to help you compare before making a decision.
+            </p>
+            <VerifiedOwnerReviewsSection reviews={relatedReviews} />
+          </div>
+        </section>
+      ) : null}
 
       {/* Approved feedback stories + write-your-own */}
       <section className="border-t border-slate-200 bg-slate-50">
