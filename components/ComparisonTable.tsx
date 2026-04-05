@@ -37,20 +37,20 @@ export default function ComparisonTable({
 
   return (
     <section className="border-t border-slate-200 bg-slate-50">
-      <div className="mx-auto max-w-7xl px-6 py-14">
-        <h2 className="text-3xl font-bold">Detailed EV Comparison</h2>
-        <p className="mt-2 text-slate-600">Compare specifications side by side to find your perfect EV</p>
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14">
+        <h2 className="text-2xl font-bold sm:text-3xl">Detailed EV Comparison</h2>
+        <p className="mt-2 text-sm text-slate-600 sm:text-base">Compare specifications side by side to find your perfect EV</p>
 
-        <div className="mt-8 grid gap-6 lg:grid-cols-2">
+        <div className="mt-6 grid grid-cols-2 gap-3 sm:mt-8 sm:gap-6">
           {/* Model A Card */}
-          <div className="rounded-3xl border border-slate-200 bg-white p-6">
-            <h3 className="text-xl font-bold text-blue-600">{modelA.brand} {modelA.model}</h3>
-            <p className="mt-2 text-3xl font-bold">£{modelA.price.toLocaleString()}</p>
-            <div className="mt-4 space-y-3">
+          <div className="rounded-2xl border border-slate-200 bg-white p-3 sm:rounded-3xl sm:p-6">
+            <h3 className="text-sm font-bold text-blue-600 sm:text-xl">{modelA.brand} {modelA.model}</h3>
+            <p className="mt-1 text-base font-bold sm:mt-2 sm:text-3xl">£{modelA.price.toLocaleString()}</p>
+            <div className="mt-3 space-y-1.5 sm:mt-4 sm:space-y-3">
               {specs.map((spec, index) => (
-                <div key={index} className="flex justify-between items-center py-2 border-b border-slate-100 last:border-b-0">
-                  <span className="font-medium text-slate-700">{spec.label}</span>
-                  <span className={`text-right ${winnerClass(modelA[spec.label.toLowerCase().replace(' ', '') as keyof EVModel] as number, modelB[spec.label.toLowerCase().replace(' ', '') as keyof EVModel] as number, spec.lowerBetter, "left")}`}>
+                <div key={index} className="flex items-start justify-between gap-2 border-b border-slate-100 py-1.5 last:border-b-0 sm:items-center sm:py-2">
+                  <span className="text-[11px] font-medium text-slate-700 sm:text-sm">{spec.label}</span>
+                  <span className={`max-w-[58%] text-right text-[11px] leading-4 sm:max-w-none sm:text-sm ${winnerClass(modelA[spec.label.toLowerCase().replace(' ', '') as keyof EVModel] as number, modelB[spec.label.toLowerCase().replace(' ', '') as keyof EVModel] as number, spec.lowerBetter, "left")}`}>
                     {spec.valueA}
                   </span>
                 </div>
@@ -58,7 +58,7 @@ export default function ComparisonTable({
             </div>
             <button
               onClick={() => setShowCatalogueA(!showCatalogueA)}
-              className="mt-4 w-full rounded-2xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+              className="mt-3 w-full rounded-xl bg-blue-600 px-3 py-2 text-xs font-semibold text-white hover:bg-blue-700 sm:mt-4 sm:rounded-2xl sm:px-4 sm:text-sm"
             >
               {showCatalogueA ? "Hide" : "See More"} {modelA.brand} Models
             </button>
@@ -81,14 +81,14 @@ export default function ComparisonTable({
           </div>
 
           {/* Model B Card */}
-          <div className="rounded-3xl border border-slate-200 bg-white p-6">
-            <h3 className="text-xl font-bold text-blue-600">{modelB.brand} {modelB.model}</h3>
-            <p className="mt-2 text-3xl font-bold">£{modelB.price.toLocaleString()}</p>
-            <div className="mt-4 space-y-3">
+          <div className="rounded-2xl border border-slate-200 bg-white p-3 sm:rounded-3xl sm:p-6">
+            <h3 className="text-sm font-bold text-blue-600 sm:text-xl">{modelB.brand} {modelB.model}</h3>
+            <p className="mt-1 text-base font-bold sm:mt-2 sm:text-3xl">£{modelB.price.toLocaleString()}</p>
+            <div className="mt-3 space-y-1.5 sm:mt-4 sm:space-y-3">
               {specs.map((spec, index) => (
-                <div key={index} className="flex justify-between items-center py-2 border-b border-slate-100 last:border-b-0">
-                  <span className="font-medium text-slate-700">{spec.label}</span>
-                  <span className={`text-right ${winnerClass(modelA[spec.label.toLowerCase().replace(' ', '') as keyof EVModel] as number, modelB[spec.label.toLowerCase().replace(' ', '') as keyof EVModel] as number, spec.lowerBetter, "right")}`}>
+                <div key={index} className="flex items-start justify-between gap-2 border-b border-slate-100 py-1.5 last:border-b-0 sm:items-center sm:py-2">
+                  <span className="text-[11px] font-medium text-slate-700 sm:text-sm">{spec.label}</span>
+                  <span className={`max-w-[58%] text-right text-[11px] leading-4 sm:max-w-none sm:text-sm ${winnerClass(modelA[spec.label.toLowerCase().replace(' ', '') as keyof EVModel] as number, modelB[spec.label.toLowerCase().replace(' ', '') as keyof EVModel] as number, spec.lowerBetter, "right")}`}>
                     {spec.valueB}
                   </span>
                 </div>
@@ -96,7 +96,7 @@ export default function ComparisonTable({
             </div>
             <button
               onClick={() => setShowCatalogueB(!showCatalogueB)}
-              className="mt-4 w-full rounded-2xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+              className="mt-3 w-full rounded-xl bg-blue-600 px-3 py-2 text-xs font-semibold text-white hover:bg-blue-700 sm:mt-4 sm:rounded-2xl sm:px-4 sm:text-sm"
             >
               {showCatalogueB ? "Hide" : "See More"} {modelB.brand} Models
             </button>
