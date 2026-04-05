@@ -1,4 +1,5 @@
 import type { ApprovedFeedbackStory } from "@/lib/feedback";
+import type { Review } from "@/lib/reviews";
 import ApprovedFeedbackStories from "@/components/ApprovedFeedbackStories";
 import Link from "next/link";
 
@@ -24,9 +25,14 @@ type Props = {
     brand: string;
     model: string;
   }>;
+  verifiedReviews?: Review[];
 };
 
-export default function StoriesSection({ feedbackStories, models }: Props) {
+function renderStars(rating: number) {
+  return "★★★★★".slice(0, rating) + "☆☆☆☆☆".slice(0, 5 - rating);
+}
+
+export default function StoriesSection({ feedbackStories, models, verifiedReviews = [] }: Props) {
   return (
     <section className="border-t border-slate-200 bg-white">
       <div className="mx-auto max-w-7xl px-6 py-14">
@@ -49,6 +55,27 @@ export default function StoriesSection({ feedbackStories, models }: Props) {
             </div>
           ))}
         </div>
+
+        {verifiedReviews.length > 0 && (
+          <div className="mt-12">
+            <p className="text-sm font-semibold text-blue-600">Verified Owner Reviews</p>
+            <h3 className="mt-1 text-2xl font-bold text-slate-900">What real EV owners are saying</h3>
+            <p className="mt-1 text-sm text-slate-600">Approved reviews submitted by verified users.</p>
+            <div className="mt-6 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2">
+              {verifiedReviews.map((review) => (
+                <article key={review.id} className="w-[320px] shrink-0 snap-start rounded-2xl border border-slate-200 bg-white p-5">
+                  <p className="text-sm font-semibold text-slate-900">{review.authorLabel}</p>
+                  <p className="mt-1 text-xs text-slate-500">
+                    {review.brand ?? "EV"} {review.model ?? "Owner"}
+                  </p>
+                  <p className="mt-3 text-sm font-semibold text-amber-600">{renderStars(review.overallRating)}</p>
+                  <h4 className="mt-3 text-base font-bold text-slate-900">{review.title}</h4>
+                  <p className="mt-2 text-sm leading-6 text-slate-700">{review.description}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        )}
 
         <ApprovedFeedbackStories stories={feedbackStories} models={models} />
       </div>

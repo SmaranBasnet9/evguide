@@ -1,15 +1,13 @@
-import Link from "next/link";
 import type { EVReview } from "@/data/evReviews";
 import EVReviewCard from "@/components/EVReviewCard";
 import EVReviewSummary from "@/components/EVReviewSummary";
 
 type Props = {
-  modelId?: string;
   modelName: string;
   reviews: EVReview[];
 };
 
-export default function EVReviewsSection({ modelId, modelName, reviews }: Props) {
+export default function EVReviewsSection({ modelName, reviews }: Props) {
   return (
     <section className="border-t border-slate-200 bg-white">
       <div className="mx-auto max-w-7xl px-6 py-14">
@@ -22,14 +20,6 @@ export default function EVReviewsSection({ modelId, modelName, reviews }: Props)
 
           <div className="w-full max-w-xs">
             <EVReviewSummary reviews={reviews} />
-            <div className="mt-3 flex justify-end">
-              <Link
-                href={modelId ? `/appointment?car=${encodeURIComponent(modelId)}` : "/appointment"}
-                className="text-sm font-semibold text-blue-600 hover:underline"
-              >
-                Read full reviews →
-              </Link>
-            </div>
           </div>
         </div>
 

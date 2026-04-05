@@ -2,6 +2,7 @@ import { randomUUID } from "crypto";
 import { mkdir, writeFile } from "fs/promises";
 import path from "path";
 import { NextResponse } from "next/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 const ALLOWED_MIME_TYPES = new Set([
 	"image/png",
@@ -52,11 +53,34 @@ export async function POST(request: Request) {
 
 		const safeName = baseName || "ev-image";
 		const fileName = `${Date.now()}-${safeName}-${randomUUID()}${extension}`;
+		const bytes = Buffer.from(await file.arrayBuffer());
+
+		// In production/serverless, upload to Supabase Storage so files persist.
+		try {
+			const admin = createAdminClient();
+			const bucket = process.env.SUPABASE_UPLOADS_BUCKET ?? "uploads";
+
+			const uploadResult = await admin.storage.from(bucket).upload(fileName, bytes, {
+				contentType: file.type,
+				upsert: false,
+			});
+
+			if (!uploadResult.error) {
+				const {
+					data: { publicUrl },
+				} = admin.storage.from(bucket).getPublicUrl(fileName);
+
+				if (publicUrl) {
+					return NextResponse.json({ url: publicUrl }, { status: 201 });
+				}
+			}
+		} catch {
+			// Fall back to local storage when Supabase upload is unavailable.
+		}
 
 		const uploadsDir = path.join(process.cwd(), "public", "uploads");
 		await mkdir(uploadsDir, { recursive: true });
 
-		const bytes = Buffer.from(await file.arrayBuffer());
 		const filePath = path.join(uploadsDir, fileName);
 		await writeFile(filePath, bytes);
 

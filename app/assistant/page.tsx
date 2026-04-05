@@ -2,14 +2,27 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ConsultationForm from "@/components/ConsultationForm";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { evModels as staticEvModels } from "@/data/evModels";
 
 async function getEvModels() {
-  const admin = createAdminClient();
-  const { data } = await admin
-    .from("ev_models")
-    .select("id, brand, model")
-    .order("brand");
-  return data ?? [];
+  try {
+    const admin = createAdminClient();
+    const { data } = await admin
+      .from("ev_models")
+      .select("id, brand, model")
+      .order("brand");
+    if (data && data.length > 0) {
+      return data;
+    }
+  } catch {
+    // Use static models during build when server env keys are unavailable.
+  }
+
+  return staticEvModels.map((item) => ({
+    id: item.id,
+    brand: item.brand,
+    model: item.model,
+  }));
 }
 
 export default async function AssistantPage() {

@@ -297,7 +297,7 @@ export default async function CarDetailsPage({ params }: Props) {
         </div>
       </section>
 
-      <EVReviewsSection modelId={model.id} modelName={`${model.brand} ${model.model}`} reviews={reviews} />
+      <EVReviewsSection modelName={`${model.brand} ${model.model}`} reviews={reviews} />
 
       <section className="border-t border-slate-200 bg-white">
         <div className="mx-auto max-w-7xl px-6 py-14">

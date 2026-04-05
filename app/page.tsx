@@ -1,7 +1,6 @@
 import Navbar from "@/components/Navbar";
 import FeaturedBlogPostsSection from "@/components/FeaturedBlogPostsSection";
 import NewsSection from "@/components/NewsSection";
-import VerifiedOwnerReviewsSection from "@/components/VerifiedOwnerReviewsSection";
 import BestSellingSection from "@/components/BestSellingSection";
 import StoriesSection from "@/components/StoriesSection";
 import Footer from "@/components/Footer";
@@ -25,9 +24,8 @@ export default async function HomePage() {
       <Navbar />
       <FeaturedBlogPostsSection posts={featuredPosts} />
       <NewsSection items={evNews} />
-      <VerifiedOwnerReviewsSection reviews={verifiedReviews} />
       <BestSellingSection models={evModels} />
-      <StoriesSection feedbackStories={feedbackStories} models={evModels} />
+      <StoriesSection feedbackStories={feedbackStories} models={evModels} verifiedReviews={verifiedReviews} />
       <Footer />
     </main>
   );
