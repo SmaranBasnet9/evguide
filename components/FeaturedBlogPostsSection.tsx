@@ -38,11 +38,11 @@ export default function FeaturedBlogPostsSection({ posts }: Props) {
 
   return (
     <section className="border-b border-slate-200 bg-white">
-      <div className="mx-auto max-w-7xl px-6 py-14">
+      <div className="mx-auto max-w-7xl px-5 py-8 lg:px-6 lg:py-14">
         <div className="max-w-3xl">
           <p className="text-sm font-semibold text-blue-600">Featured Blog Posts</p>
-          <h2 className="mt-2 text-4xl font-bold text-slate-900">Latest expert EV articles</h2>
-          <p className="mt-3 text-sm text-slate-600">Read one deep-dive feature and two quick updates.</p>
+          <h2 className="mt-1.5 text-xl font-bold text-slate-900 lg:mt-2 lg:text-4xl">Latest expert EV articles</h2>
+          <p className="mt-2 text-xs text-slate-600 lg:mt-3 lg:text-sm">Read one deep-dive feature and two quick updates.</p>
         </div>
 
         {posts.length === 0 ? (
@@ -52,9 +52,9 @@ export default function FeaturedBlogPostsSection({ posts }: Props) {
         ) : (
           <>
             {featured ? (
-              <div className="mt-10 grid items-start gap-6 lg:grid-cols-[1.28fr_0.72fr]">
+              <div className="mt-4 grid items-start gap-3 lg:mt-10 lg:gap-6 lg:grid-cols-[1.28fr_0.72fr]">
                 <article className="flex flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition hover:shadow-lg">
-                  <div className="relative aspect-[16/9] w-full overflow-hidden bg-slate-100">
+                  <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-100 lg:aspect-[16/9]">
                     {featured.coverImage ? (
                       <Image
                         src={featured.coverImage}
@@ -69,7 +69,7 @@ export default function FeaturedBlogPostsSection({ posts }: Props) {
                     )}
                   </div>
 
-                  <div className="flex flex-col p-6">
+                  <div className="flex flex-col p-4 lg:p-6">
                     <div className="flex items-center justify-between gap-3">
                       <span className="inline-flex rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
                         {featured.category ?? "EV Blog"}
@@ -77,19 +77,19 @@ export default function FeaturedBlogPostsSection({ posts }: Props) {
                       <span className="text-xs text-slate-500">{formatDate(featured.publishedAt)}</span>
                     </div>
 
-                    <h3 className="mt-4 text-3xl font-bold text-slate-900">{featured.title}</h3>
+                    <h3 className="mt-2.5 line-clamp-2 text-lg font-bold text-slate-900 lg:mt-4 lg:text-3xl">{featured.title}</h3>
 
-                    <p className="mt-4 text-[15px] leading-7 text-slate-600">{previewWords(featured.content || featured.excerpt, 140)}</p>
+                    <p className="mt-2 text-xs leading-5 text-slate-600 lg:mt-4 lg:text-[15px] lg:leading-7">{previewWords(featured.content || featured.excerpt, 70)}</p>
 
-                    <div className="mt-6">
-                      <Link href={getReadMoreHref(featured)} className="inline-flex items-center rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-700">
+                    <div className="mt-3 lg:mt-6">
+                      <Link href={getReadMoreHref(featured)} className="inline-flex items-center rounded-xl bg-blue-600 px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-blue-700 lg:px-5 lg:py-3 lg:text-sm">
                         Read more
                       </Link>
                     </div>
                   </div>
                 </article>
 
-                <div className="grid gap-4">
+                <div className="hidden lg:grid gap-4">
                   {secondary.map((post) => (
                     <article key={post.id} className="rounded-2xl border border-slate-200 bg-gradient-to-b from-white to-slate-50 p-5 transition hover:shadow-md">
                       <div className="flex items-center justify-between gap-3">
@@ -112,7 +112,7 @@ export default function FeaturedBlogPostsSection({ posts }: Props) {
               </div>
             ) : null}
 
-            <div className="mt-6">
+            <div className="mt-4 lg:mt-6">
               <Link href="/blog" className="text-sm font-semibold text-blue-600 hover:underline">
                 View all blog posts →
               </Link>

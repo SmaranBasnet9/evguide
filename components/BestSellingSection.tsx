@@ -46,7 +46,7 @@ export default function BestSellingSection({
             </p>
           </div>
 
-          <div className="flex gap-3">
+          <div className="hidden sm:flex gap-3">
             <button
               type="button"
               onClick={handlePrev}
@@ -74,7 +74,54 @@ export default function BestSellingSection({
           </div>
         </div>
 
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+        {/* Mobile horizontal scroll — 2 cards visible at a time */}
+        <div className="mt-10 flex gap-3 overflow-x-auto pb-4 snap-x snap-proximity scroll-smooth touch-pan-x sm:hidden">
+          {topModels.map((model, index) => (
+            <article
+              key={model.id}
+              className="w-[calc(50%-6px)] flex-none snap-start overflow-hidden rounded-3xl border border-blue-200 bg-gradient-to-b from-blue-50 to-white shadow-md ring-1 ring-blue-100"
+            >
+              <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-100">
+                <Image
+                  src={model.heroImage}
+                  alt={`${model.brand} ${model.model}`}
+                  fill
+                  sizes="50vw"
+                  unoptimized
+                  className="h-full w-full object-cover"
+                />
+                <span className="absolute left-3 top-3 rounded-full bg-white/95 px-2.5 py-1 text-xs font-bold text-blue-700 shadow-sm ring-1 ring-blue-100">
+                  #{index + 1}
+                </span>
+              </div>
+              <div className="p-3">
+                <h3 className="text-sm font-bold leading-snug text-slate-900">
+                  {model.brand} {model.model}
+                </h3>
+                <p className="mt-0.5 text-xs text-slate-500">£{model.price.toLocaleString()}</p>
+                <span className="mt-1.5 inline-block rounded-full bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-700">
+                  {model.rangeKm} km
+                </span>
+                <div className="mt-3 flex gap-2">
+                  <Link
+                    href="/compare"
+                    className="inline-flex flex-1 items-center justify-center rounded-xl bg-blue-600 px-2 py-2 text-xs font-semibold text-white"
+                  >
+                    Compare
+                  </Link>
+                  <Link
+                    href="/finance"
+                    className="inline-flex flex-1 items-center justify-center rounded-xl border border-slate-300 bg-white px-2 py-2 text-xs font-semibold text-slate-800"
+                  >
+                    Finance
+                  </Link>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <div className="mt-10 hidden sm:grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
           {visibleModels.map((model, index) => {
             const rank = page * cardsPerPage + index + 1;
 
@@ -164,7 +211,7 @@ export default function BestSellingSection({
           })}
         </div>
 
-        <div className="mt-8 flex items-center justify-center gap-2">
+        <div className="mt-8 hidden sm:flex items-center justify-center gap-2">
           {Array.from({ length: totalPages }).map((_, index) => (
             <button
               key={index}

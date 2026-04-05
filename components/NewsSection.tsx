@@ -17,10 +17,10 @@ export default function NewsSection({ items }: NewsSectionProps) {
 
   return (
     <section className="bg-white">
-      <div className="mx-auto max-w-7xl px-6 py-16">
+      <div className="mx-auto max-w-7xl px-5 py-8 lg:px-6 lg:py-16">
         <div className="max-w-3xl">
           <p className="text-sm font-semibold text-blue-600">Trending EV News</p>
-          <h2 className="mt-2 text-4xl font-bold text-slate-900">
+          <h2 className="mt-1.5 text-xl font-bold text-slate-900 lg:mt-2 lg:text-4xl">
             Latest EV tech, battery innovation, and charging updates
           </h2>
         </div>
@@ -37,9 +37,9 @@ export default function NewsSection({ items }: NewsSectionProps) {
         ) : (
           <>
             {featuredItem && (
-              <div className="mt-10 grid items-start gap-6 lg:grid-cols-[1.25fr_0.75fr]">
+              <div className="mt-4 grid items-start gap-3 lg:mt-10 lg:gap-6 lg:grid-cols-[1.25fr_0.75fr]">
                 <article className="flex flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
-                  <div className="relative aspect-[16/9] w-full overflow-hidden bg-slate-100">
+                  <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-100 lg:aspect-[16/9]">
                     <Image
                       src={featuredItem.image}
                       alt={featuredItem.title}
@@ -50,7 +50,7 @@ export default function NewsSection({ items }: NewsSectionProps) {
                     />
                   </div>
 
-                  <div className="flex flex-col p-6">
+                  <div className="flex flex-col p-4 lg:p-6">
                     <div className="flex items-center justify-between gap-3">
                       <span className="inline-flex rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
                         {featuredItem.category}
@@ -60,15 +60,15 @@ export default function NewsSection({ items }: NewsSectionProps) {
                       </span>
                     </div>
 
-                    <h3 className="mt-4 text-3xl font-bold text-slate-900">
+                    <h3 className="mt-2.5 line-clamp-2 text-lg font-bold text-slate-900 lg:mt-4 lg:text-3xl">
                       {featuredItem.title}
                     </h3>
 
-                    <p className="mt-4 text-base text-slate-600">
+                    <p className="mt-2 line-clamp-3 text-xs leading-5 text-slate-600 lg:mt-4 lg:text-base">
                       {featuredItem.summary}
                     </p>
 
-                    <div className="mt-6 flex items-center justify-between gap-4">
+                    <div className="mt-3 flex items-center justify-between gap-4 lg:mt-6">
                       <p className="text-sm font-medium text-slate-500">
                         Source: {featuredItem.source}
                       </p>
@@ -78,12 +78,12 @@ export default function NewsSection({ items }: NewsSectionProps) {
                           href={featuredItem.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white"
+                          className="inline-flex items-center rounded-xl bg-blue-600 px-3.5 py-1.5 text-xs font-semibold text-white lg:px-5 lg:py-3 lg:text-sm"
                         >
                           Read more
                         </a>
                       ) : (
-                        <span className="inline-flex items-center rounded-xl bg-slate-200 px-5 py-3 text-sm font-semibold text-slate-500">
+                        <span className="inline-flex items-center rounded-xl bg-slate-200 px-3.5 py-1.5 text-xs font-semibold text-slate-500 lg:px-5 lg:py-3 lg:text-sm">
                           Link unavailable
                         </span>
                       )}
@@ -117,7 +117,7 @@ export default function NewsSection({ items }: NewsSectionProps) {
                   </div>
                 </article>
 
-                <div className="grid gap-4">
+                <div className="hidden lg:grid gap-4">
                   {secondaryItems.map((item) => (
                     <article
                       key={item.id}

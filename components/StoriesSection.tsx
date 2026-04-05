@@ -41,8 +41,8 @@ export default function StoriesSection({ feedbackStories, models, verifiedReview
           Why EVs are winning people over
         </h2>
 
-        <div className="mt-8 grid gap-5 lg:grid-cols-3">
-          {stories.map((story) => (
+        <div className="mt-8 grid gap-5 lg:grid-cols-2">
+          {stories.slice(0, 2).map((story) => (
             <div
               key={story.title}
               className="rounded-3xl border border-slate-200 bg-slate-50 p-6"

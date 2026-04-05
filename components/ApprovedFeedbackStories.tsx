@@ -72,7 +72,7 @@ export default function ApprovedFeedbackStories({ stories, models }: Props) {
         </div>
       ) : (
         <div className="mt-5 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2">
-          {stories.map((story) => (
+          {stories.slice(0, 2).map((story) => (
             <article
               key={`${story.id}-${story.createdAt}`}
               className="w-[320px] shrink-0 snap-start rounded-2xl border border-slate-200 bg-white p-5"
