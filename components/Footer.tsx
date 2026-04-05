@@ -9,10 +9,15 @@ export default function Footer() {
           EV news, comparisons, finance tools, and insights.
         </p>
 
-        <div className="mt-6 flex gap-6 text-sm text-slate-600">
+        <div className="mt-6 flex flex-wrap gap-6 text-sm text-slate-600">
           <Link href="/">Home</Link>
           <Link href="/compare">Compare</Link>
           <Link href="/finance">Finance</Link>
+          <Link href="/blog">Blog</Link>
+          <Link href="/assistant">Consultation</Link>
+          <Link href="/appointment">Appointment</Link>
+          <Link href="/login">Sign In</Link>
+          <Link href="/signup">Sign Up</Link>
         </div>
 
         <p className="mt-6 text-xs text-slate-400">
