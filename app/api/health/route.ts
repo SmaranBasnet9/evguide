@@ -1,6 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { NextResponse } from "next/server";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
+import { requireAdmin } from "@/lib/security/admin";
 
 export const runtime = "nodejs";
 
@@ -54,6 +55,11 @@ async function checkAnthropic(apiKey: string) {
 }
 
 export async function GET() {
+  const auth = await requireAdmin();
+  if (!auth.ok) {
+    return auth.response;
+  }
+
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
   const supabaseAnon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
   const serviceRole = process.env.SUPABASE_SERVICE_ROLE_KEY || "";

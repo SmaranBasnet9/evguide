@@ -8,6 +8,7 @@ import { refreshIntentProfileForIdentity } from "@/lib/profiling/intent-profile"
 import { refreshLeadScoreForIdentity } from "@/lib/scoring/lead-intent";
 import { ALLOWED_TRACKED_EVENTS, FINANCIAL_PROFILE_SIGNAL_EVENTS } from "@/lib/tracking/event-catalog";
 import type { UserEventType } from "@/types";
+import { applyRateLimit } from "@/lib/security/rate-limit";
 
 function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -15,6 +16,17 @@ function isObject(value: unknown): value is Record<string, unknown> {
 
 export async function POST(request: Request) {
   try {
+    const rateLimit = applyRateLimit(request, "tracking", 120, 5 * 60 * 1000);
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { error: "Too many tracking requests." },
+        {
+          status: 429,
+          headers: { "Retry-After": String(rateLimit.retryAfterSeconds) },
+        },
+      );
+    }
+
     let body: Record<string, unknown>;
     try {
       body = await request.json();

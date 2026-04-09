@@ -1,9 +1,14 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { createPublicServerClient } from "@/lib/supabase/public-server";
+import { requireAdmin } from "@/lib/security/admin";
 
 export async function GET() {
   try {
-    const supabase = createAdminClient();
+    const supabase = createPublicServerClient();
+    if (!supabase) {
+      return NextResponse.json({ error: "EV data is not configured." }, { status: 503 });
+    }
 
     const { data, error } = await supabase
       .from("ev_models")
@@ -23,6 +28,11 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
+    const auth = await requireAdmin();
+    if (!auth.ok) {
+      return auth.response;
+    }
+
     const body = await request.json();
     const supabase = createAdminClient();
 

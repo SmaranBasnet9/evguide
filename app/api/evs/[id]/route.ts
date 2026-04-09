@@ -1,11 +1,17 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { requireAdmin } from "@/lib/security/admin";
 
 export async function PUT(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const auth = await requireAdmin();
+    if (!auth.ok) {
+      return auth.response;
+    }
+
     const { id } = await params;
     const body = await request.json();
     const supabase = createAdminClient();
@@ -59,6 +65,11 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const auth = await requireAdmin();
+    if (!auth.ok) {
+      return auth.response;
+    }
+
     const { id } = await params;
     const supabase = createAdminClient();
 

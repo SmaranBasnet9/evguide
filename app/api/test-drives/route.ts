@@ -3,6 +3,8 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { refreshIntentProfileForIdentity } from "@/lib/profiling/intent-profile";
 import { refreshLeadScoreForIdentity } from "@/lib/scoring/lead-intent";
 import { createClient } from "@/lib/supabase/server";
+import { notifySecurityEvent } from "@/lib/security/alerts";
+import { applyRateLimit } from "@/lib/security/rate-limit";
 
 type IntentProfileGate = {
   id: string;
@@ -12,12 +14,33 @@ const UUID_REGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 export async function POST(request: Request) {
+  const rateLimit = applyRateLimit(request, "test-drives", 8, 10 * 60 * 1000);
+  if (!rateLimit.allowed) {
+    await notifySecurityEvent({
+      type: "rate-limit",
+      message: "Test drive submissions exceeded rate limit.",
+    });
+
+    return NextResponse.json(
+      { error: "Too many requests. Please try again shortly." },
+      {
+        status: 429,
+        headers: { "Retry-After": String(rateLimit.retryAfterSeconds) },
+      },
+    );
+  }
+
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   if (!user) {
+    await notifySecurityEvent({
+      type: "unauthorized-test-drive",
+      message: "Unauthenticated test-drive request blocked.",
+    });
+
     return NextResponse.json({ error: "Please sign in to book a test drive." }, { status: 401 });
   }
 

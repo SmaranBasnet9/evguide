@@ -4,15 +4,38 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { refreshIntentProfileForIdentity } from "@/lib/profiling/intent-profile";
 import { refreshLeadScoreForIdentity } from "@/lib/scoring/lead-intent";
 import { Resend } from "resend";
+import { notifySecurityEvent } from "@/lib/security/alerts";
+import { applyRateLimit } from "@/lib/security/rate-limit";
 
 const UUID_REGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 export async function POST(request: Request) {
+  const rateLimit = applyRateLimit(request, "consultations", 8, 10 * 60 * 1000);
+  if (!rateLimit.allowed) {
+    await notifySecurityEvent({
+      type: "rate-limit",
+      message: "Consultation submissions exceeded rate limit.",
+    });
+
+    return NextResponse.json(
+      { error: "Too many requests. Please try again shortly." },
+      {
+        status: 429,
+        headers: { "Retry-After": String(rateLimit.retryAfterSeconds) },
+      },
+    );
+  }
+
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
+    await notifySecurityEvent({
+      type: "unauthorized-consultation",
+      message: "Unauthenticated consultation submission attempt blocked.",
+    });
+
     return NextResponse.json(
       { error: "Please log in to submit consultation requests." },
       { status: 401 }

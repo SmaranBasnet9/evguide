@@ -1,6 +1,6 @@
 import { evModels } from "@/data/evModels";
 import { mapDbEV, type DbEV } from "@/lib/ev-models";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createPublicServerClient } from "@/lib/supabase/public-server";
 
 interface RouteContext {
   params: Promise<{ id: string }>;
@@ -11,12 +11,10 @@ export async function GET(_request: Request, context: RouteContext) {
   let model = evModels.find((item) => item.id === id) ?? null;
 
   if (!model) {
-    const supabase = createAdminClient();
-    const { data } = await supabase
-      .from("ev_models")
-      .select("*")
-      .eq("id", id)
-      .maybeSingle();
+    const supabase = createPublicServerClient();
+    const { data } = supabase
+      ? await supabase.from("ev_models").select("*").eq("id", id).maybeSingle()
+      : { data: null };
 
     if (data) {
       model = mapDbEV(data as DbEV);

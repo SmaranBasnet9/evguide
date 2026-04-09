@@ -3,6 +3,7 @@ import { mkdir, writeFile } from "fs/promises";
 import path from "path";
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { requireAdmin } from "@/lib/security/admin";
 
 const ALLOWED_MIME_TYPES = new Set([
 	"image/png",
@@ -20,6 +21,11 @@ const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024;
 
 export async function POST(request: Request) {
 	try {
+		const auth = await requireAdmin();
+		if (!auth.ok) {
+			return auth.response;
+		}
+
 		const formData = await request.formData();
 		const file = formData.get("file");
 

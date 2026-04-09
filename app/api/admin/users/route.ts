@@ -1,8 +1,14 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { requireAdmin } from "@/lib/security/admin";
 
 export async function GET() {
   try {
+    const auth = await requireAdmin();
+    if (!auth.ok) {
+      return auth.response;
+    }
+
     const supabase = createAdminClient();
 
     // Get all auth users

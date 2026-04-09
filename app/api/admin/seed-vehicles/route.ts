@@ -1,9 +1,15 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { evModels } from "@/data/evModels";
+import { requireAdmin } from "@/lib/security/admin";
 
 export async function POST() {
   try {
+    const auth = await requireAdmin();
+    if (!auth.ok) {
+      return auth.response;
+    }
+
     const supabase = createAdminClient();
 
     const rows = evModels.map((v) => ({
