@@ -267,6 +267,12 @@ export default async function AdminDashboardPage() {
 
       <div className="mt-6 flex flex-wrap gap-3">
         <Link
+          href="/admin/audit"
+          className="rounded-xl border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700 transition hover:bg-blue-100"
+        >
+          Run System Audit
+        </Link>
+        <Link
           href="/admin/evs/new"
           className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
         >

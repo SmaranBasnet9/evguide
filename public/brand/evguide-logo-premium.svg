@@ -1,0 +1,42 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1600" height="900" fill="#0B0B0B"/>
+
+  <g transform="translate(800 320)">
+    <g transform="translate(-140 -140)">
+      <rect x="0.75" y="0.75" width="278.5" height="278.5" rx="72" fill="#101010" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+      <path d="M156 42L91 156H145L120 238L193 125H142L156 42Z" fill="#F3F4F6"/>
+      <path d="M181 77C209.457 89.2384 228.766 117.52 230 150" stroke="#22C55E" stroke-width="9" stroke-linecap="round"/>
+      <path d="M194 52C232.592 68.6716 259.269 105.886 261 150" stroke="#06B6D4" stroke-opacity="0.88" stroke-width="7" stroke-linecap="round"/>
+      <circle cx="228" cy="150" r="8" fill="#22C55E"/>
+      <circle cx="261" cy="150" r="6" fill="#06B6D4"/>
+      <path d="M95 212C125.928 233.16 166.208 239.297 202 227" stroke="rgba(255,255,255,0.12)" stroke-width="2.5" stroke-linecap="round"/>
+      <circle cx="202" cy="227" r="4.5" fill="rgba(255,255,255,0.7)"/>
+    </g>
+  </g>
+
+  <g text-anchor="middle" transform="translate(800 610)">
+    <text
+      x="0"
+      y="0"
+      fill="#F8FAFC"
+      font-family="Inter, Sora, Manrope, system-ui, sans-serif"
+      font-size="116"
+      font-weight="700"
+      letter-spacing="-3"
+    >
+      EVGuide
+    </text>
+    <text
+      x="0"
+      y="70"
+      fill="#7DD3FC"
+      fill-opacity="0.9"
+      font-family="Inter, Sora, Manrope, system-ui, sans-serif"
+      font-size="24"
+      font-weight="600"
+      letter-spacing="10"
+    >
+      AI EV DECISION PLATFORM
+    </text>
+  </g>
+</svg>

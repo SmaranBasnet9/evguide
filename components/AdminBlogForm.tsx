@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -10,6 +10,11 @@ const EMPTY = {
   content: "",
   cover_image: "",
   category: "",
+  meta_title: "",
+  meta_description: "",
+  keywords: "",
+  geo_location: "UK",
+  author: "EVGuide AI Editorial",
   published: false,
 };
 
@@ -113,6 +118,11 @@ export default function AdminBlogForm({ mode = "create", id, initialData }: Prop
         content: formData.content,
         cover_image: formData.cover_image,
         category: formData.category,
+        meta_title: formData.meta_title,
+        meta_description: formData.meta_description,
+        keywords: formData.keywords,
+        geo_location: formData.geo_location,
+        author: formData.author,
         published: formData.published,
       }),
     });
@@ -126,8 +136,11 @@ export default function AdminBlogForm({ mode = "create", id, initialData }: Prop
       return;
     }
 
-    setMessage(mode === "edit" ? "Post updated successfully." : "Post created successfully.");
-    setMessageType("success");
+    setMessage(
+      result.warning ??
+        (mode === "edit" ? "Post updated successfully." : "Post created successfully."),
+    );
+    setMessageType(result.warning ? "error" : "success");
 
     if (mode === "create") {
       setFormData(EMPTY);
@@ -139,12 +152,13 @@ export default function AdminBlogForm({ mode = "create", id, initialData }: Prop
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
-      {/* Meta */}
       <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <h2 className="mb-5 text-base font-semibold text-slate-900">Post Details</h2>
         <div className="space-y-4">
           <Field label="Title *" name="title" value={formData.title} onChange={handleChange} placeholder="Why EVs are the future of driving" />
           <Field label="Category" name="category" value={formData.category} onChange={handleChange} placeholder="EV Insights, Finance, Charging..." />
+          <Field label="Author" name="author" value={formData.author} onChange={handleChange} placeholder="EVGuide AI Editorial" />
+          <Field label="Geo Location" name="geo_location" value={formData.geo_location} onChange={handleChange} placeholder="UK, London, Manchester..." />
           <div>
             <label className="mb-1.5 block text-sm font-medium text-slate-700">Cover Image</label>
             <input
@@ -159,13 +173,13 @@ export default function AdminBlogForm({ mode = "create", id, initialData }: Prop
             </p>
             {formData.cover_image && (
               <div className="mt-3">
-                    <Image
+                <Image
                   src={formData.cover_image}
                   alt="Cover preview"
-                      width={1200}
-                      height={384}
-                      unoptimized
-                  className="h-32 w-full rounded-xl object-cover border border-slate-200"
+                  width={1200}
+                  height={384}
+                  unoptimized
+                  className="h-32 w-full rounded-xl border border-slate-200 object-cover"
                 />
                 <input
                   type="text"
@@ -202,7 +216,36 @@ export default function AdminBlogForm({ mode = "create", id, initialData }: Prop
         </div>
       </section>
 
-      {/* Content */}
+      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <h2 className="mb-5 text-base font-semibold text-slate-900">SEO & Discovery</h2>
+        <div className="space-y-4">
+          <Field label="Meta Title" name="meta_title" value={formData.meta_title} onChange={handleChange} placeholder="Best EV under £20k in the UK" />
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-slate-700">Meta Description</label>
+            <textarea
+              name="meta_description"
+              value={formData.meta_description}
+              onChange={handleChange}
+              rows={3}
+              placeholder="SEO description for Google and social previews..."
+              className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm focus:border-blue-500 focus:outline-none"
+            />
+          </div>
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-slate-700">Keywords</label>
+            <textarea
+              name="keywords"
+              value={formData.keywords}
+              onChange={handleChange}
+              rows={2}
+              placeholder="best EV UK, EV finance UK, electric car buying guide"
+              className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm focus:border-blue-500 focus:outline-none"
+            />
+            <p className="mt-1 text-xs text-slate-500">Separate keywords with commas.</p>
+          </div>
+        </div>
+      </section>
+
       <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <h2 className="mb-5 text-base font-semibold text-slate-900">Content *</h2>
         <textarea
@@ -219,7 +262,6 @@ export default function AdminBlogForm({ mode = "create", id, initialData }: Prop
         </p>
       </section>
 
-      {/* Publish toggle + submit */}
       <div className="flex flex-wrap items-center gap-5">
         <button
           type="submit"

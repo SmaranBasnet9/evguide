@@ -12,17 +12,17 @@ async function getUsers() {
     .from("profiles")
     .select("id, role");
 
-  const roleMap = new Map((profiles ?? []).map((p) => [p.id, p.role]));
+  const roleMap = new Map((profiles ?? []).map((profile) => [profile.id, profile.role]));
 
-  return authData.users.map((u) => {
-    const metaName = typeof u.user_metadata?.full_name === "string" ? u.user_metadata.full_name : null;
+  return authData.users.map((user) => {
+    const metaName = typeof user.user_metadata?.full_name === "string" ? user.user_metadata.full_name : null;
 
     return {
-      id: u.id,
-      name: metaName ?? "—",
-      email: u.email ?? "—",
-      created_at: u.created_at,
-      role: roleMap.get(u.id) ?? "user",
+      id: user.id,
+      name: metaName ?? "-",
+      email: user.email ?? "-",
+      created_at: user.created_at,
+      role: roleMap.get(user.id) ?? "user",
     };
   });
 }
@@ -36,8 +36,8 @@ async function getCurrentUserId() {
 export default async function AdminUsersPage() {
   const [users, currentUserId] = await Promise.all([getUsers(), getCurrentUserId()]);
 
-  const admins = users.filter((u) => u.role === "admin");
-  const regularUsers = users.filter((u) => u.role !== "admin");
+  const admins = users.filter((user) => user.role === "admin");
+  const regularUsers = users.filter((user) => user.role !== "admin");
 
   function formatDate(dateStr: string) {
     return new Date(dateStr).toLocaleDateString("en-GB", {
@@ -52,12 +52,11 @@ export default async function AdminUsersPage() {
       <div>
         <h1 className="text-3xl font-bold text-slate-900">Users</h1>
         <p className="mt-1 text-slate-500">
-          {users.length} total — {admins.length} admin{admins.length !== 1 ? "s" : ""},{" "}
+          {users.length} total - {admins.length} admin{admins.length !== 1 ? "s" : ""},{" "}
           {regularUsers.length} regular user{regularUsers.length !== 1 ? "s" : ""}
         </p>
       </div>
 
-      {/* Admins */}
       <div className="mt-8">
         <h2 className="mb-3 text-sm font-semibold uppercase tracking-widest text-slate-400">
           Admins
@@ -77,11 +76,11 @@ export default async function AdminUsersPage() {
                 </tr>
               </thead>
               <tbody>
-                {admins.map((u) => (
-                  <tr key={u.id} className="border-b border-slate-100 last:border-b-0">
-                    <td className="px-6 py-4 font-medium text-slate-900">{u.name}</td>
-                    <td className="px-6 py-4 font-medium text-slate-900">{u.email}</td>
-                    <td className="px-6 py-4 text-slate-500">{formatDate(u.created_at)}</td>
+                {admins.map((user) => (
+                  <tr key={user.id} className="border-b border-slate-100 last:border-b-0">
+                    <td className="px-6 py-4 font-medium text-slate-900">{user.name}</td>
+                    <td className="px-6 py-4 font-medium text-slate-900">{user.email}</td>
+                    <td className="px-6 py-4 text-slate-500">{formatDate(user.created_at)}</td>
                     <td className="px-6 py-4">
                       <span className="rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-semibold text-blue-700">
                         Admin
@@ -89,9 +88,9 @@ export default async function AdminUsersPage() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <AdminRoleToggle
-                        userId={u.id}
-                        currentRole={u.role}
-                        isSelf={u.id === currentUserId}
+                        userId={user.id}
+                        currentRole={user.role}
+                        isSelf={user.id === currentUserId}
                       />
                     </td>
                   </tr>
@@ -102,7 +101,6 @@ export default async function AdminUsersPage() {
         </div>
       </div>
 
-      {/* Regular users */}
       <div className="mt-8">
         <h2 className="mb-3 text-sm font-semibold uppercase tracking-widest text-slate-400">
           Users
@@ -122,11 +120,11 @@ export default async function AdminUsersPage() {
                 </tr>
               </thead>
               <tbody>
-                {regularUsers.map((u) => (
-                  <tr key={u.id} className="border-b border-slate-100 last:border-b-0">
-                    <td className="px-6 py-4 font-medium text-slate-900">{u.name}</td>
-                    <td className="px-6 py-4 font-medium text-slate-900">{u.email}</td>
-                    <td className="px-6 py-4 text-slate-500">{formatDate(u.created_at)}</td>
+                {regularUsers.map((user) => (
+                  <tr key={user.id} className="border-b border-slate-100 last:border-b-0">
+                    <td className="px-6 py-4 font-medium text-slate-900">{user.name}</td>
+                    <td className="px-6 py-4 font-medium text-slate-900">{user.email}</td>
+                    <td className="px-6 py-4 text-slate-500">{formatDate(user.created_at)}</td>
                     <td className="px-6 py-4">
                       <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600">
                         User
@@ -134,9 +132,9 @@ export default async function AdminUsersPage() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <AdminRoleToggle
-                        userId={u.id}
-                        currentRole={u.role}
-                        isSelf={u.id === currentUserId}
+                        userId={user.id}
+                        currentRole={user.role}
+                        isSelf={user.id === currentUserId}
                       />
                     </td>
                   </tr>

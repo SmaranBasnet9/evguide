@@ -1,13 +1,14 @@
 "use client";
 
-import { Suspense, useState, useRef, useEffect } from "react";
+import { Suspense, useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import CompareHero from "@/components/CompareHero";
-import ComparisonTable from "@/components/ComparisonTable";
-import ComparisonConsultationForm from "@/components/ComparisonConsultationForm";
-import AllModelsComparison from "@/components/AllModelsComparison";
+import PremiumNavbar from "@/components/home/PremiumNavbar";
+import PremiumFooter from "@/components/home/PremiumFooter";
+import PremiumCompareHero from "@/components/compare/PremiumCompareHero";
+import PremiumCompareSummary from "@/components/compare/PremiumCompareSummary";
+import PremiumCompareTable from "@/components/compare/PremiumCompareTable";
+import PremiumCompareInsights from "@/components/compare/PremiumCompareInsights";
+import PremiumCompareCTA from "@/components/compare/PremiumCompareCTA";
 import { evModels } from "@/data/evModels";
 import { mapDbEV, type DbEV } from "@/lib/ev-models";
 import { trackEvent } from "@/lib/tracking/client";
@@ -32,13 +33,12 @@ function ComparePageInner() {
     const carB = searchParams.get("carB");
     return carB && evModels.some((m) => m.id === carB) ? carB : "";
   });
-  const [showComparison, setShowComparison] = useState<boolean>(false);
   const comparisonRef = useRef<HTMLDivElement>(null);
+  const trackedComparisonRef = useRef<string | null>(null);
 
-  const modelA = models.find(m => m.id === selectedA) ?? null;
-  const modelB = models.find(m => m.id === selectedB) ?? null;
-
-  const isCompareDisabled = !selectedA || !selectedB || selectedA === selectedB;
+  const modelA = models.find((m) => m.id === selectedA) ?? null;
+  const modelB = models.find((m) => m.id === selectedB) ?? null;
+  const showComparison = Boolean(modelA && modelB && selectedA !== selectedB);
 
   useEffect(() => {
     let mounted = true;
@@ -58,100 +58,83 @@ function ComparePageInner() {
           setModels(mapped);
         }
       } catch {
-        // Keep static fallback data if API fetch fails.
+        // Fallback to static
       }
     }
 
     loadModels();
-
-    return () => {
-      mounted = false;
-    };
+    return () => { mounted = false; };
   }, []);
 
-  const handleCompare = (): void => {
-    if (!isCompareDisabled) {
+  const handleSwap = () => {
+    setSelectedA(selectedB);
+    setSelectedB(selectedA);
+  };
+
+  useEffect(() => {
+    if (showComparison) {
+      const comparisonKey = `${selectedA}:${selectedB}`;
+
+      if (trackedComparisonRef.current === comparisonKey) {
+        return;
+      }
+
+      trackedComparisonRef.current = comparisonKey;
       void trackEvent({
         eventType: "compare_clicked",
         eventValue: { carA: selectedA, carB: selectedB },
       });
-      setShowComparison(true);
+    } else {
+      trackedComparisonRef.current = null;
     }
+  }, [selectedA, selectedB, showComparison]);
+
+  const handleReset = () => {
+    setSelectedA("");
+    setSelectedB("");
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  useEffect(() => {
-    if (showComparison && comparisonRef.current) {
-      const scrollTimeout = setTimeout(() => {
-        comparisonRef.current?.scrollIntoView({ behavior: "smooth" });
-      }, 0);
-      
-      return () => clearTimeout(scrollTimeout);
-    }
-  }, [showComparison]);
-
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900">
-      <Navbar />
-      <CompareHero
+    <main className="min-h-screen bg-[#0B0B0B] text-zinc-100 font-sans selection:bg-emerald-500/30">
+      <PremiumNavbar />
+      
+      <PremiumCompareHero
         models={models}
         selectedA={selectedA}
         selectedB={selectedB}
         onSelectA={setSelectedA}
         onSelectB={setSelectedB}
+        onSwap={handleSwap}
       />
       
-      <section className="border-b border-slate-200 bg-gradient-to-r from-slate-100 to-blue-50">
-        <div className="mx-auto max-w-7xl px-6 py-6">
-          <button
-            onClick={handleCompare}
-            disabled={isCompareDisabled}
-            className={`rounded-2xl px-8 py-3 text-sm font-semibold text-white transition-all ${
-              isCompareDisabled
-                ? "cursor-not-allowed bg-slate-400"
-                : "bg-blue-600 shadow-lg shadow-blue-300/40 hover:-translate-y-0.5 hover:bg-blue-700"
-            }`}
-          >
-            Compare Now
-          </button>
-          {isCompareDisabled && (
-            <p className="mt-2 text-sm font-medium text-slate-700">
-              Please select 2 different vehicles to compare
-            </p>
-          )}
-        </div>
-      </section>
-
       {showComparison && modelA && modelB && (
-        <>
-          <div ref={comparisonRef}>
-            <ComparisonTable modelA={modelA} modelB={modelB} />
-          </div>
-          <ComparisonConsultationForm modelA={modelA} modelB={modelB} />
-          <section className="border-t border-slate-200 bg-slate-50">
-            <div className="mx-auto max-w-7xl px-6 py-10">
-              <h3 className="text-2xl font-bold text-slate-900">Continue Comparing</h3>
-              <p className="mt-2 text-slate-600">
-                You can compare another pair right away or pick from popular EV options below.
-              </p>
-              <button
-                type="button"
-                onClick={() => {
-                  setShowComparison(false);
-                  setSelectedA("");
-                  setSelectedB("");
-                  window.scrollTo({ top: 0, behavior: "smooth" });
-                }}
-                className="mt-5 rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800"
-              >
-                Compare Another Pair
-              </button>
-            </div>
-          </section>
-        </>
+        <div ref={comparisonRef} className="animate-in fade-in slide-in-from-bottom-8 duration-700">
+          <PremiumCompareSummary modelA={modelA} modelB={modelB} />
+          <PremiumCompareTable modelA={modelA} modelB={modelB} />
+          <PremiumCompareInsights modelA={modelA} modelB={modelB} />
+          <PremiumCompareCTA modelA={modelA} modelB={modelB} onReset={handleReset} />
+        </div>
       )}
       
-      <AllModelsComparison models={models} />
-      <Footer />
+      {/* We keep AllModelsComparison at the very bottom as a fallback grid */}
+      <div className={`${showComparison ? "opacity-30 pointer-events-none hidden" : "opacity-100"} transition-opacity duration-500`}>
+        {!showComparison && (
+          <div className="text-center py-20 px-6">
+            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full border border-white/10 bg-zinc-900">
+              <svg className="h-6 w-6 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+            <h3 className="mb-2 text-2xl font-bold text-white">Awaiting Selection</h3>
+            <p className="mx-auto max-w-md text-zinc-500">
+              Select two vehicles from the dropdown above to engage the comparison engine and view decision insights.
+            </p>
+          </div>
+        )}
+      </div>
+
+      <PremiumFooter />
     </main>
   );
 }

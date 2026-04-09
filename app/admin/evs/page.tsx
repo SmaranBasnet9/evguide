@@ -68,12 +68,10 @@ export default async function AdminEVsPage() {
                   >
                     <td className="px-6 py-4 font-medium text-slate-900">{ev.brand}</td>
                     <td className="px-6 py-4 text-slate-700">{ev.model}</td>
-                    <td className="px-6 py-4 text-slate-700">
-                      £{ev.price?.toLocaleString()}
-                    </td>
+                    <td className="px-6 py-4 text-slate-700">GBP {ev.price?.toLocaleString()}</td>
                     <td className="px-6 py-4 text-slate-700">{ev.range_km} km</td>
                     <td className="px-6 py-4 text-slate-700">{ev.battery_kwh} kWh</td>
-                    <td className="px-6 py-4 text-slate-700">{ev.drive ?? "—"}</td>
+                    <td className="px-6 py-4 text-slate-700">{ev.drive ?? "-"}</td>
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-end gap-4">
                         <Link

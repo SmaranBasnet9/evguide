@@ -1,524 +1,335 @@
-"use client";
+﻿"use client";
 
-import { useRef, useState } from "react";
-import { getRecommendations } from "@/lib/actions/recommendations";
-import { trackEvent } from "@/lib/tracking/client";
+import { useState } from "react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  BatteryCharging,
+  CarFront,
+  Check,
+  ChevronRight,
+  CircleDollarSign,
+  Cpu,
+  Map,
+  ShieldCheck,
+  Sparkles,
+} from "lucide-react";
 import RecommendationResults from "./RecommendationResults";
-import type {
-  BodyType,
-  ChargingAccess,
-  RecommendationResult,
-  UsageType,
-  UserPreferences,
-} from "@/types";
+import {
+  defaultAnswers,
+  getTopMatches,
+  matchQuestions,
+  type MatchAnswers,
+  type MatchQuestionOption,
+} from "./recommendationEngine";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Initial (empty) form state
-// ─────────────────────────────────────────────────────────────────────────────
-const DEFAULT_PREFS: UserPreferences = {
-  monthlyIncome:      4000,
-  totalBudget:        35000,
-  downPayment:        5000,
-  preferredMonthlyEmi: 400,
-  usageType:          "mixed",
-  familySize:         2,
-  chargingAccess:     "home",
-  preferredBodyType:  "any",
-};
+const questionIcons = [CircleDollarSign, Map, BatteryCharging, CarFront, Sparkles, ShieldCheck];
 
-type WizardStep = 1 | 2 | 3;
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Main component
-// ─────────────────────────────────────────────────────────────────────────────
 export default function RecommendationForm() {
-  const [step, setStep]             = useState<WizardStep>(1);
-  const [prefs, setPrefs]           = useState<UserPreferences>(DEFAULT_PREFS);
-  const [loading, setLoading]       = useState(false);
-  const [error, setError]           = useState<string | null>(null);
-  const [results, setResults]         = useState<RecommendationResult[] | null>(null);
-  const [savedPrefs, setSavedPrefs]   = useState<UserPreferences | null>(null);
-  const [preferenceId, setPreferenceId] = useState<string | null>(null);
-  const hasTrackedStart = useRef(false);
+  const [started, setStarted] = useState(false);
+  const [stepIndex, setStepIndex] = useState(0);
+  const [answers, setAnswers] = useState<MatchAnswers>(defaultAnswers);
+  const [results, setResults] = useState<ReturnType<typeof getTopMatches> | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  // Helper to update one field at a time
-  function update<K extends keyof UserPreferences>(key: K, value: UserPreferences[K]) {
-    setPrefs((prev) => ({ ...prev, [key]: value }));
+  const currentQuestion = matchQuestions[stepIndex];
+  const isLastStep = stepIndex === matchQuestions.length - 1;
+  const currentValue = answers[currentQuestion.key];
+  const progress = ((stepIndex + 1) / matchQuestions.length) * 100;
+
+  const friendlyTitles: Partial<Record<keyof MatchAnswers, string>> = {
+    budget: "What budget feels comfortable for your next EV?",
+    mileage: "How far do you usually drive each week?",
+    charging: "Where do you expect to do most of your charging?",
+    bodyType: "What kind of EV would feel easiest to live with?",
+    priority: "What matters most in the final decision?",
+    condition: "Would you like us to consider new, used, or both?",
+  };
+
+  function updateAnswer(value: string) {
+    setAnswers((prev) => ({ ...prev, [currentQuestion.key]: value }));
   }
 
-  // ── Step validation ────────────────────────────────────────────────────────
-  function validateStep(): string | null {
-    if (step === 1) {
-      if (prefs.monthlyIncome <= 0)       return "Please enter a valid monthly income.";
-      if (prefs.totalBudget <= 0)         return "Please enter a valid total budget.";
-      if (prefs.downPayment < 0)          return "Down payment cannot be negative.";
-      if (prefs.downPayment >= prefs.totalBudget) return "Down payment must be less than total budget.";
-      if (prefs.preferredMonthlyEmi <= 0) return "Please enter a valid monthly EMI target.";
-    }
-    if (step === 2) {
-      if (prefs.familySize < 1 || prefs.familySize > 10) return "Family size must be 1–10.";
-    }
-    return null;
-  }
-
-  // ── Navigate forward ───────────────────────────────────────────────────────
-  function handleNext() {
-    const err = validateStep();
-    if (err) { setError(err); return; }
-    setError(null);
-    if (!hasTrackedStart.current) {
-      hasTrackedStart.current = true;
-      void trackEvent({
-        eventType: "recommendation_started",
-        eventValue: {
-          step,
-          budget: prefs.totalBudget,
-          preferred_body_type: prefs.preferredBodyType,
-          usage_type: prefs.usageType,
-        },
-      });
-    }
-    setStep((s) => Math.min(3, s + 1) as WizardStep);
-  }
-
-  // ── Submit on final step ───────────────────────────────────────────────────
-  async function handleSubmit() {
-    setError(null);
-    setLoading(true);
-    setSavedPrefs(prefs); // snapshot preferences so results screen can show them
-
-    const { results: res, preferenceId: prefId, error: err } = await getRecommendations(prefs);
-
-    setLoading(false);
-
-    if (err) {
-      setError(err);
+  function handleContinue() {
+    if (!started) {
+      setStarted(true);
       return;
     }
-    setPreferenceId(prefId);
-    setResults(res);
-    void trackEvent({
-      eventType: "recommendation_completed",
-      eventValue: {
-        preference_id: prefId,
-        result_count: res.length,
-        top_match_id: res[0]?.ev.id ?? null,
-        top_match_score: res[0]?.score ?? null,
-      },
-    });
+
+    if (isLastStep) {
+      setLoading(true);
+      setTimeout(() => {
+        setResults(getTopMatches(answers));
+        setLoading(false);
+      }, 650);
+      return;
+    }
+
+    setStepIndex((prev) => prev + 1);
   }
 
-  // ── Reset wizard ───────────────────────────────────────────────────────────
+  function handleBack() {
+    if (results) {
+      setResults(null);
+      setStepIndex(matchQuestions.length - 1);
+      return;
+    }
+
+    if (stepIndex > 0) {
+      setStepIndex((prev) => prev - 1);
+    } else {
+      setStarted(false);
+    }
+  }
+
   function handleReset() {
+    setStarted(false);
+    setStepIndex(0);
+    setAnswers(defaultAnswers);
     setResults(null);
-    setSavedPrefs(null);
-    setPreferenceId(null);
-    setPrefs(DEFAULT_PREFS);
-    setStep(1);
-    setError(null);
-    hasTrackedStart.current = false;
+    setLoading(false);
   }
 
-  // ─────────────────────────────────────────────────────────────────────────
-  // Render: results view
-  // ─────────────────────────────────────────────────────────────────────────
-  if (results !== null && savedPrefs) {
-    return (
-      <RecommendationResults
-        results={results}
-        preferences={savedPrefs}
-        preferenceId={preferenceId}
-        onReset={handleReset}
-      />
-    );
+  if (results) {
+    return <RecommendationResults results={results} answers={answers} onReset={handleReset} />;
   }
-
-  // ─────────────────────────────────────────────────────────────────────────
-  // Render: loading state
-  // ─────────────────────────────────────────────────────────────────────────
-  if (loading) {
-    return <LoadingState />;
-  }
-
-  // ─────────────────────────────────────────────────────────────────────────
-  // Render: wizard form
-  // ─────────────────────────────────────────────────────────────────────────
-  return (
-    <div className="mx-auto max-w-2xl">
-      {/* Step indicator */}
-      <StepIndicator current={step} />
-
-      {/* Form card */}
-      <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-        {/* Error banner */}
-        {error && (
-          <div className="mb-5 flex items-start gap-3 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700 border border-red-200">
-            <svg className="mt-0.5 h-4 w-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-            </svg>
-            {error}
-          </div>
-        )}
-
-        {/* Step panels */}
-        {step === 1 && <StepBudget prefs={prefs} update={update} />}
-        {step === 2 && <StepLifestyle prefs={prefs} update={update} />}
-        {step === 3 && <StepPreference prefs={prefs} update={update} />}
-
-        {/* Navigation buttons */}
-        <div className="mt-8 flex items-center justify-between">
-          {step > 1 ? (
-            <button
-              type="button"
-              onClick={() => { setError(null); setStep((s) => Math.max(1, s - 1) as WizardStep); }}
-              className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50"
-            >
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-              </svg>
-              Back
-            </button>
-          ) : (
-            <div /> /* spacer */
-          )}
-
-          {step < 3 ? (
-            <button
-              type="button"
-              onClick={handleNext}
-              className="flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
-            >
-              Continue
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={handleSubmit}
-              className="flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
-            >
-              Find My Best Match
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 3l14 9-14 9V3z" />
-              </svg>
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* Small privacy note */}
-      <p className="mt-4 text-center text-xs text-slate-400">
-        Your data is used only to generate recommendations and is never sold to third parties.
-      </p>
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Sub-component: Step indicator (3 numbered circles + connector lines)
-// ─────────────────────────────────────────────────────────────────────────────
-function StepIndicator({ current }: { current: WizardStep }) {
-  const steps = [
-    { num: 1 as WizardStep, label: "Budget" },
-    { num: 2 as WizardStep, label: "Lifestyle" },
-    { num: 3 as WizardStep, label: "Preferences" },
-  ];
 
   return (
-    <div className="flex items-center justify-center gap-0">
-      {steps.map((s, i) => (
-        <div key={s.num} className="flex items-center">
-          <div className="flex flex-col items-center">
-            <div
-              className={`flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold transition-colors
-                ${current > s.num
-                  ? "bg-blue-600 text-white"       // completed
-                  : current === s.num
-                    ? "bg-blue-600 text-white ring-4 ring-blue-100"  // active
-                    : "bg-slate-100 text-slate-400"}` // upcoming
-              }
-            >
-              {current > s.num ? (
-                /* Completed: show tick */
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                </svg>
-              ) : s.num}
+    <>
+      <section className="relative overflow-hidden border-b border-white/6 bg-[#07090B] pb-20 pt-32">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(16,185,129,0.18),_transparent_32%),radial-gradient(circle_at_80%_18%,_rgba(6,182,212,0.16),_transparent_28%)]" />
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
+          <div className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+            <div className="max-w-2xl">
+              <span className="inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.28em] text-cyan-300">
+                Premium AI Match
+              </span>
+              <h1 className="mt-6 text-4xl font-semibold tracking-[-0.04em] text-white md:text-6xl">
+                Find your perfect EV in under 60 seconds.
+              </h1>
+              <p className="mt-6 max-w-xl text-lg leading-8 text-zinc-300">
+                Answer one question at a time and we will build a shortlist around affordability,
+                charging reality, body style, and what matters most to your life.
+              </p>
+              <p className="mt-4 max-w-xl text-sm leading-7 text-zinc-500">
+                AI Match helps you research options faster. It does not make legally binding or credit decisions,
+                and you should verify important information independently.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-3 text-sm text-zinc-300">
+                <TrustPill label="One question per screen" />
+                <TrustPill label="Top 3 EVs only" />
+                <TrustPill label="No signup required" />
+              </div>
             </div>
-            <span className={`mt-1.5 text-xs font-medium ${current === s.num ? "text-blue-600" : "text-slate-400"}`}>
-              {s.label}
+
+            <div className="rounded-[2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.07),rgba(255,255,255,0.03))] p-7 shadow-[0_30px_100px_rgba(0,0,0,0.45)] backdrop-blur-xl">
+              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-zinc-500">What you get</p>
+              <div className="mt-5 grid gap-4 sm:grid-cols-2">
+                <HeroMetric label="Top matches" value="3 EVs" sub="A simple shortlist instead of a long feed." />
+                <HeroMetric label="Decision signal" value="Match %" sub="A confidence score you can understand quickly." />
+                <HeroMetric label="Money view" value="Monthly cost" sub="So the recommendation feels affordable, not abstract." />
+                <HeroMetric label="Reassurance" value="Why it fits" sub="Clear reasoning in human language, not just specs." />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-[#090C0E] py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <div className="mb-8 max-w-3xl">
+            <span className="inline-flex rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs font-semibold uppercase tracking-[0.28em] text-zinc-400">
+              How It Works
             </span>
+            <h2 className="mt-4 text-3xl font-semibold tracking-tight text-white md:text-4xl">
+              A calmer recommendation flow for a higher-confidence decision.
+            </h2>
           </div>
-          {/* Connector line between steps */}
-          {i < steps.length - 1 && (
-            <div className={`mb-5 h-0.5 w-16 sm:w-24 ${current > s.num ? "bg-blue-600" : "bg-slate-200"}`} />
-          )}
-        </div>
-      ))}
-    </div>
-  );
-}
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Sub-component: Loading animation
-// ─────────────────────────────────────────────────────────────────────────────
-function LoadingState() {
-  return (
-    <div className="flex flex-col items-center justify-center py-24">
-      {/* Animated spinner */}
-      <div className="h-14 w-14 animate-spin rounded-full border-4 border-slate-200 border-t-blue-600" />
-      <h3 className="mt-6 text-lg font-bold text-slate-900">Analysing your preferences…</h3>
-      <p className="mt-2 max-w-xs text-center text-sm text-slate-500">
-        We&apos;re matching your preferences with BYD, Tesla, and Omoda options, including live inventory when available.
-      </p>
-      {/* Animated loading bars for style */}
-      <div className="mt-8 w-64 space-y-2">
-        {["Affordability", "Range & Usage", "Charging Fit", "Family Suitability"].map((label) => (
-          <div key={label} className="flex items-center gap-3 text-xs text-slate-400">
-            <span className="w-28 shrink-0 text-right">{label}</span>
-            <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-100">
-              <div className="h-full animate-pulse rounded-full bg-blue-400" />
-            </div>
+          <div className="grid gap-5 lg:grid-cols-3">
+            <InfoCard
+              title="Tell us what your life looks like"
+              description="We start with affordability and daily use so the shortlist feels personal and realistic right away."
+              step="01"
+              icon={CircleDollarSign}
+            />
+            <InfoCard
+              title="We narrow the strongest fits"
+              description="Charging setup, driving pattern, and body preference reduce overload before results appear."
+              step="02"
+              icon={Cpu}
+            />
+            <InfoCard
+              title="You get a decision-ready shortlist"
+              description="See only the top 3 EVs, why they fit, and the next step if one stands out."
+              step="03"
+              icon={Check}
+            />
           </div>
-        ))}
-      </div>
-    </div>
+        </div>
+      </section>
+
+      <section className="bg-[#07090B] pb-24">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6">
+          <div className="rounded-[2.25rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.03))] p-6 shadow-[0_30px_100px_rgba(0,0,0,0.42)] backdrop-blur-xl md:p-8">
+            {!started ? (
+              <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
+                <div>
+                  <span className="inline-flex rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.28em] text-emerald-300">
+                    Start Match
+                  </span>
+                  <h2 className="mt-4 text-3xl font-semibold tracking-tight text-white md:text-4xl">
+                    We will guide you through 6 focused questions.
+                  </h2>
+                  <p className="mt-4 text-base leading-7 text-zinc-400">
+                    Each screen asks for one thing only, so the process feels simpler, lighter, and easier to finish on both desktop and mobile.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={handleContinue}
+                    className="mt-8 inline-flex items-center gap-2 rounded-full bg-emerald-500 px-6 py-3 text-sm font-semibold text-black transition hover:bg-emerald-400"
+                  >
+                    Start AI Match
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                </div>
+
+                <div className="rounded-[2rem] border border-white/8 bg-black/20 p-6">
+                  <div className="space-y-4">
+                    {matchQuestions.map((question, index) => {
+                      const Icon = questionIcons[index];
+                      return (
+                        <div key={question.key} className="flex items-center gap-4 rounded-[1.25rem] border border-white/6 bg-white/[0.03] p-4">
+                          <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04] text-cyan-300">
+                            <Icon className="h-5 w-5" />
+                          </div>
+                          <div>
+                            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-zinc-500">Question {index + 1}</p>
+                            <p className="mt-1 text-sm font-medium text-white">{friendlyTitles[question.key] ?? question.title}</p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            ) : loading ? (
+              <LoadingState />
+            ) : (
+              <div>
+                <div className="flex flex-col gap-5 border-b border-white/8 pb-6 md:flex-row md:items-end md:justify-between">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.28em] text-zinc-500">
+                      Question {stepIndex + 1} of {matchQuestions.length}
+                    </p>
+                    <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white md:text-4xl">
+                      {friendlyTitles[currentQuestion.key] ?? currentQuestion.title}
+                    </h2>
+                    <p className="mt-3 max-w-2xl text-base leading-7 text-zinc-400">
+                      {currentQuestion.description}
+                    </p>
+                  </div>
+                  <div className="min-w-[220px]">
+                    <div className="mb-2 flex items-center justify-between text-xs font-semibold uppercase tracking-[0.22em] text-zinc-500">
+                      <span>Progress</span>
+                      <span>{Math.round(progress)}%</span>
+                    </div>
+                    <div className="h-2 overflow-hidden rounded-full bg-white/8">
+                      <div
+                        className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-cyan-400 transition-all duration-500"
+                        style={{ width: `${progress}%` }}
+                      />
+                    </div>
+                    <p className="mt-2 text-xs text-zinc-500">You are almost there. We only need a few more answers.</p>
+                  </div>
+                </div>
+
+                <div className="mt-8 grid gap-4 md:grid-cols-2">
+                  {currentQuestion.options.map((option) => (
+                    <QuestionCard
+                      key={option.value}
+                      option={option}
+                      selected={currentValue === option.value}
+                      onClick={() => updateAnswer(option.value)}
+                    />
+                  ))}
+                </div>
+
+                <div className="mt-8 flex items-center justify-between gap-4">
+                  <button
+                    type="button"
+                    onClick={handleBack}
+                    className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:border-white/20 hover:bg-white/10"
+                  >
+                    <ArrowLeft className="h-4 w-4" />
+                    {stepIndex === 0 ? "Back to intro" : "Previous"}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleContinue}
+                    className="inline-flex items-center gap-2 rounded-full bg-emerald-500 px-6 py-3 text-sm font-semibold text-black transition hover:bg-emerald-400"
+                  >
+                    {isLastStep ? "See my matches" : "Continue"}
+                    <ArrowRight className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+    </>
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Step 1: Budget
-// ─────────────────────────────────────────────────────────────────────────────
-type UpdateFn = <K extends keyof UserPreferences>(key: K, value: UserPreferences[K]) => void;
-
-function StepBudget({ prefs, update }: { prefs: UserPreferences; update: UpdateFn }) {
+function TrustPill({ label }: { label: string }) {
   return (
-    <div>
-      <h2 className="text-xl font-bold text-slate-900">Your Budget</h2>
-      <p className="mt-1 text-sm text-slate-500">
-        Tell us your financial picture so we can find EVs within your reach.
-      </p>
-
-      <div className="mt-6 grid gap-5 sm:grid-cols-2">
-        <CurrencyInput
-          label="Monthly Income"
-          hint="Your take-home pay per month"
-          value={prefs.monthlyIncome}
-          onChange={(v) => update("monthlyIncome", v)}
-          min={500}
-          max={50000}
-        />
-        <CurrencyInput
-          label="Total Car Budget"
-          hint="Maximum you'd spend on the car"
-          value={prefs.totalBudget}
-          onChange={(v) => update("totalBudget", v)}
-          min={10000}
-          max={150000}
-        />
-        <CurrencyInput
-          label="Down Payment"
-          hint="Upfront deposit you can put down"
-          value={prefs.downPayment}
-          onChange={(v) => update("downPayment", v)}
-          min={0}
-          max={prefs.totalBudget - 1000}
-        />
-        <CurrencyInput
-          label="Target Monthly EMI"
-          hint="Ideal monthly finance payment"
-          value={prefs.preferredMonthlyEmi}
-          onChange={(v) => update("preferredMonthlyEmi", v)}
-          min={100}
-          max={5000}
-        />
-      </div>
-
-      {/* Live EMI preview */}
-      <div className="mt-5 rounded-xl bg-blue-50 px-4 py-3 text-sm text-blue-700 border border-blue-100">
-        <span className="font-semibold">Loan amount: </span>
-        £{Math.max(0, prefs.totalBudget - prefs.downPayment).toLocaleString()}
-        {" "}at 8% p.a. over 5 years. Scores reward staying within your EMI target.
-      </div>
-    </div>
+    <span className="inline-flex rounded-full border border-white/10 bg-white/[0.03] px-4 py-2">
+      {label}
+    </span>
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Step 2: Lifestyle
-// ─────────────────────────────────────────────────────────────────────────────
-function StepLifestyle({ prefs, update }: { prefs: UserPreferences; update: UpdateFn }) {
-  const usageOptions: { value: UsageType; label: string; icon: string; desc: string }[] = [
-    { value: "city",    label: "City",    icon: "🏙️", desc: "Mostly urban, short daily trips" },
-    { value: "mixed",   label: "Mixed",   icon: "🛣️", desc: "A blend of city and countryside" },
-    { value: "highway", label: "Highway", icon: "🚗", desc: "Long motorway journeys regularly" },
-  ];
-
-  const chargingOptions: { value: ChargingAccess; label: string; icon: string; desc: string }[] = [
-    { value: "home",   label: "Home Charger",    icon: "🏠", desc: "I can install a wallbox at home" },
-    { value: "public", label: "Public Network",  icon: "⚡", desc: "I rely on public charge points" },
-    { value: "none",   label: "Not Sure Yet",    icon: "❓", desc: "No dedicated charging access" },
-  ];
-
+function HeroMetric({ label, value, sub }: { label: string; value: string; sub: string }) {
   return (
-    <div>
-      <h2 className="text-xl font-bold text-slate-900">Your Lifestyle</h2>
-      <p className="mt-1 text-sm text-slate-500">
-        Help us match the right range, space, and charging to your real life.
-      </p>
-
-      {/* Usage type */}
-      <div className="mt-6">
-        <label className="mb-2 block text-sm font-semibold text-slate-700">How do you mainly drive?</label>
-        <div className="grid grid-cols-3 gap-3">
-          {usageOptions.map((opt) => (
-            <OptionCard
-              key={opt.value}
-              icon={opt.icon}
-              label={opt.label}
-              desc={opt.desc}
-              selected={prefs.usageType === opt.value}
-              onClick={() => update("usageType", opt.value)}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* Family size */}
-      <div className="mt-6">
-        <label className="mb-2 block text-sm font-semibold text-slate-700">
-          Family / group size
-          <span className="ml-2 text-blue-600">{prefs.familySize} {prefs.familySize === 1 ? "person" : "people"}</span>
-        </label>
-        <input
-          type="range"
-          min={1}
-          max={7}
-          step={1}
-          value={prefs.familySize}
-          onChange={(e) => update("familySize", Number(e.target.value))}
-          className="w-full accent-blue-600"
-        />
-        <div className="mt-1 flex justify-between text-xs text-slate-400">
-          <span>1 person</span>
-          <span>7+ people</span>
-        </div>
-      </div>
-
-      {/* Charging access */}
-      <div className="mt-6">
-        <label className="mb-2 block text-sm font-semibold text-slate-700">Charging access</label>
-        <div className="grid grid-cols-3 gap-3">
-          {chargingOptions.map((opt) => (
-            <OptionCard
-              key={opt.value}
-              icon={opt.icon}
-              label={opt.label}
-              desc={opt.desc}
-              selected={prefs.chargingAccess === opt.value}
-              onClick={() => update("chargingAccess", opt.value)}
-            />
-          ))}
-        </div>
-      </div>
+    <div className="rounded-[1.5rem] border border-white/8 bg-black/20 p-5">
+      <p className="text-xs font-semibold uppercase tracking-[0.22em] text-zinc-500">{label}</p>
+      <p className="mt-2 text-2xl font-semibold text-white">{value}</p>
+      <p className="mt-2 text-sm leading-6 text-zinc-400">{sub}</p>
     </div>
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Step 3: Body type preference
-// ─────────────────────────────────────────────────────────────────────────────
-function StepPreference({ prefs, update }: { prefs: UserPreferences; update: UpdateFn }) {
-  const bodyOptions: { value: BodyType; label: string; icon: string; desc: string }[] = [
-    { value: "suv",      label: "SUV / Crossover", icon: "🚙", desc: "Taller, more ground clearance" },
-    { value: "sedan",    label: "Sedan",           icon: "🚘", desc: "Classic boot, sleek profile" },
-    { value: "hatchback",label: "Hatchback",       icon: "🚗", desc: "Compact and easy to park" },
-    { value: "any",      label: "No Preference",   icon: "✨", desc: "Show me all body types" },
-  ];
-
-  return (
-    <div>
-      <h2 className="text-xl font-bold text-slate-900">Body Type</h2>
-      <p className="mt-1 text-sm text-slate-500">
-        Do you have a preferred style? This acts as a bonus filter — you&apos;ll still see other types if they score highly.
-      </p>
-
-      <div className="mt-6 grid grid-cols-2 gap-3">
-        {bodyOptions.map((opt) => (
-          <OptionCard
-            key={opt.value}
-            icon={opt.icon}
-            label={opt.label}
-            desc={opt.desc}
-            selected={prefs.preferredBodyType === opt.value}
-            onClick={() => update("preferredBodyType", opt.value)}
-          />
-        ))}
-      </div>
-
-      {/* Summary of all choices before final submit */}
-      <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 p-4">
-        <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-500">Your summary</p>
-        <div className="grid grid-cols-2 gap-y-2 text-sm">
-          <SummaryRow label="Budget"    value={`£${prefs.totalBudget.toLocaleString()}`} />
-          <SummaryRow label="Down"      value={`£${prefs.downPayment.toLocaleString()}`} />
-          <SummaryRow label="EMI target" value={`£${prefs.preferredMonthlyEmi}/mo`} />
-          <SummaryRow label="Income"    value={`£${prefs.monthlyIncome.toLocaleString()}/mo`} />
-          <SummaryRow label="Usage"     value={prefs.usageType} className="capitalize" />
-          <SummaryRow label="Family"    value={`${prefs.familySize} people`} />
-          <SummaryRow label="Charging"  value={prefs.chargingAccess} className="capitalize" />
-          <SummaryRow label="Body"      value={prefs.preferredBodyType === "any" ? "Any" : prefs.preferredBodyType} className="capitalize" />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Reusable form primitives
-// ─────────────────────────────────────────────────────────────────────────────
-
-/** Numeric input with a £ prefix symbol */
-function CurrencyInput({
-  label, hint, value, onChange, min, max,
+function InfoCard({
+  title,
+  description,
+  step,
+  icon: Icon,
 }: {
-  label: string;
-  hint: string;
-  value: number;
-  onChange: (v: number) => void;
-  min?: number;
-  max?: number;
+  title: string;
+  description: string;
+  step: string;
+  icon: typeof Cpu;
 }) {
   return (
-    <div>
-      <label className="mb-1.5 block text-sm font-semibold text-slate-700">{label}</label>
-      <p className="mb-1.5 text-xs text-slate-400">{hint}</p>
-      <div className="flex overflow-hidden rounded-xl border border-slate-200 focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-100">
-        <span className="flex items-center bg-slate-50 px-3 text-sm font-medium text-slate-500 border-r border-slate-200">
-          £
-        </span>
-        <input
-          type="number"
-          value={value}
-          min={min}
-          max={max}
-          onChange={(e) => onChange(Number(e.target.value))}
-          className="flex-1 bg-white px-3 py-2.5 text-sm font-medium text-slate-900 outline-none"
-        />
+    <div className="rounded-[2rem] border border-white/10 bg-white/[0.03] p-6 shadow-[0_20px_60px_rgba(0,0,0,0.35)] backdrop-blur-xl">
+      <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04] text-cyan-300">
+        <Icon className="h-5 w-5" />
       </div>
+      <p className="mt-5 text-xs font-semibold uppercase tracking-[0.28em] text-zinc-500">Step {step}</p>
+      <h3 className="mt-3 text-2xl font-semibold text-white">{title}</h3>
+      <p className="mt-3 text-sm leading-6 text-zinc-400">{description}</p>
     </div>
   );
 }
 
-/** Clickable card for radio-like single-selection */
-function OptionCard({
-  icon, label, desc, selected, onClick,
+function QuestionCard({
+  option,
+  selected,
+  onClick,
 }: {
-  icon: string;
-  label: string;
-  desc: string;
+  option: MatchQuestionOption<string>;
   selected: boolean;
   onClick: () => void;
 }) {
@@ -526,31 +337,52 @@ function OptionCard({
     <button
       type="button"
       onClick={onClick}
-      className={`flex flex-col items-center gap-1.5 rounded-xl border p-3 text-center transition-all
-        ${selected
-          ? "border-blue-500 bg-blue-50 ring-2 ring-blue-200"
-          : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
-        }`}
+      className={`rounded-[1.75rem] border p-5 text-left transition duration-300 ${
+        selected
+          ? "border-emerald-400/35 bg-emerald-400/10 shadow-[0_20px_40px_rgba(16,185,129,0.12)]"
+          : "border-white/8 bg-black/20 hover:-translate-y-1 hover:border-white/15 hover:bg-white/[0.04]"
+      }`}
     >
-      <span className="text-2xl leading-none">{icon}</span>
-      <span className={`text-xs font-bold ${selected ? "text-blue-700" : "text-slate-800"}`}>{label}</span>
-      <span className="text-[10px] leading-tight text-slate-400">{desc}</span>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h3 className="text-xl font-semibold text-white">{option.title}</h3>
+          <p className="mt-3 text-sm leading-6 text-zinc-400">{option.description}</p>
+        </div>
+        <div
+          className={`mt-1 flex h-6 w-6 items-center justify-center rounded-full border ${
+            selected ? "border-emerald-400 bg-emerald-400 text-black" : "border-white/15 text-transparent"
+          }`}
+        >
+          <Check className="h-3.5 w-3.5" />
+        </div>
+      </div>
     </button>
   );
 }
 
-/** Two-column summary row for the final review step */
-function SummaryRow({
-  label, value, className = "",
-}: {
-  label: string;
-  value: string;
-  className?: string;
-}) {
+function LoadingState() {
   return (
-    <>
-      <span className="text-slate-500">{label}</span>
-      <span className={`font-semibold text-slate-800 ${className}`}>{value}</span>
-    </>
+    <div className="flex flex-col items-center justify-center py-18 text-center">
+      <div className="h-14 w-14 animate-spin rounded-full border-4 border-white/10 border-t-emerald-400" />
+      <h3 className="mt-6 text-2xl font-semibold text-white">Building your EV shortlist</h3>
+      <p className="mt-3 max-w-md text-sm leading-6 text-zinc-400">
+        We are narrowing the strongest fits so the result feels clear, calm, and easier to trust.
+      </p>
+      <div className="mt-8 w-full max-w-md space-y-3">
+        {[
+          "Budget fit",
+          "Charging compatibility",
+          "Body style preference",
+          "Priority weighting",
+        ].map((label) => (
+          <div key={label} className="flex items-center gap-3 text-sm text-zinc-500">
+            <span className="w-40 text-right">{label}</span>
+            <div className="h-2 flex-1 overflow-hidden rounded-full bg-white/8">
+              <div className="h-full animate-pulse rounded-full bg-gradient-to-r from-emerald-400 to-cyan-400" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }

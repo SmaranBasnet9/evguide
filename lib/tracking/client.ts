@@ -1,6 +1,7 @@
 "use client";
 
 import type { TrackEventInput } from "@/types";
+import { hasAnalyticsConsent } from "@/lib/privacy/consent";
 import { getTrackingIdentity } from "@/lib/tracking/identity";
 
 const FIRST_VISIT_KEY = "evguide_first_visit_at";
@@ -13,6 +14,8 @@ function resolvePagePath(path?: string): string {
 
 export async function trackEvent(input: TrackEventInput): Promise<void> {
   try {
+    if (!hasAnalyticsConsent()) return;
+
     const identity = getTrackingIdentity();
     if (!identity) return;
 
@@ -39,6 +42,7 @@ export async function trackEvent(input: TrackEventInput): Promise<void> {
 export async function trackRepeatVisit(): Promise<void> {
   try {
     if (typeof window === "undefined") return;
+    if (!hasAnalyticsConsent()) return;
 
     const seen = window.localStorage.getItem(FIRST_VISIT_KEY);
     if (!seen) {

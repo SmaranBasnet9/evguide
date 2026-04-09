@@ -7,16 +7,12 @@ import type { LeadIntelligenceRow, UserIntentProfileRow, AffordabilityBand, Lead
 
 export const metadata = {
   title: "Lead Intelligence | EV Guide Admin",
-  description: "See which visitors are most likely to buy — scored, segmented, and ranked.",
+  description: "See which visitors are most likely to buy, scored, segmented, and ranked.",
 };
-
-// ─── Data fetching ─────────────────────────────────────────────────────────────
 
 async function getLeads(): Promise<LeadIntelligenceRow[]> {
   const admin = createAdminClient();
 
-  // Fetch all intent profiles, newest activity first.
-  // Limit 500 — a second page or cursor can be added when needed.
   const { data, error } = await admin
     .from("user_intent_profiles")
     .select(
@@ -36,19 +32,12 @@ async function getLeads(): Promise<LeadIntelligenceRow[]> {
 
   const rows = (data ?? []) as unknown as UserIntentProfileRow[];
 
-  // Enrich each row: resolve car name + build display identifier
   return rows.map((row): LeadIntelligenceRow => {
     const carModel = row.strongest_interest_car_id
-      ? evModels.find((m) => m.id === row.strongest_interest_car_id)
+      ? evModels.find((model) => model.id === row.strongest_interest_car_id)
       : null;
 
-    const strongestCarLabel = carModel
-      ? `${carModel.brand} ${carModel.model}`
-      : null;
-
-    // Build readable display ID:
-    //  - logged-in users → masked form of user_id UUID ("user:a1b2c3…")
-    //  - anonymous       → first 16 chars of session_id
+    const strongestCarLabel = carModel ? `${carModel.brand} ${carModel.model}` : null;
     const displayId = row.user_id
       ? `user:${row.user_id.slice(0, 8)}`
       : row.session_id
@@ -78,8 +67,6 @@ async function getLeads(): Promise<LeadIntelligenceRow[]> {
   });
 }
 
-// ─── Stat cards ────────────────────────────────────────────────────────────────
-
 type StatCardProps = {
   label: string;
   value: number;
@@ -97,12 +84,7 @@ function StatCard({ label, value, sub, accent }: StatCardProps) {
   );
 }
 
-// ─── Page ──────────────────────────────────────────────────────────────────────
-
 export default async function LeadIntelligencePage() {
-  // Auth guard — mirrors the pattern used in /admin/consultations and other admin pages.
-  // TODO: when a "dealer" role is introduced, add `profile.role !== "dealer"` here
-  //       so dealers can access this page without needing full admin access.
   const supabase = await createClient();
   const {
     data: { user },
@@ -118,24 +100,21 @@ export default async function LeadIntelligencePage() {
 
   const leads = await getLeads();
 
-  // Aggregate counts for stat cards
-  const buyerCount = leads.filter((l) => l.user_type === "buyer").length;
-  const researchCount = leads.filter((l) => l.user_type === "research").length;
-  const casualCount = leads.filter((l) => l.user_type === "casual").length;
-  const highScoreCount = leads.filter((l) => l.intent_score >= 70).length;
+  const buyerCount = leads.filter((lead) => lead.user_type === "buyer").length;
+  const researchCount = leads.filter((lead) => lead.user_type === "research").length;
+  const casualCount = leads.filter((lead) => lead.user_type === "casual").length;
+  const highScoreCount = leads.filter((lead) => lead.intent_score >= 70).length;
 
   return (
     <div className="space-y-8">
-      {/* Header */}
       <div>
         <p className="text-sm font-semibold text-blue-600">Buyer Intelligence</p>
         <h1 className="mt-1 text-3xl font-extrabold text-slate-900">Lead Intelligence</h1>
         <p className="mt-2 text-slate-500">
-          Visitors ranked by purchase intent — updated after every interaction.
+          Visitors ranked by purchase intent, updated after every interaction.
         </p>
       </div>
 
-      {/* Stat cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
           label="Total Profiles"
@@ -146,13 +125,13 @@ export default async function LeadIntelligencePage() {
         <StatCard
           label="Ready to Buy"
           value={buyerCount}
-          sub="Score 71–100 · Contact now"
+          sub="Score 71-100 · Contact now"
           accent="border-red-200"
         />
         <StatCard
           label="Actively Researching"
           value={researchCount}
-          sub="Score 31–70 · Send an offer"
+          sub="Score 31-70 · Send an offer"
           accent="border-blue-200"
         />
         <StatCard
@@ -163,7 +142,6 @@ export default async function LeadIntelligencePage() {
         />
       </div>
 
-      {/* Lead table (client component — owns filter + sort state) */}
       <LeadIntelligenceTable
         leads={leads}
         casualCount={casualCount}

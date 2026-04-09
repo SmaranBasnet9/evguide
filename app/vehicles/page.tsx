@@ -1,5 +1,5 @@
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+﻿import PremiumNavbar from "@/components/home/PremiumNavbar";
+import PremiumFooter from "@/components/home/PremiumFooter";
 import VehicleDiscovery from "@/components/vehicles/VehicleDiscovery";
 import { getAllEVs } from "@/lib/evs";
 import {
@@ -9,9 +9,9 @@ import {
 import { evModels } from "@/data/evModels";
 
 export const metadata = {
-  title: "Find Your Perfect EV | EV Guide",
+  title: "Vehicles | Find the Best EV for Your Budget",
   description:
-    "Browse all electric vehicles. Filter by price, range, brand and more. Get personalised recommendations.",
+    "Explore EVs with clearer deal signals, monthly cost estimates, and fit guidance designed for UK buyers.",
 };
 
 export default async function VehiclesPage() {
@@ -21,16 +21,15 @@ export default async function VehiclesPage() {
   const personalizedVehicles = buildPersonalizedVehicleCards(vehicles, listingContext);
 
   return (
-    <main className="min-h-screen bg-slate-50">
-      <Navbar />
-      <div className="py-8 pb-20">
+    <main className="min-h-screen bg-[#0B0B0B]">
+      <PremiumNavbar />
+      <div className="pt-24 pb-20">
         <VehicleDiscovery
           vehicles={personalizedVehicles}
           segment={listingContext.segment}
         />
       </div>
-      <Footer />
+      <PremiumFooter />
     </main>
   );
 }
-

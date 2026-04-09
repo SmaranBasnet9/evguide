@@ -8,6 +8,7 @@ async function getAllPosts() {
     .from("blog_posts")
     .select("id, slug, title, category, published, created_at")
     .order("created_at", { ascending: false });
+
   if (error) throw new Error(error.message);
   return data ?? [];
 }
@@ -40,6 +41,17 @@ export default async function AdminBlogPage() {
         </Link>
       </div>
 
+      <div className="mt-6 rounded-2xl border border-blue-100 bg-blue-50 p-4 text-sm text-blue-900">
+        <p className="font-semibold">Blog SEO fields audit</p>
+        <p className="mt-1 text-blue-800">
+          If the upgraded blog metadata fields are missing in Supabase, the editor can still load but
+          SEO saves will be limited until the blog SEO migration is applied.
+        </p>
+        <Link href="/admin/audit" className="mt-3 inline-flex font-semibold text-blue-700 hover:underline">
+          Open system audit
+        </Link>
+      </div>
+
       <div className="mt-8">
         {posts.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-slate-300 bg-white py-20 text-center">
@@ -67,7 +79,7 @@ export default async function AdminBlogPage() {
                 {posts.map((post) => (
                   <tr key={post.id} className="border-b border-slate-100 last:border-b-0 hover:bg-slate-50">
                     <td className="px-6 py-4 font-medium text-slate-900">{post.title}</td>
-                    <td className="px-6 py-4 text-slate-600">{post.category ?? "—"}</td>
+                    <td className="px-6 py-4 text-slate-600">{post.category ?? "-"}</td>
                     <td className="px-6 py-4">
                       <span
                         className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${

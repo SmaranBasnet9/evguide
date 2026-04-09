@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+﻿import { notFound } from "next/navigation";
 import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
 import AdminBlogForm from "@/components/AdminBlogForm";
@@ -29,6 +29,11 @@ export default async function EditBlogPostPage({
     content: post.content ?? "",
     cover_image: post.cover_image ?? "",
     category: post.category ?? "",
+    meta_title: post.meta_title ?? "",
+    meta_description: post.meta_description ?? "",
+    keywords: Array.isArray(post.keywords) ? post.keywords.join(", ") : "",
+    geo_location: post.geo_location ?? "UK",
+    author: post.author ?? "EVGuide AI Editorial",
     published: post.published ?? false,
   };
 

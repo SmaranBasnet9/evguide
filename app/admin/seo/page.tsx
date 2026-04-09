@@ -57,12 +57,12 @@ export default async function AdminSeoPage() {
                       </code>
                     </td>
                     <td className="max-w-xs truncate px-6 py-4 font-medium text-slate-900">
-                      {page.meta_title ?? <span className="text-slate-400">—</span>}
+                      {page.meta_title ?? <span className="text-slate-400">-</span>}
                     </td>
                     <td className="max-w-xs truncate px-6 py-4 text-slate-600">
                       {page.meta_description
-                        ? page.meta_description.slice(0, 80) + (page.meta_description.length > 80 ? "…" : "")
-                        : <span className="text-slate-400">—</span>}
+                        ? page.meta_description.slice(0, 80) + (page.meta_description.length > 80 ? "..." : "")
+                        : <span className="text-slate-400">-</span>}
                     </td>
                     <td className="px-6 py-4">
                       <span
@@ -94,7 +94,6 @@ export default async function AdminSeoPage() {
         )}
       </div>
 
-      {/* Info card */}
       <div className="mt-6 rounded-2xl border border-blue-100 bg-blue-50 p-5">
         <h2 className="text-sm font-semibold text-blue-900">How it works</h2>
         <p className="mt-1 text-sm text-blue-700">

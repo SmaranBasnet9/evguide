@@ -1,36 +1,37 @@
-import Navbar from "@/components/Navbar";
-import FeaturedBlogPostsSection from "@/components/FeaturedBlogPostsSection";
-import NewsSection from "@/components/NewsSection";
-import BestSellingSection from "@/components/BestSellingSection";
-import StoriesSection from "@/components/StoriesSection";
-import Footer from "@/components/Footer";
-import RecommendedForYou from "@/components/personalization/RecommendedForYou";
-import PersonalizedCTA from "@/components/personalization/PersonalizedCTA";
+﻿import PremiumNavbar from "@/components/home/PremiumNavbar";
+import HeroSection from "@/components/home/HeroSection";
+import TrustStrip from "@/components/home/TrustStrip";
+import HowItWorks from "@/components/home/HowItWorks";
+import FeaturedEVs from "@/components/home/FeaturedEVs";
+import AIRecommendation from "@/components/home/AIRecommendation";
+import FinancePreview from "@/components/home/FinancePreview";
+import Testimonials from "@/components/home/Testimonials";
+import BlogPreview from "@/components/home/BlogPreview";
+import FinalCTA from "@/components/home/FinalCTA";
+import PremiumFooter from "@/components/home/PremiumFooter";
+
 import { getTopSellingEVs } from "@/lib/evs";
-import { getEvNews } from "@/lib/news";
 import { getFeaturedBlogPosts } from "@/lib/blog";
-import { getLatestApprovedReviews } from "@/lib/reviews";
-import { getApprovedFeedbackStories } from "@/lib/feedback";
 
 export default async function HomePage() {
-  const [featuredPosts, evNews, verifiedReviews, evModels, feedbackStories] = await Promise.all([
+  const [featuredPosts, evModels] = await Promise.all([
     getFeaturedBlogPosts(3),
-    getEvNews(),
-    getLatestApprovedReviews(8),
     getTopSellingEVs(),
-    getApprovedFeedbackStories(),
   ]);
 
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900">
-      <Navbar />
-      <FeaturedBlogPostsSection posts={featuredPosts} />
-      <NewsSection items={evNews} />
-      <BestSellingSection models={evModels} />
-      <RecommendedForYou />
-      <StoriesSection feedbackStories={feedbackStories} models={evModels} verifiedReviews={verifiedReviews} />
-      <PersonalizedCTA />
-      <Footer />
+    <main className="min-h-screen overflow-x-hidden bg-[#0B0B0B] font-sans text-zinc-100 selection:bg-emerald-500/30">
+      <PremiumNavbar />
+      <HeroSection models={evModels.slice(0, 3)} />
+      <TrustStrip />
+      <HowItWorks />
+      <FeaturedEVs models={evModels} />
+      <AIRecommendation />
+      <FinancePreview />
+      <Testimonials />
+      <BlogPreview posts={featuredPosts} />
+      <FinalCTA />
+      <PremiumFooter />
     </main>
   );
 }
