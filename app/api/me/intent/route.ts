@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { hasPersonalizationConsent, readConsentFromCookieStore } from "@/lib/privacy/consent";
 import { TRACKING_SESSION_ID_KEY } from "@/lib/tracking/identity";
 
 /**
@@ -14,6 +15,12 @@ import { TRACKING_SESSION_ID_KEY } from "@/lib/tracking/identity";
  */
 export async function GET() {
   try {
+    const cookieStore = await cookies();
+    const consent = readConsentFromCookieStore(cookieStore);
+    if (!hasPersonalizationConsent(consent)) {
+      return NextResponse.json({ profile: null });
+    }
+
     // 1. Try to get authenticated user
     const supabase = await createClient();
     const {
@@ -21,7 +28,6 @@ export async function GET() {
     } = await supabase.auth.getUser();
 
     // 2. Try to read anonymous session_id from cookie
-    const cookieStore = await cookies();
     const rawSessionId = cookieStore.get(TRACKING_SESSION_ID_KEY)?.value ?? null;
     const sessionId =
       rawSessionId ? decodeURIComponent(rawSessionId).trim() || null : null;

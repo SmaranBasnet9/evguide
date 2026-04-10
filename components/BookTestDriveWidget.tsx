@@ -38,7 +38,7 @@ export default function BookTestDriveWidget() {
   const supabase = useMemo(() => createClient(), []);
   const [open, setOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [authLoading, setAuthLoading] = useState(true);
+  const [authLoading, setAuthLoading] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [formData, setFormData] = useState<FormData>(EMPTY_FORM);
   const [submitted, setSubmitted] = useState(false);
@@ -46,9 +46,17 @@ export default function BookTestDriveWidget() {
   const [submitting, setSubmitting] = useState(false);
   const [, setIntentProfile] = useState<IntentProfileLite | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  const authLoadedRef = useRef(false);
+  const intentLoadedRef = useRef(false);
 
   useEffect(() => {
+    if (!open || authLoadedRef.current) {
+      return;
+    }
+
     let mounted = true;
+    authLoadedRef.current = true;
+    setAuthLoading(true);
 
     async function loadAuth() {
       try {
@@ -70,10 +78,15 @@ export default function BookTestDriveWidget() {
       mounted = false;
       sub.subscription.unsubscribe();
     };
-  }, [supabase]);
+  }, [open, supabase]);
 
   useEffect(() => {
+    if (!open || intentLoadedRef.current) {
+      return;
+    }
+
     let active = true;
+    intentLoadedRef.current = true;
 
     async function loadIntentProfile() {
       try {
@@ -99,7 +112,7 @@ export default function BookTestDriveWidget() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -216,7 +229,7 @@ export default function BookTestDriveWidget() {
         aria-modal="true"
         aria-label="Book a test drive"
         className={`fixed bottom-0 right-0 z-50 flex h-[90dvh] w-full flex-col overflow-hidden rounded-t-3xl bg-white shadow-2xl transition-transform duration-300 ease-out sm:bottom-6 sm:right-6 sm:h-auto sm:max-h-[85vh] sm:w-[440px] sm:rounded-3xl ${
-          open ? "translate-y-0" : "translate-y-full sm:translate-y-[120%]"
+          open ? "pointer-events-auto translate-y-0" : "pointer-events-none translate-y-full sm:translate-y-[120%]"
         }`}
       >
         <div className="flex shrink-0 items-start justify-between border-b border-slate-100 px-6 py-5">

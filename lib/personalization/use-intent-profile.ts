@@ -1,6 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import {
+  COOKIE_CONSENT_EVENT,
+  getClientConsentOrDefault,
+  hasPersonalizationConsent,
+} from "@/lib/privacy/consent";
 import type { UserIntentProfileRow } from "@/types";
 
 export type UseIntentProfileResult = {
@@ -23,9 +28,33 @@ export type UseIntentProfileResult = {
 export function useIntentProfile(): UseIntentProfileResult {
   const [profile, setProfile] = useState<UserIntentProfileRow | null>(null);
   const [loading, setLoading] = useState(true);
+  const [personalizationEnabled, setPersonalizationEnabled] = useState(() =>
+    hasPersonalizationConsent(getClientConsentOrDefault()),
+  );
+
+  useEffect(() => {
+    function syncConsent() {
+      setPersonalizationEnabled(hasPersonalizationConsent(getClientConsentOrDefault()));
+    }
+
+    syncConsent();
+    window.addEventListener(COOKIE_CONSENT_EVENT, syncConsent);
+    window.addEventListener("storage", syncConsent);
+
+    return () => {
+      window.removeEventListener(COOKIE_CONSENT_EVENT, syncConsent);
+      window.removeEventListener("storage", syncConsent);
+    };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
+
+    if (!personalizationEnabled) {
+      return () => {
+        cancelled = true;
+      };
+    }
 
     fetch("/api/me/intent", { credentials: "same-origin" })
       .then((res) => {
@@ -45,7 +74,10 @@ export function useIntentProfile(): UseIntentProfileResult {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [personalizationEnabled]);
 
-  return { profile, loading };
+  return {
+    profile: personalizationEnabled ? profile : null,
+    loading: personalizationEnabled ? loading : false,
+  };
 }

@@ -44,24 +44,24 @@ export default function PrivacyPage() {
       <Section title="What we collect">
         <p>We may collect identity and contact data such as name, email address, phone number, and account details when you create an account or request support, consultations, or test drives.</p>
         <p>We collect EV preference and journey data such as budget ranges, charging preferences, shortlist actions, comparison behavior, and affordability inputs when you use product tools.</p>
-        <p>We may collect technical and usage data such as page views, engagement signals, and anonymous session identifiers only where analytics consent has been given.</p>
+        <p>We may collect technical and usage data such as page views, engagement signals, anonymous session identifiers, and personalization inputs only where the relevant analytics or personalization consent has been given.</p>
       </Section>
 
       <Section title="How we use personal data">
         <p>We use personal data to provide the service, run user accounts, deliver recommendation and comparison journeys, respond to support requests, and manage booked consultations or test-drive requests.</p>
-        <p>We use preference and behavior data to personalise results, improve relevance, and understand which product flows are working. We do not claim that these outputs are financial, legal, or regulated advice.</p>
+        <p>Where you allow personalization, we use preference and behavior data to personalise results, improve relevance, remember AI Match context, and understand which product flows are working. We do not claim that these outputs are financial, legal, or regulated advice.</p>
         <p>Where you have consented, we use analytics data to measure performance, improve usability, and understand the effectiveness of content and conversion journeys.</p>
       </Section>
 
       <Section title="Lawful bases">
         <p>We typically rely on contract or pre-contract steps when you ask us to create an account, provide product functionality, or handle a consultation or test-drive request.</p>
         <p>We rely on legitimate interests for core service security, fraud prevention, debugging, and limited operational record keeping.</p>
-        <p>We rely on consent for non-essential analytics cookies and similar technologies.</p>
+        <p>We rely on consent for non-essential analytics cookies, personalization storage, and profiling-related product features that are not strictly necessary to provide the core service.</p>
       </Section>
 
       <Section title="Profiling and AI-supported decisions">
         <p>Our platform uses rules, scoring, and AI-supported logic to rank vehicles, infer likely preferences, and tailor content or next steps. This includes signals such as affordability ranges, comparison activity, and stated preferences.</p>
-        <p>These outputs are designed to support research and product personalisation. They are not binding decisions, credit approvals, or legal determinations.</p>
+        <p>These outputs are designed to support research and product personalisation where you have allowed that processing. They are not binding decisions, credit approvals, or legal determinations.</p>
         <p>If you want information about the main factors used in profiling or want us to review a concern manually, contact us at {companyProfile.privacyEmail}.</p>
       </Section>
 
@@ -77,7 +77,7 @@ export default function PrivacyPage() {
 
       <Section title="Your rights">
         <p>You may have rights to access, correct, erase, restrict, object to certain processing, and request portability under UK data protection law.</p>
-        <p>You may withdraw analytics consent at any time by changing your cookie choice.</p>
+        <p>You may withdraw analytics or personalization consent at any time by changing your cookie choice.</p>
         <p>You also have the right to complain to the UK Information Commissioner&apos;s Office if you believe your data has been handled unlawfully.</p>
       </Section>
     </LegalPageShell>

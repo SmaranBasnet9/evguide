@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import {
+  hasAnalyticsConsent,
+  hasPersonalizationConsent,
+  readConsentFromCookieHeader,
+} from "@/lib/privacy/consent";
 import { getTrackingIdentity } from "@/lib/tracking/identity";
 import { upsertUserCarInterestOnCarView } from "@/lib/tracking/car-interest";
 import { refreshFinancialProfileForIdentity } from "@/lib/profiling/financial-profile";
@@ -16,6 +21,13 @@ function isObject(value: unknown): value is Record<string, unknown> {
 
 export async function POST(request: Request) {
   try {
+    const consent = readConsentFromCookieHeader(request.headers.get("cookie"));
+    if (!hasAnalyticsConsent(consent)) {
+      return NextResponse.json({ success: true, skipped: "analytics-consent-not-granted" }, { status: 202 });
+    }
+
+    const personalizationAllowed = hasPersonalizationConsent(consent);
+
     const rateLimit = applyRateLimit(request, "tracking", 120, 5 * 60 * 1000);
     if (!rateLimit.allowed) {
       return NextResponse.json(
@@ -77,7 +89,7 @@ export async function POST(request: Request) {
     }
 
     // Keep per-car interest summary and auto-emit repeat_visit on repeated car views.
-    if (eventType === "car_view" && carId) {
+    if (personalizationAllowed && eventType === "car_view" && carId) {
       const interest = await upsertUserCarInterestOnCarView({
         identity: {
           userId: identity.userId,
@@ -106,24 +118,24 @@ export async function POST(request: Request) {
       }
     }
 
-    if (FINANCIAL_PROFILE_SIGNAL_EVENTS.includes(eventType as UserEventType)) {
+    if (personalizationAllowed && FINANCIAL_PROFILE_SIGNAL_EVENTS.includes(eventType as UserEventType)) {
       await refreshFinancialProfileForIdentity({
         userId: identity.userId,
         sessionId: identity.sessionId,
       });
     }
 
-    // Recompute lead score after each event to keep lead_scores current.
-    await refreshLeadScoreForIdentity({
-      userId: identity.userId,
-      sessionId: identity.sessionId,
-    });
+    if (personalizationAllowed) {
+      await refreshLeadScoreForIdentity({
+        userId: identity.userId,
+        sessionId: identity.sessionId,
+      });
 
-    // Rebuild the unified intent profile from all now-current upstream tables.
-    await refreshIntentProfileForIdentity({
-      userId: identity.userId,
-      sessionId: identity.sessionId,
-    });
+      await refreshIntentProfileForIdentity({
+        userId: identity.userId,
+        sessionId: identity.sessionId,
+      });
+    }
 
     return NextResponse.json({ success: true }, { status: 201 });
   } catch (error) {

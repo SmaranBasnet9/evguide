@@ -13,6 +13,8 @@ import PremiumFooter from "@/components/home/PremiumFooter";
 import { getTopSellingEVs } from "@/lib/evs";
 import { getFeaturedBlogPosts } from "@/lib/blog";
 
+export const revalidate = 1800;
+
 export default async function HomePage() {
   const [featuredPosts, evModels] = await Promise.all([
     getFeaturedBlogPosts(3),

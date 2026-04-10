@@ -1,5 +1,6 @@
 ﻿import Link from "next/link";
 import { Zap, Mail, MessageCircle, Globe } from "lucide-react";
+import CookieSettingsButton from "@/components/legal/CookieSettingsButton";
 
 export default function PremiumFooter() {
   return (
@@ -55,6 +56,7 @@ export default function PremiumFooter() {
               <li><Link href="/support" className="text-zinc-400 transition-colors hover:text-emerald-400">Contact</Link></li>
               <li><Link href="/privacy" className="text-zinc-400 transition-colors hover:text-emerald-400">Privacy Policy</Link></li>
               <li><Link href="/cookies" className="text-zinc-400 transition-colors hover:text-emerald-400">Cookie Policy</Link></li>
+              <li><CookieSettingsButton className="text-zinc-400 transition-colors hover:text-emerald-400" /></li>
               <li><Link href="/terms" className="text-zinc-400 transition-colors hover:text-emerald-400">Terms of Service</Link></li>
             </ul>
           </div>

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import BookTestDriveWidget from "@/components/BookTestDriveWidget";
 import CookieBanner from "@/components/legal/CookieBanner";
+import { CookieConsentProvider } from "@/components/legal/CookieConsentProvider";
 import TrackEngagement from "@/components/tracking/TrackEngagement";
 import TrackPageView from "@/components/tracking/TrackPageView";
 import TrackRepeatVisit from "@/components/tracking/TrackRepeatVisit";
@@ -19,12 +20,14 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full antialiased">
       <body suppressHydrationWarning className="min-h-full flex flex-col">
-        <TrackPageView />
-        <TrackEngagement />
-        <TrackRepeatVisit />
-        {children}
-        <BookTestDriveWidget />
-        <CookieBanner />
+        <CookieConsentProvider>
+          <TrackPageView />
+          <TrackEngagement />
+          <TrackRepeatVisit />
+          {children}
+          <BookTestDriveWidget />
+          <CookieBanner />
+        </CookieConsentProvider>
       </body>
     </html>
   );

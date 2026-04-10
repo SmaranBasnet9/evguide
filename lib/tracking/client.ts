@@ -1,10 +1,8 @@
 "use client";
 
 import type { TrackEventInput } from "@/types";
-import { hasAnalyticsConsent } from "@/lib/privacy/consent";
+import { FIRST_VISIT_STORAGE_KEY, hasAnalyticsConsent } from "@/lib/privacy/consent";
 import { getTrackingIdentity } from "@/lib/tracking/identity";
-
-const FIRST_VISIT_KEY = "evguide_first_visit_at";
 
 function resolvePagePath(path?: string): string {
   if (path && path.trim().length > 0) return path;
@@ -44,9 +42,9 @@ export async function trackRepeatVisit(): Promise<void> {
     if (typeof window === "undefined") return;
     if (!hasAnalyticsConsent()) return;
 
-    const seen = window.localStorage.getItem(FIRST_VISIT_KEY);
+    const seen = window.localStorage.getItem(FIRST_VISIT_STORAGE_KEY);
     if (!seen) {
-      window.localStorage.setItem(FIRST_VISIT_KEY, new Date().toISOString());
+      window.localStorage.setItem(FIRST_VISIT_STORAGE_KEY, new Date().toISOString());
       return;
     }
 

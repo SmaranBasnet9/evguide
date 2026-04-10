@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import CookieSettingsButton from "@/components/legal/CookieSettingsButton";
 import LegalPageShell from "@/components/legal/LegalPageShell";
 import { companyProfile } from "@/lib/legal/company";
 
@@ -22,13 +23,13 @@ export default function CookiesPage() {
     <LegalPageShell
       eyebrow="Legal"
       title="Cookie Policy"
-      intro="This page explains how EVGuide uses cookies and similar technologies, including local storage, and how you can control non-essential analytics tracking."
+      intro="This page explains how EVGuide uses cookies, local storage, and similar technologies, and how you can control analytics and personalization choices."
     >
       <section>
         <h2 className="text-2xl font-semibold text-white">How we use cookies</h2>
         <div className="mt-4 space-y-4 text-sm leading-7 text-zinc-300">
-          <p>We use essential technologies where needed to run login sessions, security, and core product behaviour.</p>
-          <p>We only use non-essential analytics cookies and similar identifiers if you choose “Accept analytics” in our consent banner.</p>
+          <p>We use essential technologies where needed to run login sessions, security, fraud protection, and core product behaviour.</p>
+          <p>We only use non-essential analytics and personalization storage when you have actively chosen to allow those categories through our consent controls.</p>
         </div>
       </section>
 
@@ -41,22 +42,31 @@ export default function CookiesPage() {
             essential="Essential"
           />
           <Row
-            name="Analytics consent preference"
-            purpose="Stores whether you accepted or rejected analytics cookies so your preference can be respected."
+            name="Consent preference cookie"
+            purpose="Stores your cookie choices so EVGuide can remember whether analytics and personalization are allowed."
             essential="Essential"
           />
           <Row
-            name="Anonymous analytics session identifier"
-            purpose="Used to measure visits, engagement, and journey analytics only if analytics consent has been granted."
+            name="Analytics storage"
+            purpose="Used to measure visits, engagement, and conversion journeys only where analytics consent has been granted."
+            essential="Non-essential"
+          />
+          <Row
+            name="Personalization and AI storage"
+            purpose="Used to remember AI Match preferences, recommendation memory, and profiling-related product features only where personalization consent has been granted."
             essential="Non-essential"
           />
         </div>
       </section>
 
-      <section>
+      <section id="manage-cookie-settings">
         <h2 className="text-2xl font-semibold text-white">How to change your choice</h2>
         <div className="mt-4 space-y-4 text-sm leading-7 text-zinc-300">
-          <p>You can reject analytics when the consent banner appears. If analytics has already been accepted, you should provide an easy settings control before full public launch.</p>
+          <p>You can accept all, reject non-essential technologies, or choose categories individually from the consent banner.</p>
+          <p>After making a choice, you can reopen the settings panel at any time from the site footer.</p>
+          <div>
+            <CookieSettingsButton className="inline-flex rounded-full border border-emerald-400/20 bg-emerald-400/10 px-4 py-2 text-sm font-semibold text-emerald-200 transition hover:bg-emerald-400/15" />
+          </div>
           <p>You can also clear cookies and local storage through your browser settings.</p>
         </div>
       </section>

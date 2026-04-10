@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { hasPersonalizationConsent, readConsentFromCookieStore } from "@/lib/privacy/consent";
 import { createClient } from "@/lib/supabase/server";
 import { TRACKING_SESSION_ID_KEY } from "@/lib/tracking/identity";
 import type {
@@ -152,12 +153,18 @@ function scoreVehicle(vehicle: EVModel, context: VehicleListingContext): number 
 }
 
 export async function getVehicleListingContext(vehicles: EVModel[]): Promise<VehicleListingContext> {
+  const cookieStore = await cookies();
+  const consent = readConsentFromCookieStore(cookieStore);
+
+  if (!hasPersonalizationConsent(consent)) {
+    return inferListingContext([], vehicles);
+  }
+
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const cookieStore = await cookies();
   const rawSessionId = cookieStore.get(TRACKING_SESSION_ID_KEY)?.value ?? null;
   const sessionId = rawSessionId ? decodeURIComponent(rawSessionId).trim() || null : null;
 

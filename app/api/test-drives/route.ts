@@ -5,6 +5,7 @@ import { refreshLeadScoreForIdentity } from "@/lib/scoring/lead-intent";
 import { createClient } from "@/lib/supabase/server";
 import { notifySecurityEvent } from "@/lib/security/alerts";
 import { applyRateLimit } from "@/lib/security/rate-limit";
+import { hasAnalyticsConsent, hasPersonalizationConsent, readConsentFromCookieHeader } from "@/lib/privacy/consent";
 
 type IntentProfileGate = {
   id: string;
@@ -14,6 +15,10 @@ const UUID_REGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 export async function POST(request: Request) {
+  const consent = readConsentFromCookieHeader(request.headers.get("cookie"));
+  const personalizationAllowed = hasPersonalizationConsent(consent);
+  const analyticsAllowed = hasAnalyticsConsent(consent);
+
   const rateLimit = applyRateLimit(request, "test-drives", 8, 10 * 60 * 1000);
   if (!rateLimit.allowed) {
     await notifySecurityEvent({
@@ -93,7 +98,7 @@ export async function POST(request: Request) {
       user_id: user.id,
       full_name: fullName,
       email,
-      phone: "Not provided",
+      phone: null,
       ev_model_id: evModelId,
       ev_model_label: normalizedVehicleLabel,
       preferred_date: preferredDate,
@@ -111,24 +116,29 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
 
-  const { error: trackingError } = await admin.from("user_events").insert({
-    user_id: user.id,
-    session_id: null,
-    car_id: evModelId,
-    event_type: "test_drive_clicked",
-    event_value: {
-      booking_id: data.id,
-      desired_vehicle: normalizedVehicleLabel,
-      preferred_location: preferredLocation,
-      preferred_date: preferredDate,
-      preferred_time_slot: preferredTimeSlot,
-    },
-    page_path: "/appointment",
-  });
+  let trackingError: { message: string } | null = null;
+
+  if (analyticsAllowed) {
+    const result = await admin.from("user_events").insert({
+      user_id: user.id,
+      session_id: null,
+      car_id: evModelId,
+      event_type: "test_drive_clicked",
+      event_value: {
+        booking_id: data.id,
+        desired_vehicle: normalizedVehicleLabel,
+        preferred_location: preferredLocation,
+        preferred_date: preferredDate,
+        preferred_time_slot: preferredTimeSlot,
+      },
+      page_path: "/appointment",
+    });
+    trackingError = result.error;
+  }
 
   if (trackingError) {
     console.error("[test-drives] failed to insert tracking event:", trackingError.message);
-  } else {
+  } else if (personalizationAllowed) {
     await refreshLeadScoreForIdentity({ userId: user.id, sessionId: null });
     await refreshIntentProfileForIdentity({ userId: user.id, sessionId: null });
   }

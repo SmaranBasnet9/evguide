@@ -1,6 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { NextResponse } from "next/server";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
+import { readEnv } from "@/lib/env";
 import { requireAdmin } from "@/lib/security/admin";
 
 export const runtime = "nodejs";
@@ -60,11 +61,11 @@ export async function GET() {
     return auth.response;
   }
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-  const supabaseAnon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
-  const serviceRole = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
-  const anthropicApiKey = process.env.ANTHROPIC_API_KEY || "";
-  const claudeModel = process.env.CLAUDE_MODEL || "claude-3-5-sonnet-latest";
+  const supabaseUrl = readEnv("NEXT_PUBLIC_SUPABASE_URL") || "";
+  const supabaseAnon = readEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY") || "";
+  const serviceRole = readEnv("SUPABASE_SERVICE_ROLE_KEY") || "";
+  const anthropicApiKey = readEnv("ANTHROPIC_API_KEY") || "";
+  const claudeModel = readEnv("CLAUDE_MODEL") || "claude-3-5-sonnet-latest";
 
   const details: HealthDetails = {
     env: {

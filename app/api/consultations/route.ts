@@ -6,11 +6,16 @@ import { refreshLeadScoreForIdentity } from "@/lib/scoring/lead-intent";
 import { Resend } from "resend";
 import { notifySecurityEvent } from "@/lib/security/alerts";
 import { applyRateLimit } from "@/lib/security/rate-limit";
+import { hasAnalyticsConsent, hasPersonalizationConsent, readConsentFromCookieHeader } from "@/lib/privacy/consent";
 
 const UUID_REGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 export async function POST(request: Request) {
+  const consent = readConsentFromCookieHeader(request.headers.get("cookie"));
+  const personalizationAllowed = hasPersonalizationConsent(consent);
+  const analyticsAllowed = hasAnalyticsConsent(consent);
+
   const rateLimit = applyRateLimit(request, "consultations", 8, 10 * 60 * 1000);
   if (!rateLimit.allowed) {
     await notifySecurityEvent({
@@ -93,28 +98,30 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
 
-  const consultationTrackingEvent =
-    sector === "bank" ? "finance_apply_clicked" : "consultation_submitted";
+  if (analyticsAllowed) {
+    const consultationTrackingEvent =
+      sector === "bank" ? "finance_apply_clicked" : "consultation_submitted";
 
-  const { error: trackingError } = await admin.from("user_events").insert({
-    user_id: user.id,
-    session_id: null,
-    car_id: sector === "vehicle" && ev_model_id ? ev_model_id : null,
-    event_type: consultationTrackingEvent,
-    event_value: {
-      consultation_id: data.id,
-      sector,
-      bank_name: sector === "bank" ? bank_name?.trim() ?? null : null,
-      ev_model_label: sector === "vehicle" ? ev_model_label?.trim() ?? null : null,
-    },
-    page_path: sector === "bank" ? "/finance" : "/appointment",
-  });
+    const { error: trackingError } = await admin.from("user_events").insert({
+      user_id: user.id,
+      session_id: null,
+      car_id: sector === "vehicle" && ev_model_id ? ev_model_id : null,
+      event_type: consultationTrackingEvent,
+      event_value: {
+        consultation_id: data.id,
+        sector,
+        bank_name: sector === "bank" ? bank_name?.trim() ?? null : null,
+        ev_model_label: sector === "vehicle" ? ev_model_label?.trim() ?? null : null,
+      },
+      page_path: sector === "bank" ? "/finance" : "/appointment",
+    });
 
-  if (trackingError) {
-    console.error("[consultations] tracking insert failed:", trackingError.message);
-  } else {
-    await refreshLeadScoreForIdentity({ userId: user.id, sessionId: null });
-    await refreshIntentProfileForIdentity({ userId: user.id, sessionId: null });
+    if (trackingError) {
+      console.error("[consultations] tracking insert failed:", trackingError.message);
+    } else if (personalizationAllowed) {
+      await refreshLeadScoreForIdentity({ userId: user.id, sessionId: null });
+      await refreshIntentProfileForIdentity({ userId: user.id, sessionId: null });
+    }
   }
 
   // Send confirmation email (fire-and-forget — don't fail the request if email fails)

@@ -1,4 +1,5 @@
 import type { TrackingIdentity as BaseTrackingIdentity } from "@/lib/tracking/identity-shared";
+import { canUseNonEssentialStorage } from "@/lib/privacy/consent";
 
 export type TrackingIdentity = BaseTrackingIdentity & {
   isAnonymous: boolean;
@@ -47,8 +48,8 @@ function readSessionIdFromCookie(): string | null {
 function writeSessionIdCookie(sessionId: string): void {
   if (typeof document === "undefined") return;
 
-  // 400 days keeps the same browser identity stable for returning visitors.
-  const maxAgeSeconds = 400 * 24 * 60 * 60;
+  // 30 days — short-lived session identity for returning visitor continuity.
+  const maxAgeSeconds = 30 * 24 * 60 * 60;
   const secure = typeof window !== "undefined" && window.location.protocol === "https:";
 
   document.cookie = [
@@ -68,7 +69,16 @@ export function getOrCreateAnonymousSessionId(): string {
     return createSessionId();
   }
 
-  const fromStorage = parseSessionId(window.localStorage.getItem(SESSION_STORAGE_KEY));
+  if (!canUseNonEssentialStorage()) {
+    return "";
+  }
+
+  let fromStorage: string | null = null;
+  try {
+    fromStorage = parseSessionId(window.localStorage.getItem(SESSION_STORAGE_KEY));
+  } catch {
+    fromStorage = null;
+  }
   if (fromStorage) {
     writeSessionIdCookie(fromStorage);
     return fromStorage;
@@ -76,12 +86,20 @@ export function getOrCreateAnonymousSessionId(): string {
 
   const fromCookie = readSessionIdFromCookie();
   if (fromCookie) {
-    window.localStorage.setItem(SESSION_STORAGE_KEY, fromCookie);
+    try {
+      window.localStorage.setItem(SESSION_STORAGE_KEY, fromCookie);
+    } catch {
+      // Fall back to cookie-only storage in restricted environments.
+    }
     return fromCookie;
   }
 
   const next = createSessionId();
-  window.localStorage.setItem(SESSION_STORAGE_KEY, next);
+  try {
+    window.localStorage.setItem(SESSION_STORAGE_KEY, next);
+  } catch {
+    // Fall back to cookie-only storage in restricted environments.
+  }
   writeSessionIdCookie(next);
   return next;
 }
@@ -114,6 +132,10 @@ export function getTrackingIdentity(input?: GetTrackingIdentityInput): TrackingI
   }
 
   if (typeof window !== "undefined") {
+    if (!canUseNonEssentialStorage()) {
+      return null;
+    }
+
     return {
       userId: null,
       sessionId: getOrCreateAnonymousSessionId(),

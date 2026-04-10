@@ -44,6 +44,13 @@ function isMissingColumnError(message: string | undefined) {
   return typeof message === "string" && message.includes("column blog_posts.");
 }
 
+function isTransientFetchError(message: string | undefined) {
+  if (typeof message !== "string") return false;
+
+  const normalized = message.toLowerCase();
+  return normalized.includes("fetch failed") || normalized.includes("network") || normalized.includes("failed to fetch");
+}
+
 function mapBlogRow(item: RawBlogRow): FeaturedBlogPost {
   return {
     id: item.id,
@@ -149,35 +156,51 @@ async function getFeaturedBlogRows(limit: number) {
     return { data: [], usedLegacySelect: false };
   }
 
-  const fullQuery = await supabase
-    .from("blog_posts")
-    .select(BLOG_SELECT_FULL)
-    .eq("published", true)
-    .order("published_at", { ascending: false })
-    .limit(limit);
+  try {
+    const fullQuery = await supabase
+      .from("blog_posts")
+      .select(BLOG_SELECT_FULL)
+      .eq("published", true)
+      .order("published_at", { ascending: false })
+      .limit(limit);
 
-  if (!fullQuery.error) {
-    return { data: (fullQuery.data as RawBlogRow[]) ?? [], usedLegacySelect: false };
-  }
+    if (!fullQuery.error) {
+      return { data: (fullQuery.data as RawBlogRow[]) ?? [], usedLegacySelect: false };
+    }
 
-  if (!isMissingColumnError(fullQuery.error.message)) {
-    console.error("Error fetching featured blog posts:", fullQuery.error.message);
+    if (isTransientFetchError(fullQuery.error.message)) {
+      return { data: [], usedLegacySelect: false };
+    }
+
+    if (!isMissingColumnError(fullQuery.error.message)) {
+      console.error("Error fetching featured blog posts:", fullQuery.error.message);
+      return { data: [], usedLegacySelect: false };
+    }
+
+    const legacyQuery = await supabase
+      .from("blog_posts")
+      .select(BLOG_SELECT_LEGACY)
+      .eq("published", true)
+      .order("published_at", { ascending: false })
+      .limit(limit);
+
+    if (legacyQuery.error) {
+      if (!isTransientFetchError(legacyQuery.error.message)) {
+        console.error("Error fetching featured blog posts:", legacyQuery.error.message);
+      }
+
+      return { data: [], usedLegacySelect: true };
+    }
+
+    return { data: (legacyQuery.data as RawBlogRow[]) ?? [], usedLegacySelect: true };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "";
+    if (!isTransientFetchError(message)) {
+      console.error("Error fetching featured blog posts:", message || "Unknown blog fetch error");
+    }
+
     return { data: [], usedLegacySelect: false };
   }
-
-  const legacyQuery = await supabase
-    .from("blog_posts")
-    .select(BLOG_SELECT_LEGACY)
-    .eq("published", true)
-    .order("published_at", { ascending: false })
-    .limit(limit);
-
-  if (legacyQuery.error) {
-    console.error("Error fetching featured blog posts:", legacyQuery.error.message);
-    return { data: [], usedLegacySelect: true };
-  }
-
-  return { data: (legacyQuery.data as RawBlogRow[]) ?? [], usedLegacySelect: true };
 }
 
 export async function getFeaturedBlogPosts(limit = 4): Promise<FeaturedBlogPost[]> {
