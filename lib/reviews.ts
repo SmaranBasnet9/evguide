@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createPublicServerClient } from "@/lib/supabase/public-server";
 import type { EVReview } from "@/data/evReviews";
 
 // ─── Public types ─────────────────────────────────────────────────────────────
@@ -130,44 +130,29 @@ export async function getApprovedReviewsForCar(
   model: string,
   limit = 6
 ): Promise<Review[]> {
-  const supabase = await createClient();
+  const supabase = createPublicServerClient();
+  if (!supabase) return [];
 
-  // Primary lookup: exact car_id slug
-  const { data: byId, error: errById } = await supabase
+  // Single query: match by exact car_id OR brand+model text match
+  const { data, error } = await supabase
     .from("reviews")
     .select(REVIEW_COLUMNS)
     .eq("is_approved", true)
-    .eq("car_id", carId)
+    .or(`car_id.eq.${carId},and(brand.ilike.*${brand}*,model.ilike.*${model}*)`)
     .order("created_at", { ascending: false })
     .limit(limit);
 
-  if (errById) {
-    console.error("[reviews] Error fetching by car_id:", errById.message);
+  if (error) {
+    console.error("[reviews] Error fetching reviews:", error.message);
+    return [];
   }
 
-  if (byId && byId.length > 0) {
-    return (byId as RawReviewRow[]).map(mapRow);
-  }
-
-  // Fallback lookup: brand + model text match
-  const { data: byModel, error: errByModel } = await supabase
-    .from("reviews")
-    .select(REVIEW_COLUMNS)
-    .eq("is_approved", true)
-    .ilike("brand", `%${brand}%`)
-    .ilike("model", `%${model}%`)
-    .order("created_at", { ascending: false })
-    .limit(limit);
-
-  if (errByModel) {
-    console.error("[reviews] Error fetching by brand/model:", errByModel.message);
-  }
-
-  return (byModel as RawReviewRow[] | null)?.map(mapRow) ?? [];
+  return (data as RawReviewRow[] | null)?.map(mapRow) ?? [];
 }
 
 export async function getLatestApprovedReviews(limit = 6): Promise<Review[]> {
-  const supabase = await createClient();
+  const supabase = createPublicServerClient();
+  if (!supabase) return [];
 
   const { data, error } = await supabase
     .from("reviews")

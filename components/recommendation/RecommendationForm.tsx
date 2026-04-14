@@ -189,7 +189,7 @@ export default function RecommendationForm() {
                     onClick={handleContinue}
                     className="mt-8 inline-flex items-center gap-2 rounded-full bg-emerald-500 px-6 py-3 text-sm font-semibold text-black transition hover:bg-emerald-400"
                   >
-                    Start AI Match
+                    Start Match
                     <ChevronRight className="h-4 w-4" />
                   </button>
                 </div>

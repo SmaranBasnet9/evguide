@@ -10,7 +10,7 @@ const actions = [
     primary: true,
   },
   {
-    title: "Start AI Match",
+    title: "Start Match",
     description: "Let the platform suggest the EV and structure that fits your budget best.",
     href: "/assistant",
     icon: Bot,

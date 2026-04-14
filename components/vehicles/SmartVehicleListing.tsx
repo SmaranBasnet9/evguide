@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
 import { trackEvent } from "@/lib/tracking/client";
+import ExchangeButton from "@/components/exchange/ExchangeButton";
 import type {
   PersonalizedVehicleCard,
   VehicleListingFilters,
@@ -73,7 +74,7 @@ function VehicleCard({ vehicle }: { vehicle: PersonalizedVehicleCard }) {
   }
 
   return (
-    <article className="group overflow-hidden rounded-[28px] border border-slate-200/80 bg-white shadow-sm transition duration-300 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-slate-200">
+    <article className="group overflow-hidden rounded-[28px] border border-[#E5E7EB] bg-white shadow-sm transition duration-300 hover:-translate-y-1.5 hover:border-[#1FBF9F]/40 hover:shadow-lg">
       <Link href={`/cars/${vehicle.id}`} onClick={handleVehicleView} className="block">
         <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200">
           <Image
@@ -97,7 +98,7 @@ function VehicleCard({ vehicle }: { vehicle: PersonalizedVehicleCard }) {
 
       <div className="space-y-4 p-5">
         <div className="space-y-1">
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-blue-600">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#1FBF9F]">
             {vehicle.brand}
           </p>
           <div className="flex items-start justify-between gap-3">
@@ -106,23 +107,23 @@ function VehicleCard({ vehicle }: { vehicle: PersonalizedVehicleCard }) {
               GBP {vehicle.price.toLocaleString()}
             </p>
           </div>
-          <p className="inline-flex rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
+          <p className="inline-flex rounded-full bg-[#E8F8F5] px-3 py-1 text-xs font-semibold text-[#1FBF9F]">
             {vehicle.whyRecommended}
           </p>
         </div>
 
-        <div className="grid grid-cols-3 gap-2 text-xs text-slate-600">
-          <div className="rounded-2xl bg-slate-50 px-3 py-2">
-            <p className="text-[11px] uppercase tracking-wide text-slate-400">Range</p>
-            <p className="mt-1 font-semibold text-slate-900">{vehicle.rangeKm} km</p>
+        <div className="grid grid-cols-3 gap-2 text-xs text-[#6B7280]">
+          <div className="rounded-2xl bg-[#F8FAF9] px-3 py-2">
+            <p className="text-[11px] uppercase tracking-wide text-[#6B7280]">Range</p>
+            <p className="mt-1 font-semibold text-[#1A1A1A]">{vehicle.rangeKm} km</p>
           </div>
-          <div className="rounded-2xl bg-slate-50 px-3 py-2">
-            <p className="text-[11px] uppercase tracking-wide text-slate-400">EMI est.</p>
-            <p className="mt-1 font-semibold text-slate-900">GBP {vehicle.estimatedEmi}/mo</p>
+          <div className="rounded-2xl bg-[#F8FAF9] px-3 py-2">
+            <p className="text-[11px] uppercase tracking-wide text-[#6B7280]">EMI est.</p>
+            <p className="mt-1 font-semibold text-[#1A1A1A]">GBP {vehicle.estimatedEmi}/mo</p>
           </div>
-          <div className="rounded-2xl bg-slate-50 px-3 py-2">
-            <p className="text-[11px] uppercase tracking-wide text-slate-400">Battery</p>
-            <p className="mt-1 font-semibold text-slate-900">{vehicle.batteryKWh} kWh</p>
+          <div className="rounded-2xl bg-[#F8FAF9] px-3 py-2">
+            <p className="text-[11px] uppercase tracking-wide text-[#6B7280]">Battery</p>
+            <p className="mt-1 font-semibold text-[#1A1A1A]">{vehicle.batteryKWh} kWh</p>
           </div>
         </div>
 
@@ -130,14 +131,14 @@ function VehicleCard({ vehicle }: { vehicle: PersonalizedVehicleCard }) {
           <Link
             href={`/cars/${vehicle.id}`}
             onClick={handleVehicleView}
-            className="flex-1 rounded-2xl border border-slate-300 bg-white px-4 py-2.5 text-center text-sm font-semibold text-slate-800 transition hover:bg-slate-50"
+            className="flex-1 rounded-2xl border border-[#E5E7EB] bg-white px-4 py-2.5 text-center text-sm font-semibold text-[#1A1A1A] transition hover:bg-[#F8FAF9]"
           >
             View details
           </Link>
           <Link
             href={`/compare?carA=${vehicle.id}`}
             onClick={handleCompareClick}
-            className="flex-1 rounded-2xl border border-slate-300 bg-white px-4 py-2.5 text-center text-sm font-semibold text-slate-800 transition hover:bg-slate-50"
+            className="flex-1 rounded-2xl border border-[#E5E7EB] bg-white px-4 py-2.5 text-center text-sm font-semibold text-[#1A1A1A] transition hover:bg-[#F8FAF9]"
           >
             Compare
           </Link>
@@ -146,10 +147,22 @@ function VehicleCard({ vehicle }: { vehicle: PersonalizedVehicleCard }) {
         <Link
           href={`/finance?car=${vehicle.id}`}
           onClick={handleEmiClick}
-          className="block rounded-2xl bg-blue-600 px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-blue-700"
+          className="block rounded-2xl bg-[#1FBF9F] px-4 py-3 text-center text-sm font-semibold text-white shadow-md transition hover:bg-[#17A589]"
         >
           Check EMI
         </Link>
+
+        <ExchangeButton
+          vehicle={{
+            id:        vehicle.id,
+            brand:     vehicle.brand,
+            model:     vehicle.model,
+            price:     vehicle.price,
+            heroImage: vehicle.heroImage,
+          }}
+          variant="compact"
+          className="w-full justify-center rounded-2xl"
+        />
       </div>
     </article>
   );
@@ -170,8 +183,8 @@ function ListingSection({
     <section className="space-y-5">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900">{title}</h2>
-          <p className="mt-1 text-sm text-slate-500">{description}</p>
+          <h2 className="text-2xl font-bold text-[#1A1A1A]">{title}</h2>
+          <p className="mt-1 text-sm text-[#6B7280]">{description}</p>
         </div>
         <p className="text-sm font-medium text-slate-400">{vehicles.length} models</p>
       </div>
@@ -246,27 +259,27 @@ export default function SmartVehicleListing({
 
   return (
     <div className="space-y-12">
-      <div className="overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-sm">
-        <div className="grid gap-4 border-b border-slate-100 bg-gradient-to-r from-white via-slate-50 to-blue-50/50 px-6 py-6 lg:grid-cols-[1.2fr_repeat(4,minmax(0,1fr))]">
+      <div className="overflow-hidden rounded-[32px] border border-[#E5E7EB] bg-white shadow-sm">
+        <div className="grid gap-4 border-b border-[#E5E7EB] bg-gradient-to-r from-white via-[#F8FAF9] to-[#E8F8F5] px-6 py-6 lg:grid-cols-[1.2fr_repeat(4,minmax(0,1fr))]">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#1FBF9F]">
               Smart Listing Mode
             </p>
-            <h2 className="mt-2 text-2xl font-bold text-slate-900">
+            <h2 className="mt-2 text-2xl font-bold text-[#1A1A1A]">
               Personalized around your browsing
             </h2>
-            <p className="mt-1 text-sm text-slate-500">
-              Segment: <span className="font-semibold text-slate-700">{initialSegment}</span>
+            <p className="mt-1 text-sm text-[#6B7280]">
+              Segment: <span className="font-semibold text-[#1A1A1A]">{initialSegment}</span>
               {" | "}
               Preferred tier:{" "}
-              <span className="font-semibold text-slate-700">{initialPreferredTier}</span>
+              <span className="font-semibold text-[#1A1A1A]">{initialPreferredTier}</span>
             </p>
           </div>
 
-          <label className="text-sm text-slate-600">
+          <label className="text-sm text-[#6B7280]">
             Budget
             <select
-              className="mt-1 w-full rounded-2xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700"
+              className="mt-1 w-full rounded-2xl border border-[#E5E7EB] bg-white px-3 py-2.5 text-sm text-[#1A1A1A]"
               value={filters.budgetMax ?? ""}
               onChange={(event) =>
                 setFilters((prev) => ({
@@ -283,10 +296,10 @@ export default function SmartVehicleListing({
             </select>
           </label>
 
-          <label className="text-sm text-slate-600">
+          <label className="text-sm text-[#6B7280]">
             Range
             <select
-              className="mt-1 w-full rounded-2xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700"
+              className="mt-1 w-full rounded-2xl border border-[#E5E7EB] bg-white px-3 py-2.5 text-sm text-[#1A1A1A]"
               value={filters.rangeMin ?? ""}
               onChange={(event) =>
                 setFilters((prev) => ({
@@ -302,10 +315,10 @@ export default function SmartVehicleListing({
             </select>
           </label>
 
-          <label className="text-sm text-slate-600">
+          <label className="text-sm text-[#6B7280]">
             Brand
             <select
-              className="mt-1 w-full rounded-2xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700"
+              className="mt-1 w-full rounded-2xl border border-[#E5E7EB] bg-white px-3 py-2.5 text-sm text-[#1A1A1A]"
               value={filters.brand ?? ""}
               onChange={(event) =>
                 setFilters((prev) => ({
@@ -323,10 +336,10 @@ export default function SmartVehicleListing({
             </select>
           </label>
 
-          <label className="text-sm text-slate-600">
+          <label className="text-sm text-[#6B7280]">
             EMI
             <select
-              className="mt-1 w-full rounded-2xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700"
+              className="mt-1 w-full rounded-2xl border border-[#E5E7EB] bg-white px-3 py-2.5 text-sm text-[#1A1A1A]"
               value={filters.emiMax ?? ""}
               onChange={(event) =>
                 setFilters((prev) => ({

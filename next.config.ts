@@ -1,6 +1,6 @@
 const isVercelBuild = process.env.VERCEL === "1";
 const isDevelopment = process.env.NODE_ENV !== "production";
-const localBuildDistDir = !isVercelBuild && !isDevelopment ? ".next-build" : undefined;
+const localBuildDistDir = !isVercelBuild && !isDevelopment ? ".next-local" : undefined;
 const contentSecurityPolicy = [
   "default-src 'self'",
   "base-uri 'self'",
@@ -57,6 +57,10 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "images.unsplash.com",
+      },
+      {
+        protocol: "https",
+        hostname: "upload.wikimedia.org",
       },
       {
         protocol: "https",

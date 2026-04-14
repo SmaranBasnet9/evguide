@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "ES2017",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -19,7 +23,9 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": [
+        "./*"
+      ]
     }
   },
   "include": [
@@ -37,7 +43,11 @@
     ".next-local-build/types/**/*.ts",
     ".next-local-build/dev/types/**/*.ts",
     "**/*.mts",
-    "app/page.js"
+    "app/page.js",
+    ".next-local/types/**/*.ts",
+    ".next-local/dev/types/**/*.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules"
+  ]
 }

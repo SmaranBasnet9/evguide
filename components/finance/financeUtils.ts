@@ -24,6 +24,12 @@ export interface FinanceScenario {
   totalInterest: number;
 }
 
+export interface FinanceEnquirySummary extends FinanceMetrics {
+  processingFeeAmount: number;
+  totalInsuranceCost: number;
+  totalPayableAmount: number;
+}
+
 export function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
 }
@@ -34,6 +40,12 @@ export function formatCurrency(value: number) {
     currency: "GBP",
     maximumFractionDigits: 0,
   }).format(value);
+}
+
+export function parsePercentageValue(value: string) {
+  const sanitized = value.replace(/[^\d.]/g, "");
+  const parsed = Number.parseFloat(sanitized);
+  return Number.isFinite(parsed) ? parsed : 0;
 }
 
 export function calculateFinanceMetrics({
@@ -99,6 +111,42 @@ export function estimateRunningCost(model: EVModel | null, carPrice: number): Ru
     insurance,
     maintenance,
     totalMonthly: charging + insurance + maintenance,
+  };
+}
+
+export function calculateFinanceEnquirySummary({
+  carPrice,
+  deposit,
+  apr,
+  termYears,
+  insuranceCost,
+  processingFeeAmount,
+  balloonPayment = 0,
+}: {
+  carPrice: number;
+  deposit: number;
+  apr: number;
+  termYears: number;
+  insuranceCost: number;
+  processingFeeAmount: number;
+  balloonPayment?: number;
+}): FinanceEnquirySummary {
+  const metrics = calculateFinanceMetrics({
+    carPrice,
+    deposit,
+    apr,
+    termYears,
+    balloonPayment,
+  });
+  const safeInsuranceCost = Math.max(insuranceCost, 0);
+  const safeProcessingFeeAmount = Math.max(processingFeeAmount, 0);
+  const totalInsuranceCost = safeInsuranceCost * Math.max(termYears * 12, 1);
+
+  return {
+    ...metrics,
+    processingFeeAmount: safeProcessingFeeAmount,
+    totalInsuranceCost,
+    totalPayableAmount: metrics.totalRepayable + safeProcessingFeeAmount + totalInsuranceCost,
   };
 }
 

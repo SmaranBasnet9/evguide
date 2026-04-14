@@ -23,18 +23,18 @@ function estimateMonthlyEmi(price: number): number {
  */
 function FallbackActions({ carId }: { carId: string }) {
   return (
-    <div className="mt-8 flex gap-4">
+    <div className="flex gap-3">
       <Link
         href={`/compare?carA=${carId}`}
-        className="flex-1 rounded-2xl bg-blue-600 px-6 py-3 text-center text-sm font-semibold text-white hover:bg-blue-700"
+        className="flex-1 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-white/10"
       >
-        Compare This EV
+        Compare
       </Link>
       <Link
         href={`/finance?car=${carId}`}
-        className="flex-1 rounded-2xl bg-emerald-600 px-6 py-3 text-center text-sm font-semibold text-white hover:bg-emerald-700"
+        className="flex-1 rounded-xl bg-emerald-500 px-4 py-2.5 text-center text-sm font-semibold text-black transition hover:bg-emerald-400"
       >
-        Finance This EV
+        Finance
       </Link>
     </div>
   );
@@ -42,22 +42,22 @@ function FallbackActions({ carId }: { carId: string }) {
 
 function CasualActions({ carId }: { carId: string }) {
   return (
-    <div className="mt-8 flex flex-col gap-3">
-      <div className="flex gap-4">
+    <div className="flex flex-col gap-3">
+      <div className="flex gap-3">
         <Link
           href={`/compare?carA=${carId}`}
-          className="flex-1 rounded-2xl bg-blue-600 px-6 py-3 text-center text-sm font-semibold text-white hover:bg-blue-700"
+          className="flex-1 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-white/10"
         >
-          Compare This EV
+          Compare
         </Link>
         <Link
           href={`/finance?car=${carId}`}
-          className="flex-1 rounded-2xl bg-emerald-600 px-6 py-3 text-center text-sm font-semibold text-white hover:bg-emerald-700"
+          className="flex-1 rounded-xl bg-emerald-500 px-4 py-2.5 text-center text-sm font-semibold text-black transition hover:bg-emerald-400"
         >
           Calculate EMI
         </Link>
       </div>
-      <p className="text-center text-xs text-slate-400">
+      <p className="text-center text-xs text-zinc-600">
         Tip: use Compare to see this EV side by side with others.
       </p>
     </div>
@@ -73,30 +73,30 @@ function ResearchActions({
 }) {
   const emi = estimateMonthlyEmi(carPrice);
   return (
-    <div className="mt-8 flex flex-col gap-3">
-      <div className="flex gap-4">
+    <div className="flex flex-col gap-3">
+      <div className="flex gap-3">
         <Link
           href={`/compare?carA=${carId}`}
-          className="flex-1 rounded-2xl bg-blue-600 px-6 py-3 text-center text-sm font-semibold text-white hover:bg-blue-700"
+          className="flex-1 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-white/10"
         >
-          Compare This EV
+          Compare
         </Link>
         <Link
           href={`/finance?car=${carId}`}
-          className="flex-1 rounded-2xl bg-emerald-600 px-6 py-3 text-center text-sm font-semibold text-white hover:bg-emerald-700"
+          className="flex-1 rounded-xl bg-emerald-500 px-4 py-2.5 text-center text-sm font-semibold text-black transition hover:bg-emerald-400"
         >
-          Finance This EV
+          Finance
         </Link>
       </div>
-      <div className="rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-center">
-        <p className="text-sm text-blue-700">
+      <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 px-4 py-3 text-center">
+        <p className="text-sm text-zinc-300">
           Estimated monthly payment{" "}
-          <span className="font-bold">~£{emi.toLocaleString()}/mo</span>
-          <span className="text-blue-500"> on 60-month finance</span>
+          <span className="font-bold text-emerald-400">~£{emi.toLocaleString()}/mo</span>
+          <span className="text-zinc-500"> on 60-month finance</span>
         </p>
         <Link
           href={`/finance?car=${carId}`}
-          className="mt-1.5 inline-block text-xs font-semibold text-blue-600 hover:underline"
+          className="mt-1 inline-block text-xs font-semibold text-emerald-400 hover:underline"
         >
           Customise your deal →
         </Link>
@@ -115,10 +115,10 @@ function BuyerActions({
   model: string;
 }) {
   return (
-    <div className="mt-8 flex flex-col gap-3">
+    <div className="flex flex-col gap-3">
       {/* Buyer intent nudge */}
-      <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-2.5 text-center">
-        <p className="text-xs font-semibold text-amber-700">
+      <div className="rounded-xl border border-amber-500/20 bg-amber-500/10 px-4 py-2.5 text-center">
+        <p className="text-xs font-semibold text-amber-300">
           You&apos;ve shown strong interest in the {brand} {model}.
         </p>
       </div>
@@ -126,7 +126,7 @@ function BuyerActions({
       {/* Primary: Test Drive */}
       <Link
         href={`/appointment?car=${carId}`}
-        className="rounded-2xl bg-blue-600 px-6 py-3.5 text-center text-sm font-bold text-white shadow-md shadow-blue-500/20 hover:bg-blue-700"
+        className="rounded-xl bg-emerald-500 px-6 py-3 text-center text-sm font-bold text-black shadow-[0_0_20px_rgba(16,185,129,0.2)] transition hover:bg-emerald-400"
       >
         Book a Test Drive →
       </Link>
@@ -135,13 +135,13 @@ function BuyerActions({
       <div className="flex gap-3">
         <Link
           href={`/finance?car=${carId}`}
-          className="flex-1 rounded-2xl bg-emerald-600 px-4 py-3 text-center text-sm font-semibold text-white hover:bg-emerald-700"
+          className="flex-1 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-white/10"
         >
           Apply for Finance
         </Link>
         <Link
           href={`/appointment?car=${carId}&intent=reserve`}
-          className="flex-1 rounded-2xl border border-slate-300 bg-white px-4 py-3 text-center text-sm font-semibold text-slate-700 hover:border-slate-400"
+          className="flex-1 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-white/10"
         >
           Reserve This EV
         </Link>

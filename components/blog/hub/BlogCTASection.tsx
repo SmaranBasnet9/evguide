@@ -32,13 +32,13 @@ export default function BlogCTASection({
       : "border-emerald-400/25 bg-emerald-400/12 text-emerald-100 hover:border-emerald-300/35 hover:bg-emerald-400/18 hover:shadow-[0_0_28px_rgba(16,185,129,0.18)]";
 
   return (
-    <section className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[#111111]/92 p-8 shadow-[0_24px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl sm:p-10">
+    <section className="relative overflow-hidden rounded-[2rem] border border-[#E5E7EB] bg-white/92 p-8 shadow-[0_24px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl sm:p-10">
       <div className={`absolute inset-0 bg-gradient-to-r ${accentClass}`} />
       <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
         <div className="max-w-2xl">
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-500">{eyebrow}</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#6B7280]">{eyebrow}</p>
           <h3 className="mt-4 text-3xl font-semibold tracking-tight text-white sm:text-4xl">{title}</h3>
-          <p className="mt-4 max-w-xl text-base leading-8 text-zinc-400">{text}</p>
+          <p className="mt-4 max-w-xl text-base leading-8 text-[#6B7280]">{text}</p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
@@ -52,7 +52,7 @@ export default function BlogCTASection({
           {secondaryLabel && secondaryHref ? (
             <Link
               href={secondaryHref}
-              className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-5 py-3 text-sm font-semibold text-zinc-200 transition duration-300 hover:border-white/18 hover:bg-white/[0.06] hover:text-white"
+              className="inline-flex items-center gap-2 rounded-full border border-[#E5E7EB] bg-[#F8FAF9] px-5 py-3 text-sm font-semibold text-[#1A1A1A] transition duration-300 hover:border-white/18 hover:bg-white/[0.06] hover:text-white"
             >
               {secondaryLabel}
             </Link>

@@ -1,0 +1,93 @@
+{
+  "research": {
+    "title": "EVGuide Competitor Intelligence",
+    "date": "2026-04-10",
+    "platforms_analysed": ["carwow.co.uk", "autotrader.co.uk"],
+    "agents_run": 5
+  },
+  "platform_scores": {
+    "carwow": {
+      "design": 8.5,
+      "user_flow": 7.5,
+      "cta_quality": 8.0,
+      "data_depth": 6.0,
+      "business_model_maturity": 7.0,
+      "ev_readiness": 2.0
+    },
+    "autotrader": {
+      "design": 6.5,
+      "user_flow": 7.0,
+      "cta_quality": 7.5,
+      "data_depth": 9.0,
+      "business_model_maturity": 9.5,
+      "ev_readiness": 1.5
+    }
+  },
+  "key_gaps_neither_competitor_addresses": [
+    "Range confidence engine (commute fit check)",
+    "Battery health as a listing data point",
+    "EV-native total cost of ownership calculator",
+    "Salary sacrifice marketplace integration",
+    "Battery-adjusted EV valuations",
+    "Charging compatibility filter and overlay",
+    "Government grant eligibility checker",
+    "EV-specific CTA language and flow design",
+    "Real-world range data (crowdsourced)"
+  ],
+  "copy_from_carwow": [
+    "Reverse auction multi-dealer lead model",
+    "Sticky single-intent primary CTA",
+    "Budget-first finance discovery flow",
+    "Lightweight lead form (name/email/postcode only)",
+    "Reg-number-first sell flow",
+    "High-quality photography standards"
+  ],
+  "copy_from_autotrader": [
+    "Price intelligence badges (Great/Good/Fair)",
+    "Saved search + price drop alert retention",
+    "Vehicle history product (EV battery version)",
+    "Dealer subscription tiers",
+    "Side-by-side comparison tool",
+    "Dealer analytics/data products"
+  ],
+  "avoid": [
+    "Orange/warm color palette — limits premium EV positioning",
+    "Filter overload on listing pages",
+    "Ad/sponsored placements disrupting browse",
+    "Off-platform post-lead experience",
+    "Generic ICE-focused CTA language",
+    "ICE-inherited data model (MPG, engine size as primary spec)",
+    "Long unstructured spec pages"
+  ],
+  "monetisation_roadmap": {
+    "mvp_0_12_months": {
+      "primary_revenue": "CPL dealer leads",
+      "secondary_revenue": "Finance referral",
+      "est_mrr_month_12": "£8,000–£23,000"
+    },
+    "growth_12_24_months": {
+      "primary_revenue": "Dealer subscriptions",
+      "secondary_revenue": ["Battery health reports", "Finance commission", "Salary sacrifice affiliate"],
+      "est_mrr_month_24": "£42,000–£105,000"
+    },
+    "scale_24_48_months": {
+      "primary_revenue": ["Dealer subscriptions", "Finance brokerage"],
+      "secondary_revenue": ["B2B data products", "Consumer products", "Insurance affiliate"],
+      "est_arr_month_48": "£3.7M–£7.3M"
+    }
+  },
+  "positioning": {
+    "tagline": "EVGuide as an EV intelligence platform",
+    "one_liner": "The authoritative place for UK buyers to find, evaluate and buy the right electric car for their life — with verified data, real costs, and competitive pricing.",
+    "competitive_advantage": "First EV-native data model and user experience in UK automotive. Battery health, range intelligence, and TCO clarity that ICE-optimised incumbents cannot quickly replicate.",
+    "window_years": "3–5 years before incumbents adequately respond"
+  },
+  "files": {
+    "executive_summary": "00-executive-summary.md",
+    "design_agent": "01-design-agent.md",
+    "user_flow_agent": "02-user-flow-agent.md",
+    "buttons_functions_agent": "03-buttons-functions-agent.md",
+    "database_agent": "04-database-agent.md",
+    "business_model_agent": "05-business-model-agent.md"
+  }
+}

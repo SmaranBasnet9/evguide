@@ -4,7 +4,7 @@ import VerifiedOwnerReviewsSection from "@/components/VerifiedOwnerReviewsSectio
 import ApprovedFeedbackStories from "@/components/ApprovedFeedbackStories";
 import { getApprovedReviewsForCar, getLatestApprovedReviews } from "@/lib/reviews";
 import { getApprovedFeedbackStories, getApprovedFeedbackStoriesForModel } from "@/lib/feedback";
-import { createClient } from "@/lib/supabase/server";
+import { createPublicServerClient } from "@/lib/supabase/public-server";
 import { evModels } from "@/data/evModels";
 
 export const metadata = {
@@ -31,7 +31,8 @@ async function getVehicleForReviews(id: string): Promise<VehicleForReviews | nul
     return { id: staticModel.id, brand: staticModel.brand, model: staticModel.model };
   }
 
-  const supabase = await createClient();
+  const supabase = createPublicServerClient();
+  if (!supabase) return null;
   const { data } = await supabase
     .from("ev_models")
     .select("id, brand, model")

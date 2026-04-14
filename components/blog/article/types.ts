@@ -74,7 +74,7 @@ export interface ArticleHeroData {
   author: string;
   readTime: string;
   publishedAt: string;
-  image: string;
+  image: string | null;
   geoLocation?: string | null;
 }
 

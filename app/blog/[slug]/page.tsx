@@ -420,7 +420,7 @@ function buildArticleBlocks(post: FeaturedBlogPost): ArticleBlock[] {
       title: "Not sure which EV fits you?",
       description:
         "Answer a few quick questions and get a personalised shortlist based on your budget, charging setup, and real-world priorities.",
-      primaryLabel: "Start AI Match",
+      primaryLabel: "Start Match",
       primaryHref: "/ai-match",
       secondaryLabel: "Explore EVs",
       secondaryHref: "/vehicles",
@@ -477,12 +477,17 @@ function toRelatedArticle(post: FeaturedBlogPost): RelatedArticleItem {
 }
 
 async function buildArticlePageModel(slug: string): Promise<ArticlePageModel | null> {
-  const post = await getPost(slug);
+  // Fetch post + related articles in parallel; abort early if post not found.
+  const [post, allRelated] = await Promise.all([
+    getPost(slug),
+    getFeaturedBlogPosts(6),
+  ]);
+
   if (!post) {
     return null;
   }
 
-  const related = (await getFeaturedBlogPosts(6))
+  const related = allRelated
     .filter((item) => item.slug && item.slug !== post.slug)
     .slice(0, 3)
     .map(toRelatedArticle);
@@ -495,9 +500,7 @@ async function buildArticlePageModel(slug: string): Promise<ArticlePageModel | n
       author: getArticleAuthor(post),
       readTime: getReadTime(post.content),
       publishedAt: formatDate(post.publishedAt),
-      image:
-        post.coverImage ??
-        "https://images.unsplash.com/photo-1553440569-bcc63803a83d?auto=format&fit=crop&w=1400&q=80",
+      image: post.coverImage ?? null,
       geoLocation: normalizeGeoLocation(post.geoLocation),
     },
     blocks: buildArticleBlocks(post),
@@ -506,7 +509,7 @@ async function buildArticlePageModel(slug: string): Promise<ArticlePageModel | n
       title: "Find your perfect EV today",
       description:
         "Use AI Match, compare your shortlist, and pressure-test affordability in one premium EV decision flow designed for UK buyers.",
-      primaryLabel: "Start AI Match",
+      primaryLabel: "Start Match",
       primaryHref: "/ai-match",
       secondaryLabel: "Explore EVs",
       secondaryHref: "/vehicles",
@@ -596,7 +599,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   };
 
   return (
-    <main className="min-h-screen bg-[#0B0B0B] text-white">
+    <main className="min-h-screen bg-[#F8FAF9] text-[#1A1A1A]">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}

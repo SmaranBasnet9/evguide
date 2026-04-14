@@ -47,8 +47,8 @@ function CompareRow({ label, valueA, valueB, displayA, displayB, lowerIsBetter =
   const strB = displayB || String(valueB);
 
   return (
-    <div className="grid grid-cols-[1fr_2fr_2fr] sm:grid-cols-[1fr_1fr_1fr] items-center gap-4 py-4 border-b border-white/5 hover:bg-white/[0.02] transition-colors px-4 rounded-xl">
-      <div className="text-zinc-500 font-medium text-sm">{label}</div>
+    <div className="grid grid-cols-[1fr_2fr_2fr] sm:grid-cols-[1fr_1fr_1fr] items-center gap-4 py-4 border-b border-[#E5E7EB] hover:bg-white/[0.02] transition-colors px-4 rounded-xl">
+      <div className="text-[#6B7280] font-medium text-sm">{label}</div>
       
       <div className={`text-base font-semibold ${winner === "A" ? "text-emerald-400" : "text-white"}`}>
         <div className="flex items-center gap-2">
@@ -84,13 +84,13 @@ export default function PremiumCompareTable({ modelA, modelB }: PremiumCompareTa
   };
 
   return (
-    <section className="bg-[#0B0B0B] py-16">
+    <section className="bg-[#F8FAF9] py-16">
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
-        <h2 className="text-3xl font-bold text-white mb-8 border-b border-white/10 pb-4">Detailed Specifications</h2>
+        <h2 className="text-3xl font-bold text-white mb-8 border-b border-[#E5E7EB] pb-4">Detailed Specifications</h2>
         
-        <div className="bg-[#111111] border border-white/5 rounded-3xl p-2 sm:p-6 shadow-2xl">
+        <div className="bg-white border border-[#E5E7EB] rounded-3xl p-2 sm:p-6 shadow-2xl">
           <div className="grid grid-cols-[1fr_2fr_2fr] sm:grid-cols-[1fr_1fr_1fr] gap-4 mb-4 px-4">
-            <div className="text-zinc-500 text-xs font-bold uppercase tracking-wider">Metrics</div>
+            <div className="text-[#6B7280] text-xs font-bold uppercase tracking-wider">Metrics</div>
             <div className="text-white text-sm font-bold">{modelA.brand} {modelA.model}</div>
             <div className="text-white text-sm font-bold">{modelB.brand} {modelB.model}</div>
           </div>

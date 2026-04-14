@@ -1,4 +1,4 @@
-﻿import { BrainCircuit, PoundSterling, ShieldCheck, SplitSquareVertical } from "lucide-react";
+import { BrainCircuit, PoundSterling, ShieldCheck, SplitSquareVertical } from "lucide-react";
 
 const items = [
   {
@@ -25,20 +25,20 @@ const items = [
 
 export default function TrustStrip() {
   return (
-    <section className="border-y border-white/10 bg-white/[0.03] py-7 backdrop-blur-sm">
+    <section className="border-y border-[#E5E7EB] bg-white py-7">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {items.map((item) => {
             const Icon = item.icon;
             return (
-              <div key={item.title} className="rounded-[1.5rem] border border-white/8 bg-[#111111]/60 px-5 py-4 transition duration-300 hover:border-emerald-400/20 hover:bg-[#151515]">
+              <div key={item.title} className="rounded-[1.5rem] border border-[#E5E7EB] bg-[#F8FAF9] px-5 py-4 transition duration-300 hover:border-[#1FBF9F]/40 hover:bg-[#E8F8F5]">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/5">
-                    <Icon className="h-4.5 w-4.5 text-emerald-300" />
+                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#D1F2EB] bg-[#E8F8F5]">
+                    <Icon className="h-4.5 w-4.5 text-[#1FBF9F]" />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-white">{item.title}</p>
-                    <p className="mt-1 text-xs leading-5 text-zinc-400">{item.description}</p>
+                    <p className="text-sm font-semibold text-[#1A1A1A]">{item.title}</p>
+                    <p className="mt-1 text-xs leading-5 text-[#6B7280]">{item.description}</p>
                   </div>
                 </div>
               </div>

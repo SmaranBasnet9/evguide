@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 
 type Props = {
   stories: ApprovedFeedbackStory[];
-  models: Array<{
+  models?: Array<{
     id: string;
     brand: string;
     model: string;
@@ -18,7 +18,7 @@ function renderStars(rating: number) {
   return "★★★★★".slice(0, rating) + "☆☆☆☆☆".slice(0, 5 - rating);
 }
 
-export default function ApprovedFeedbackStories({ stories, models }: Props) {
+export default function ApprovedFeedbackStories({ stories, models = [] }: Props) {
   const supabase = useMemo(() => createClient(), []);
   const [showForm, setShowForm] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);

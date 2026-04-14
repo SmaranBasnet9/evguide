@@ -77,7 +77,7 @@ export default function RecommendationResults({ results, answers, onReset }: Rec
               className="inline-flex items-center gap-2 self-start rounded-full border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:border-white/20 hover:bg-white/10"
             >
               <ArrowLeft className="h-4 w-4" />
-              Retake AI Match
+              Retake Match
             </button>
           </div>
 

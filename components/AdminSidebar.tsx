@@ -13,6 +13,7 @@ const navLinks = [
   { href: "/admin/feedback",         label: "Feedback Moderation" },
   { href: "/admin/consultations",    label: "Consultations" },
   { href: "/admin/vehicle-queries",  label: "Vehicle Queries" },
+  { href: "/admin/exchange",          label: "Exchange Requests" },
   { href: "/admin/leads",            label: "Lead Intelligence" },
   { href: "/admin/crm",              label: "CRM Journey" },
   { href: "/admin/users",            label: "Users & Access" },

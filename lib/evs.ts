@@ -1,3 +1,4 @@
+import { unstable_cache } from "next/cache";
 import { createPublicServerClient } from "@/lib/supabase/public-server";
 import { mapDbEV, type DbEV } from "@/lib/ev-models";
 
@@ -27,10 +28,24 @@ async function fetchPublicEVRows(limit?: number) {
   return (data ?? []).map((item) => mapDbEV(item as DbEV));
 }
 
+// Cache the full EV list for 2 minutes — data rarely changes.
+// Revalidate via `revalidateTag("ev-models")` after admin updates.
+const fetchAllEVsCached = unstable_cache(
+  () => fetchPublicEVRows(),
+  ["ev-models-all"],
+  { revalidate: 120, tags: ["ev-models"] },
+);
+
 export async function getAllEVs() {
-  return fetchPublicEVRows();
+  return fetchAllEVsCached();
 }
 
+const fetchTopSellingEVsCached = unstable_cache(
+  () => fetchPublicEVRows(10),
+  ["ev-models-top"],
+  { revalidate: 120, tags: ["ev-models"] },
+);
+
 export async function getTopSellingEVs() {
-  return fetchPublicEVRows(10);
+  return fetchTopSellingEVsCached();
 }

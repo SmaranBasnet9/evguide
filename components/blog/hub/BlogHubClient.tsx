@@ -92,7 +92,7 @@ export default function BlogHubClient({ articles }: BlogHubClientProps) {
             eyebrow="Conversion path"
             title="Not sure which EV fits you?"
             text="Answer a few questions and get your best EV match instantly."
-            primaryLabel="Start AI Match"
+            primaryLabel="Start Match"
             primaryHref="/ai-match"
             accent="emerald"
           />
@@ -141,7 +141,7 @@ export default function BlogHubClient({ articles }: BlogHubClientProps) {
             eyebrow="Final step"
             title="Find your perfect EV today"
             text="Start your EV journey with smart recommendations and real cost insights."
-            primaryLabel="Start AI Match"
+            primaryLabel="Start Match"
             primaryHref="/ai-match"
             secondaryLabel="Explore EVs"
             secondaryHref="/vehicles"

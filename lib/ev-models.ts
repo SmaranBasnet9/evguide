@@ -1,4 +1,3 @@
-import { evModels } from "@/data/evModels";
 import type { EVModel, VehicleTier } from "@/types";
 
 export type DbEV = {
@@ -29,38 +28,18 @@ export type DbEV = {
   description: string;
   best_for: string;
   loved_reason: string;
+  // EV-native columns (added in migration 008)
+  range_miles?: number | null;
+  real_world_range_miles?: number | null;
+  charging_speed_ac_kw?: number | null;
+  charging_speed_dc_kw?: number | null;
+  charge_port_type?: string | null;
+  charge_time_to80_mins?: number | null;
+  battery_warranty_years?: number | null;
+  v2g_capable?: boolean | null;
+  annual_energy_cost_gbp?: number | null;
+  co2_saving_kg_per_year?: number | null;
 };
-
-function normalizeValue(value: string) {
-  return value.trim().toLowerCase();
-}
-
-function getFallbackHeroImage(item: Pick<DbEV, "id" | "brand" | "model">) {
-  const exactMatch = evModels.find((model) => model.id === item.id);
-  if (exactMatch) {
-    return exactMatch.heroImage;
-  }
-
-  const brand = normalizeValue(item.brand);
-  const model = normalizeValue(item.model);
-
-  return evModels.find(
-    (entry) => normalizeValue(entry.brand) === brand && normalizeValue(entry.model) === model,
-  )?.heroImage;
-}
-
-export function resolveEvHeroImage(item: Pick<DbEV, "id" | "brand" | "model" | "hero_image">) {
-  const heroImage = item.hero_image?.trim() ?? "";
-
-  if (heroImage && !heroImage.startsWith("/uploads/")) {
-    return heroImage;
-  }
-
-  return (
-    (getFallbackHeroImage(item) ?? heroImage) ||
-    "https://images.unsplash.com/photo-1553440569-bcc63803a83d?q=80&w=1200&auto=format&fit=crop"
-  );
-}
 
 export function mapDbEV(item: DbEV): EVModel {
   const tier =
@@ -76,7 +55,7 @@ export function mapDbEV(item: DbEV): EVModel {
     id: item.id,
     brand: item.brand,
     model: item.model,
-    heroImage: resolveEvHeroImage(item),
+    heroImage: item.hero_image?.trim() ?? "",
     tier,
     bodyType: item.body_type ?? null,
     badge: item.badge ?? null,
@@ -100,5 +79,16 @@ export function mapDbEV(item: DbEV): EVModel {
     description: item.description,
     bestFor: item.best_for,
     lovedReason: item.loved_reason,
+    // EV-native fields entered by admin
+    rangeMiles: item.range_miles ?? undefined,
+    realWorldRangeMiles: item.real_world_range_miles ?? undefined,
+    chargingSpeedAcKw: item.charging_speed_ac_kw ?? undefined,
+    chargingSpeedDcKw: item.charging_speed_dc_kw ?? undefined,
+    chargePortType: item.charge_port_type ?? undefined,
+    chargeTimeTo80Mins: item.charge_time_to80_mins ?? undefined,
+    batteryWarrantyYears: item.battery_warranty_years ?? undefined,
+    v2gCapable: item.v2g_capable ?? undefined,
+    annualEnergyCostGbp: item.annual_energy_cost_gbp ?? undefined,
+    co2SavingKgPerYear: item.co2_saving_kg_per_year ?? undefined,
   };
 }

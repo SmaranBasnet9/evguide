@@ -1,3 +1,4 @@
+import { unstable_cache } from "next/cache";
 import { createPublicServerClient } from "@/lib/supabase/public-server";
 
 export type FeaturedBlogPost = {
@@ -149,7 +150,7 @@ const DUMMY_BLOG_POSTS: FeaturedBlogPost[] = [
   },
 ];
 
-async function getFeaturedBlogRows(limit: number) {
+async function getFeaturedBlogRowsUncached(limit: number) {
   const supabase = createPublicServerClient();
 
   if (!supabase) {
@@ -202,6 +203,12 @@ async function getFeaturedBlogRows(limit: number) {
     return { data: [], usedLegacySelect: false };
   }
 }
+
+const getFeaturedBlogRows = unstable_cache(
+  async (limit: number) => getFeaturedBlogRowsUncached(limit),
+  ["featured-blog-posts"],
+  { revalidate: 300, tags: ["blog-posts"] },
+);
 
 export async function getFeaturedBlogPosts(limit = 4): Promise<FeaturedBlogPost[]> {
   const { data, usedLegacySelect } = await getFeaturedBlogRows(limit);

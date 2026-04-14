@@ -43,6 +43,19 @@ const EVENT_WEIGHTS: Record<UserEventType, number> = {
   save_clicked: 0,
   tier_section_viewed: 0,
   search_used: 0,
+  // EV-native events
+  range_check_used: 8,
+  tco_calculated: 12,
+  vehicle_saved: 15,
+  vehicle_unsaved: 0,
+  charging_info_viewed: 5,
+  grant_viewed: 5,
+  salary_sacrifice_viewed: 5,
+  charger_search: 4,
+  charger_location_used: 8,
+  charger_details_viewed: 6,
+  charger_directions_clicked: 12,
+  charger_filters_applied: 0,
 };
 
 function classifyScore(score: number): LeadClassification {

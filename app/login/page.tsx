@@ -40,19 +40,14 @@ function LoginForm() {
       return;
     }
 
-    // Track login contact info for admin follow-up reporting.
-    await fetch("/api/user/session-log", {
+    // Fire-and-forget — do not block the redirect on this
+    void fetch("/api/user/session-log", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
     }).catch(() => null);
 
     const nextPath = searchParams.get("next");
-    if (nextPath && nextPath.startsWith("/")) {
-      router.push(nextPath);
-    } else {
-      router.push("/");
-    }
-    router.refresh();
+    router.push(nextPath?.startsWith("/") ? nextPath : "/");
   };
 
   return (

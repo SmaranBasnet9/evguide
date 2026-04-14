@@ -115,7 +115,7 @@ export default function AffordabilityInsight({
                 <MiniStat label="Range" value={`${bestValueOption.model.rangeKm} km`} />
               </div>
               <Link
-                href={`/vehicles/${bestValueOption.model.id}`}
+                href={`/cars/${bestValueOption.model.id}`}
                 className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-white transition hover:text-emerald-300"
               >
                 View details

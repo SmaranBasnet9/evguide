@@ -27,6 +27,19 @@ export function filterVehicles(
     if (filters.seats !== null && v.seats < filters.seats) return false;
     if (filters.batteryMin !== null && v.batteryKWh < filters.batteryMin) return false;
     if (filters.emiMax !== null && v.estimatedEmi > filters.emiMax) return false;
+    if (filters.chargePortType !== null && v.chargePortType !== filters.chargePortType) return false;
+    if (filters.chargingSpeedDcMin !== null && (v.chargingSpeedDcKw ?? 0) < filters.chargingSpeedDcMin) {
+      return false;
+    }
+    if (filters.homeChargingSpeedMin !== null && (v.chargingSpeedAcKw ?? 0) < filters.homeChargingSpeedMin) {
+      return false;
+    }
+    if (filters.dailyCommuteMiles !== null) {
+      const estimatedRealWorldMiles =
+        v.realWorldRangeMiles ?? Math.round(v.rangeKm * 0.621371 * 0.82);
+      if (estimatedRealWorldMiles < filters.dailyCommuteMiles * 2) return false;
+    }
+    if (filters.condition === "used") return false;
     return true;
   });
 }
@@ -51,6 +64,11 @@ export function defaultFilters(): AllVehiclesFilters {
     batteryMin: null,
     emiMax: null,
     sort: "recommended",
+    chargePortType: null,
+    chargingSpeedDcMin: null,
+    homeChargingSpeedMin: null,
+    dailyCommuteMiles: null,
+    condition: null,
   };
 }
 
@@ -64,6 +82,11 @@ export function hasActiveFilters(filters: AllVehiclesFilters): boolean {
     filters.bodyType !== null ||
     filters.seats !== null ||
     filters.batteryMin !== null ||
-    filters.emiMax !== null
+    filters.emiMax !== null ||
+    filters.chargePortType !== null ||
+    filters.chargingSpeedDcMin !== null ||
+    filters.homeChargingSpeedMin !== null ||
+    filters.dailyCommuteMiles !== null ||
+    filters.condition !== null
   );
 }

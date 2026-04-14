@@ -35,12 +35,145 @@ export interface EVModel {
   description: string;
   bestFor: string;
   lovedReason: string;
+  priceIntelligence?: PriceIntelligence;
   /** Optional body type override stored in DB / set by admin */
   bodyType?: string | null;
   /** Optional admin-assigned badge tag e.g. "Best Value", "Long Range" */
   badge?: string | null;
   /** DB-driven popularity score (higher = more popular) */
   popularityScore?: number;
+
+  // ── EV-native intelligence fields ───────────────────────────
+  /** WLTP official range in miles */
+  rangeMiles?: number;
+  /** Estimated real-world range in miles (approx 82% of WLTP) */
+  realWorldRangeMiles?: number;
+  /** Max AC (home wallbox) charge rate in kW */
+  chargingSpeedAcKw?: number;
+  /** Max DC (rapid/ultra-rapid) charge rate in kW */
+  chargingSpeedDcKw?: number;
+  /** Primary charge port standard: CCS | CHAdeMO | NACS | Type2 */
+  chargePortType?: string;
+  /** Time to charge from 10% to 80% on DC fast charger (minutes) */
+  chargeTimeTo80Mins?: number;
+  /** Battery warranty period in years */
+  batteryWarrantyYears?: number;
+  /** Supports Vehicle-to-Grid bidirectional charging */
+  v2gCapable?: boolean;
+  /** Estimated annual energy cost at 7,500 mi/yr and 28p/kWh */
+  annualEnergyCostGbp?: number;
+  /** Annual CO2 saving in kg vs average UK petrol car */
+  co2SavingKgPerYear?: number;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Price Intelligence
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type PriceCategory = "great_deal" | "good_deal" | "fair_price" | "above_average";
+
+export interface PriceIntelligence {
+  category: PriceCategory;
+  label: string;
+  percentageFromAvg: number;
+  brandAveragePriceGbp: number;
+  description: string;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// EV Intelligence — Range, TCO, Charging
+// ─────────────────────────────────────────────────────────────────────────────
+
+export interface RangeConfidenceResult {
+  /** Daily commute in miles (one-way × 2) */
+  dailyMiles: number;
+  /** WLTP range in miles */
+  wltpMiles: number;
+  /** Real-world range estimate in miles */
+  realWorldMiles: number;
+  /** Winter worst-case range in miles */
+  winterMiles: number;
+  /** True if real-world range covers daily commute with ≥20% buffer */
+  comfortableYes: boolean;
+  /** True if only winter range is borderline */
+  seasonalCaution: boolean;
+  /** Number of charges per week needed (based on real-world range) */
+  chargesPerWeek: number;
+  /** Descriptive label: "Fits comfortably" | "Fits with caution" | "May not fit" */
+  verdict: "comfortable" | "caution" | "tight";
+  /** Human-readable reason */
+  verdictReason: string;
+}
+
+export interface TCOInputs {
+  vehiclePrice: number;
+  batteryKWh: number;
+  rangeKm: number;
+  /** Annual mileage in miles (default 7500) */
+  annualMiles?: number;
+  /** Home energy rate in pence/kWh (default 28) */
+  energyRatePence?: number;
+  /** % of charging done at public rapid chargers (default 20) */
+  publicChargeMixPct?: number;
+  /** Current car's MPG (for comparison) */
+  currentCarMpg?: number;
+  /** Current fuel price £/litre (default 1.55) */
+  fuelPriceGbp?: number;
+  /** Finance term in months (0 = no finance) */
+  financeTermMonths?: number;
+  /** Finance deposit in £ */
+  financeDeposit?: number;
+  /** Finance APR % */
+  financeApr?: number;
+}
+
+export interface TCOResult {
+  /** Annual energy cost for the EV */
+  annualEnergyCostGbp: number;
+  /** Monthly energy cost */
+  monthlyEnergyCostGbp: number;
+  /** Estimated annual EV insurance */
+  annualInsuranceEstGbp: number;
+  /** Estimated annual EV servicing */
+  annualServicingEstGbp: number;
+  /** Annual VED (£0 for EVs under £40k, £190+ over) */
+  annualVedGbp: number;
+  /** Monthly finance payment if applicable */
+  monthlyFinanceGbp: number;
+  /** Total monthly EV cost */
+  totalMonthlyCostGbp: number;
+  /** Total 3-year cost of ownership */
+  total3YrCostGbp: number;
+  /** Estimated annual fuel cost for comparison ICE car */
+  annualFuelCostIceGbp: number | null;
+  /** Annual saving vs comparable ICE car */
+  annualSavingVsIceGbp: number | null;
+  /** Months to break even vs ICE running costs */
+  breakEvenMonths: number | null;
+  /** Cost per mile in pence */
+  costPerMilePence: number;
+}
+
+export interface SavedVehicle {
+  id: string;
+  vehicleId: string;
+  vehicleLabel: string;
+  vehiclePrice: number | null;
+  savedAt: string;
+}
+
+export interface GovernmentGrant {
+  id: string;
+  grantName: string;
+  authority: string;
+  grantAmountGbp: number;
+  description: string | null;
+  eligibilityNotes: string | null;
+  vehicleTypes: string[];
+  priceCap: number | null;
+  isActive: boolean;
+  expiresAt: string | null;
+  sourceUrl: string | null;
 }
 
 export interface BankFacility {
@@ -149,7 +282,21 @@ export type UserEventType =
   | "sort_changed"
   | "save_clicked"
   | "tier_section_viewed"
-  | "search_used";
+  | "search_used"
+  // EV-native events
+  | "range_check_used"
+  | "tco_calculated"
+  | "vehicle_saved"
+  | "vehicle_unsaved"
+  | "charging_info_viewed"
+  | "grant_viewed"
+  | "salary_sacrifice_viewed"
+  // Charging station discovery events
+  | "charger_search"
+  | "charger_location_used"
+  | "charger_details_viewed"
+  | "charger_directions_clicked"
+  | "charger_filters_applied";
 
 export interface TrackEventInput {
   eventType: UserEventType;
@@ -316,7 +463,16 @@ export interface AllVehiclesFilters {
   batteryMin: number | null;
   emiMax: number | null;
   sort: AllVehiclesSortOption;
+  // EV-native filters
+  chargePortType: string | null;
+  chargingSpeedDcMin: number | null;
+  homeChargingSpeedMin: number | null;
+  dailyCommuteMiles: number | null;
+  condition: "new" | "used" | null;
 }
+
+// CompareMetric is defined in lib/comparison.ts (includes getValue / format).
+// Do NOT redefine it here — importing from @/lib/comparison is the correct path.
 
 export interface PersonalizedVehicleCard extends EVModel {
   estimatedEmi: number;
@@ -406,4 +562,162 @@ export interface CrmLeadListRow extends LeadIntelligenceRow {
   crm_tags: string[];
   last_contacted_at: string | null;
   next_follow_up_at: string | null;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Exchange Offer Module
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type ExchangeStatus =
+  | "new"
+  | "contacted"
+  | "valuation_reviewed"
+  | "inspection_scheduled"
+  | "offer_sent"
+  | "converted"
+  | "rejected"
+  | "archived";
+
+export type ExchangePriority = "low" | "medium" | "high" | "urgent";
+
+export type ExchangeFuelType = "petrol" | "diesel" | "hybrid" | "ev" | "other";
+
+export type ExchangeCondition = "excellent" | "good" | "average" | "poor";
+
+export type ExchangeOwnershipType =
+  | "first_owner"
+  | "second_owner"
+  | "third_owner_plus";
+
+export type ValuationConfidence = "low" | "medium" | "high";
+
+/** Shape of the target EV info passed into the exchange form from the listing */
+export interface ExchangeTargetEV {
+  id: string;
+  brand: string;
+  model: string;
+  price: number;
+  heroImage?: string;
+  slug?: string;
+}
+
+/** Result returned by the instant valuation engine */
+export interface ExchangeValuationResult {
+  estimatedValue: number;
+  confidence: ValuationConfidence;
+  notes: string[];
+}
+
+/** Full exchange request row as stored in / fetched from Supabase */
+export interface ExchangeRequestRow {
+  id: string;
+  created_at: string;
+  updated_at: string;
+
+  customer_name: string;
+  phone: string;
+  email: string;
+  city: string | null;
+  preferred_contact_method: string | null;
+
+  current_vehicle_brand: string;
+  current_vehicle_model: string;
+  current_vehicle_year: number;
+  registration_year: number | null;
+  fuel_type: ExchangeFuelType;
+  transmission: string | null;
+  ownership_type: ExchangeOwnershipType | null;
+  mileage: number | null;
+  registration_number: string | null;
+  condition: ExchangeCondition | null;
+  accident_history: boolean;
+  service_history: boolean;
+  insurance_valid: boolean;
+  vehicle_color: string | null;
+  number_of_keys: number | null;
+  vehicle_location: string | null;
+  expected_value: number | null;
+  remarks: string | null;
+
+  target_ev_id: string | null;
+  target_ev_slug: string | null;
+  target_ev_brand: string | null;
+  target_ev_model: string | null;
+  target_ev_price: number | null;
+  target_ev_image: string | null;
+
+  estimated_value: number | null;
+  valuation_confidence: ValuationConfidence | null;
+  valuation_notes: string | null;
+  final_offer_value: number | null;
+
+  status: ExchangeStatus;
+  priority: ExchangePriority;
+  assigned_to: string | null;
+  source_page: string | null;
+  submitted_from: string | null;
+  is_read: boolean;
+  admin_notes: string | null;
+}
+
+/** Image record attached to an exchange request */
+export interface ExchangeRequestImageRow {
+  id: string;
+  exchange_request_id: string;
+  image_type: string;
+  file_path: string | null;
+  file_url: string;
+  created_at: string;
+}
+
+/** Activity / timeline log entry */
+export interface ExchangeRequestActivityRow {
+  id: string;
+  exchange_request_id: string;
+  action_type: string;
+  old_status: string | null;
+  new_status: string | null;
+  note: string | null;
+  created_by: string | null;
+  created_at: string;
+}
+
+/** Public form payload sent to POST /api/exchange-requests */
+export interface ExchangeSubmissionPayload {
+  customer_name: string;
+  phone: string;
+  email: string;
+  city?: string;
+  preferred_contact_method?: string;
+
+  current_vehicle_brand: string;
+  current_vehicle_model: string;
+  current_vehicle_year: number;
+  registration_year?: number;
+  fuel_type: ExchangeFuelType;
+  transmission?: string;
+  ownership_type?: ExchangeOwnershipType;
+  mileage?: number;
+  registration_number?: string;
+  condition?: ExchangeCondition;
+  accident_history?: boolean;
+  service_history?: boolean;
+  insurance_valid?: boolean;
+  vehicle_color?: string;
+  number_of_keys?: number;
+  vehicle_location?: string;
+  expected_value?: number;
+  remarks?: string;
+
+  target_ev_id?: string;
+  target_ev_slug?: string;
+  target_ev_brand?: string;
+  target_ev_model?: string;
+  target_ev_price?: number;
+  target_ev_image?: string;
+
+  source_page?: string;
+
+  // Image URLs already uploaded before form submit
+  uploaded_images?: { image_type: string; file_url: string }[];
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState, startTransition } from "react";
 import {
   buildConsentPreferences,
   COOKIE_CONSENT_EVENT,
@@ -33,11 +33,23 @@ function postConsentToServer(
   personalization: boolean,
   method: string,
 ): void {
+  const body = JSON.stringify({ analytics, personalization, method });
+
+  try {
+    if (navigator.sendBeacon) {
+      const blob = new Blob([body], { type: "application/json" });
+      navigator.sendBeacon("/api/consent", blob);
+      return;
+    }
+  } catch {
+    // Fall back to fetch below.
+  }
+
   try {
     void fetch("/api/consent", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ analytics, personalization, method }),
+      body,
       keepalive: true,
     });
   } catch {
@@ -94,9 +106,11 @@ export function CookieConsentProvider({ children }: { children: React.ReactNode 
           analytics: true,
           personalization: true,
         });
-        setPreferences(next);
-        setHasMadeChoice(true);
-        setIsSettingsOpen(false);
+        startTransition(() => {
+          setPreferences(next);
+          setHasMadeChoice(true);
+          setIsSettingsOpen(false);
+        });
         postConsentToServer(true, true, "banner_accept_all");
       },
       rejectNonEssential() {
@@ -104,16 +118,20 @@ export function CookieConsentProvider({ children }: { children: React.ReactNode 
           analytics: false,
           personalization: false,
         });
-        setPreferences(next);
-        setHasMadeChoice(true);
-        setIsSettingsOpen(false);
+        startTransition(() => {
+          setPreferences(next);
+          setHasMadeChoice(true);
+          setIsSettingsOpen(false);
+        });
         postConsentToServer(false, false, "banner_reject");
       },
       savePreferences(input) {
         const next = writeClientConsent(buildConsentPreferences(input));
-        setPreferences(next);
-        setHasMadeChoice(true);
-        setIsSettingsOpen(false);
+        startTransition(() => {
+          setPreferences(next);
+          setHasMadeChoice(true);
+          setIsSettingsOpen(false);
+        });
         postConsentToServer(input.analytics, input.personalization, "banner_custom");
       },
       openSettings() {

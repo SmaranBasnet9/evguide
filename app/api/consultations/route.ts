@@ -62,8 +62,8 @@ export async function POST(request: Request) {
   if (!email?.trim() || !/^[^@]+@[^@]+\.[^@]+$/.test(email.trim())) {
     return NextResponse.json({ error: "A valid email is required." }, { status: 400 });
   }
-  if (sector !== "bank" && sector !== "vehicle") {
-    return NextResponse.json({ error: "Sector must be 'bank' or 'vehicle'." }, { status: 400 });
+  if (sector !== "bank" && sector !== "vehicle" && sector !== "finance") {
+    return NextResponse.json({ error: "Sector must be 'bank', 'vehicle', or 'finance'." }, { status: 400 });
   }
   if (sector === "bank" && !bank_name?.trim()) {
     return NextResponse.json({ error: "Please select a bank." }, { status: 400 });
@@ -100,7 +100,7 @@ export async function POST(request: Request) {
 
   if (analyticsAllowed) {
     const consultationTrackingEvent =
-      sector === "bank" ? "finance_apply_clicked" : "consultation_submitted";
+      sector === "bank" || sector === "finance" ? "finance_apply_clicked" : "consultation_submitted";
 
     const { error: trackingError } = await admin.from("user_events").insert({
       user_id: user.id,
@@ -134,6 +134,8 @@ export async function POST(request: Request) {
       const selectionLine =
         sector === "bank"
           ? `<strong>Bank:</strong> ${bank_name}`
+          : sector === "finance"
+          ? `<strong>Type:</strong> Finance Consultation`
           : `<strong>Vehicle:</strong> ${ev_model_label ?? ev_model_id}`;
 
       const preferredLine = preferred_time
@@ -176,7 +178,7 @@ export async function POST(request: Request) {
           <table width="100%" cellpadding="0" cellspacing="0" style="background:#f1f5f9;border-radius:8px;padding:0;margin:0 0 24px;">
             <tr><td style="padding:20px 24px;">
               <p style="margin:0 0 12px;font-size:12px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;color:#64748b;">Your Request Summary</p>
-              <p style="margin:0 0 6px;font-size:14px;color:#334155;"><strong>Consultation type:</strong> ${sector === "bank" ? "Bank Finance" : "EV Vehicle"}</p>
+              <p style="margin:0 0 6px;font-size:14px;color:#334155;"><strong>Consultation type:</strong> ${sector === "bank" ? "Bank Finance" : sector === "finance" ? "Finance Consultation" : "EV Vehicle"}</p>
               <p style="margin:0 0 6px;font-size:14px;color:#334155;">${selectionLine}</p>
               ${preferredLine ? `<p style="margin:0 0 6px;font-size:14px;color:#334155;">${preferredLine}</p>` : ""}
               <p style="margin:0;font-size:14px;color:#334155;"><strong>Reference ID:</strong> ${data.id}</p>

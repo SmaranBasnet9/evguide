@@ -54,6 +54,17 @@ const COOKIE_BANNER_NATIVE_SCRIPT = `
     ].filter(Boolean).join("; ");
   }
 
+  function scheduleAfterPaint(task) {
+    if (typeof window.requestAnimationFrame === "function") {
+      window.requestAnimationFrame(() => {
+        window.setTimeout(task, 0);
+      });
+      return;
+    }
+
+    window.setTimeout(task, 0);
+  }
+
   function hideBanner() {
     const banner = document.getElementById("cookie-banner");
     if (!banner) return;
@@ -96,7 +107,9 @@ const COOKIE_BANNER_NATIVE_SCRIPT = `
 
     setCookie(dismissedCookieKey, "1", consentMaxAgeSeconds);
     clearNonEssentialState(preferences);
+  }
 
+  function broadcastConsent(preferences) {
     try {
       window.dispatchEvent(new CustomEvent(consentEvent, { detail: preferences }));
     } catch {}
@@ -142,10 +155,13 @@ const COOKIE_BANNER_NATIVE_SCRIPT = `
 
     hideBanner();
     persistConsent(preferences);
-    notifyServer(
-      preferences,
-      action === "accept-all" ? "banner_accept_all" : "banner_reject",
-    );
+    scheduleAfterPaint(() => {
+      broadcastConsent(preferences);
+      notifyServer(
+        preferences,
+        action === "accept-all" ? "banner_accept_all" : "banner_reject",
+      );
+    });
   }
 
   document.addEventListener("click", (event) => {
@@ -199,6 +215,22 @@ export default function CookieBanner() {
     }
   }, [hasMadeChoice, isSettingsOpen]);
 
+  function scheduleConsentAction(action: () => void) {
+    if (typeof window === "undefined") {
+      action();
+      return;
+    }
+
+    if (typeof window.requestAnimationFrame === "function") {
+      window.requestAnimationFrame(() => {
+        window.setTimeout(action, 0);
+      });
+      return;
+    }
+
+    window.setTimeout(action, 0);
+  }
+
   function hideBannerImmediately() {
     if (decisionHandledRef.current) {
       return false;
@@ -222,7 +254,7 @@ export default function CookieBanner() {
       return;
     }
 
-    action();
+    scheduleConsentAction(action);
   }
 
   const isLocallyClosed = isDismissed && !isSettingsOpen;
