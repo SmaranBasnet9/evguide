@@ -39,7 +39,11 @@ export type SeoPage = {
   updated_at: string;
 };
 
-export type SeoPageInput = Omit<SeoPage, "id" | "created_at" | "updated_at">;
+export type SeoPageInput = Omit<
+  SeoPage,
+  "id" | "created_at" | "updated_at" | "h1_heading" | "content_blocks" | "faq_schema" | "auto_updated_at"
+> &
+  Partial<Pick<SeoPage, "h1_heading" | "content_blocks" | "faq_schema" | "auto_updated_at">>;
 
 // ─── Public helpers ─────────────────────────────────────────────────────────
 
