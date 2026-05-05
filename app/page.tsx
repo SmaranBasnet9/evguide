@@ -54,7 +54,7 @@ function DeferredSectionSkeleton() {
 export default function HomePage() {
 
   return (
-    <main className="min-h-screen overflow-x-hidden bg-[#F8FAF9] font-sans text-[#1A1A1A] selection:bg-[#D1F2EB]">
+    <main className="min-h-screen overflow-x-hidden bg-[#0A0A0A] font-sans text-white selection:bg-brand/30">
       <PremiumNavbar />
       <HeroSection
         featuredCard={

@@ -7,6 +7,10 @@ import TrackEngagement from "@/components/tracking/TrackEngagement";
 import TrackPageView from "@/components/tracking/TrackPageView";
 import TrackRepeatVisit from "@/components/tracking/TrackRepeatVisit";
 import PlatformSessionInit from "@/components/platform/PlatformSessionInit";
+import { Geist } from "next/font/google";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
   title: "EVGuide AI",
@@ -19,7 +23,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full antialiased">
+    <html lang="en" className={cn("h-full antialiased", "font-sans", geist.variable)}>
       <body suppressHydrationWarning className="min-h-full flex flex-col">
         <CookieConsentProvider>
           <PlatformSessionInit />

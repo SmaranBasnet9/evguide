@@ -1,7 +1,12 @@
+"use client";
+
 import type { EVModel } from "@/types";
 import Image from "next/image";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { ArrowRight, Zap } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import VehicleImagePlaceholder from "@/components/vehicles/VehicleImagePlaceholder";
 
 interface FeaturedEVsProps {
@@ -13,14 +18,13 @@ function estimateMonthlyCost(price: number) {
   const principal = price - deposit;
   const monthlyRate = 0.069 / 12;
   const months = 48;
-  const financePayment =
+  const payment =
     (principal * monthlyRate * Math.pow(1 + monthlyRate, months)) /
     (Math.pow(1 + monthlyRate, months) - 1);
-
-  return Math.round(financePayment + 112);
+  return Math.round(payment + 112);
 }
 
-function formatCurrency(value: number) {
+function formatGBP(value: number) {
   return new Intl.NumberFormat("en-GB", {
     style: "currency",
     currency: "GBP",
@@ -28,40 +32,66 @@ function formatCurrency(value: number) {
   }).format(value);
 }
 
-function getDealLabel(model: EVModel) {
-  if (model.price <= 33000 || model.badge === "Best Value") return "Great";
-  if (model.price <= 47000 || model.badge === "Long Range") return "Fair";
-  return "Premium";
+function getDealBadge(model: EVModel): { label: string; color: string } {
+  if (model.price <= 33000 || model.badge === "Best Value")
+    return { label: "Great value", color: "text-emerald-400 border-emerald-400/30 bg-emerald-400/10" };
+  if (model.price <= 47000 || model.badge === "Long Range")
+    return { label: "Popular pick", color: "text-amber-400 border-amber-400/30 bg-amber-400/10" };
+  return { label: "Premium", color: "text-violet-400 border-violet-400/30 bg-violet-400/10" };
 }
+
+const SPECS = (model: EVModel) => [
+  { label: "Price", value: formatGBP(model.price) },
+  { label: "Range", value: `${model.rangeKm} km` },
+  { label: "Battery", value: `${model.batteryKWh} kWh` },
+  { label: "Monthly", value: `${formatGBP(estimateMonthlyCost(model.price))}/mo`, highlight: true },
+];
 
 export default function FeaturedEVs({ models }: FeaturedEVsProps) {
   const displayModels = models.slice(0, 3);
 
   return (
-    <section className="bg-white py-24">
+    <section className="bg-[#0A0A0A] py-24 lg:py-32">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+
+        {/* Header */}
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <div className="max-w-3xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#1FBF9F]">Featured EVs</p>
-            <h2 className="mt-4 text-4xl font-semibold text-[#1A1A1A] sm:text-5xl">Top EVs for UK buyers right now</h2>
-            <p className="mt-5 text-lg leading-8 text-[#4B5563]">
-              A curated shortlist to help you move from browsing into a smarter compare-or-match decision.
+          <div className="max-w-2xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-brand">Featured EVs</p>
+            <h2 className="mt-4 text-4xl font-semibold text-white sm:text-5xl">
+              Top EVs for UK buyers right now
+            </h2>
+            <p className="mt-4 text-lg leading-8 text-white/50">
+              A curated shortlist to move from browsing into a smarter decision.
             </p>
           </div>
-          <Link href="/vehicles" className="inline-flex items-center gap-2 text-sm font-semibold text-[#1FBF9F] transition hover:text-[#17A589]">
+          <Link
+            href="/vehicles"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-brand transition hover:text-brand-hover"
+          >
             Browse all EVs
             <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
 
-        <div className="mt-12 grid gap-6 xl:grid-cols-3">
-          {displayModels.map((model) => {
-            const monthlyCost = estimateMonthlyCost(model.price);
-            const dealLabel = getDealLabel(model);
+        {/* Cards */}
+        <div className="mt-12 grid gap-5 xl:grid-cols-3">
+          {displayModels.map((model, i) => {
+            const badge = getDealBadge(model);
+            const specs = SPECS(model);
 
             return (
-              <article key={model.id} className="group overflow-hidden rounded-[2rem] border border-[#E5E7EB] bg-white p-3 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-[#1FBF9F]/40 hover:shadow-lg">
-                <div className="relative aspect-[16/11] overflow-hidden rounded-[1.5rem] border border-[#E5E7EB] bg-[#F8FAF9]">
+              <motion.article
+                key={model.id}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
+                whileHover={{ y: -4 }}
+                className="group overflow-hidden rounded-[1.75rem] border border-white/8 bg-white/[0.03] transition-all duration-300 hover:border-brand/25 hover:bg-white/[0.05] hover:shadow-[0_24px_60px_rgba(0,0,0,0.4)]"
+              >
+                {/* Image */}
+                <div className="relative aspect-[16/11] overflow-hidden bg-[#111]">
                   {model.heroImage ? (
                     <Image
                       src={model.heroImage}
@@ -71,67 +101,87 @@ export default function FeaturedEVs({ models }: FeaturedEVsProps) {
                       className="object-cover transition duration-700 group-hover:scale-105"
                     />
                   ) : (
-                    <VehicleImagePlaceholder brand={model.brand} model={model.model} className="absolute inset-0" />
+                    <VehicleImagePlaceholder
+                      brand={model.brand}
+                      model={model.model}
+                      className="absolute inset-0"
+                    />
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                  <div className="absolute left-4 top-4 inline-flex rounded-full border border-white/20 bg-white/15 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-sm">
-                    {model.bestFor}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+
+                  {/* Top badge */}
+                  <div className="absolute left-4 top-4">
+                    <span className={`inline-flex items-center rounded-full border px-3 py-1 text-[11px] font-semibold ${badge.color}`}>
+                      {badge.label}
+                    </span>
                   </div>
-                  <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between gap-4">
-                    <div>
-                      <p className="text-xs font-semibold uppercase tracking-[0.22em] text-white/80">{model.brand}</p>
-                      <h3 className="mt-2 text-3xl font-semibold text-white">{model.model}</h3>
-                    </div>
-                    <div className="rounded-full border border-[#1FBF9F]/40 bg-[#E8F8F5] px-3 py-1.5 text-xs font-semibold text-[#1FBF9F] backdrop-blur-sm">
-                      {dealLabel} deal score
-                    </div>
+
+                  {/* Bottom info */}
+                  <div className="absolute bottom-4 left-4 right-4">
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.25em] text-white/60">
+                      {model.brand}
+                    </p>
+                    <h3 className="mt-1 text-2xl font-semibold text-white">{model.model}</h3>
                   </div>
                 </div>
 
-                <div className="px-4 pb-4 pt-5">
-                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                    <div className="rounded-[1.25rem] border border-[#E5E7EB] bg-[#F8FAF9] p-3">
-                      <p className="text-xs uppercase tracking-[0.18em] text-[#374151]">Price</p>
-                      <p className="mt-2 text-base font-semibold text-[#1A1A1A]">{formatCurrency(model.price)}</p>
-                    </div>
-                    <div className="rounded-[1.25rem] border border-[#E5E7EB] bg-[#F8FAF9] p-3">
-                      <p className="text-xs uppercase tracking-[0.18em] text-[#374151]">Range</p>
-                      <p className="mt-2 text-base font-semibold text-[#1A1A1A]">{model.rangeKm} km</p>
-                    </div>
-                    <div className="rounded-[1.25rem] border border-[#E5E7EB] bg-[#F8FAF9] p-3">
-                      <p className="text-xs uppercase tracking-[0.18em] text-[#374151]">Battery</p>
-                      <p className="mt-2 text-base font-semibold text-[#1A1A1A]">{model.batteryKWh} kWh</p>
-                    </div>
-                    <div className="rounded-[1.25rem] border border-[#E5E7EB] bg-[#E8F8F5] p-3">
-                      <p className="text-xs uppercase tracking-[0.18em] text-[#374151]">Monthly</p>
-                      <p className="mt-2 text-base font-semibold text-[#1FBF9F]">{formatCurrency(monthlyCost)}/mo</p>
-                    </div>
+                {/* Content */}
+                <div className="p-5">
+                  {/* Specs grid */}
+                  <div className="grid grid-cols-4 gap-2">
+                    {specs.map((spec) => (
+                      <div
+                        key={spec.label}
+                        className={`rounded-xl p-3 ${spec.highlight ? "border border-brand/20 bg-brand/10" : "border border-white/6 bg-white/[0.03]"}`}
+                      >
+                        <p className="text-[10px] uppercase tracking-[0.15em] text-white/40">{spec.label}</p>
+                        <p className={`mt-1.5 text-sm font-semibold ${spec.highlight ? "text-brand" : "text-white"}`}>
+                          {spec.value}
+                        </p>
+                      </div>
+                    ))}
                   </div>
 
-                  <div className="mt-4 flex items-center gap-2 rounded-[1.25rem] border border-[#E5E7EB] bg-[#F8FAF9] px-4 py-3 text-sm text-[#4B5563]">
-                    <Zap className="h-4 w-4 text-[#1FBF9F]" />
+                  {/* Best for */}
+                  <div className="mt-3 flex items-center gap-2 rounded-xl border border-white/5 bg-white/[0.02] px-4 py-3 text-sm text-white/40">
+                    <Zap className="h-3.5 w-3.5 text-brand" />
                     Best for {model.bestFor.toLowerCase()}
                   </div>
 
-                  <div className="mt-5 flex gap-3">
-                    <Link href={`/cars/${model.id}`} className="flex-1 rounded-full bg-[#1FBF9F] px-5 py-3 text-center text-sm font-semibold text-white shadow-md transition hover:bg-[#17A589]">
-                      View Details
-                    </Link>
-                    <Link href={`/compare?carA=${model.id}`} className="flex-1 rounded-full border border-[#1FBF9F] bg-white px-5 py-3 text-center text-sm font-semibold text-[#1FBF9F] transition hover:bg-[#E8F8F5]">
-                      Compare
-                    </Link>
+                  {/* CTAs */}
+                  <div className="mt-4 flex gap-2">
+                    <Button
+                      asChild
+                      className="flex-1 rounded-full bg-brand text-sm font-semibold text-white hover:bg-brand-hover"
+                    >
+                      <Link href={`/cars/${model.id}`}>View Details</Link>
+                    </Button>
+                    <Button
+                      asChild
+                      variant="outline"
+                      className="flex-1 rounded-full border-white/10 bg-transparent text-sm font-semibold text-white hover:bg-white/5 hover:border-white/20"
+                    >
+                      <Link href={`/compare?carA=${model.id}`}>Compare</Link>
+                    </Button>
                   </div>
                 </div>
-              </article>
+              </motion.article>
             );
           })}
         </div>
 
+        {/* Bottom CTA */}
         <div className="mt-10 flex justify-center">
-          <Link href="/compare" className="inline-flex items-center gap-2 rounded-full border border-[#1FBF9F] bg-white px-6 py-3 text-sm font-semibold text-[#1FBF9F] transition hover:bg-[#E8F8F5]">
-            Compare EVs
-            <ArrowRight className="h-4 w-4" />
-          </Link>
+          <Button
+            asChild
+            variant="outline"
+            className="rounded-full border-white/10 bg-white/[0.03] px-8 py-6 text-sm font-semibold text-white hover:bg-white/[0.06] hover:border-white/20"
+          >
+            <Link href="/compare" className="flex items-center gap-2">
+              Compare EVs side by side
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </Button>
         </div>
       </div>
     </section>
