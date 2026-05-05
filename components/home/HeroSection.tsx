@@ -4,16 +4,19 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface HeroSectionProps {
   featuredCard?: ReactNode;
 }
 
+const EASE: [number, number, number, number] = [0.25, 0.46, 0.45, 0.94];
+
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 32 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94], delay },
+  transition: { duration: 0.7, ease: EASE, delay },
 });
 
 export default function HeroSection({ featuredCard }: HeroSectionProps) {
@@ -68,24 +71,25 @@ export default function HeroSection({ featuredCard }: HeroSectionProps) {
               {...fadeUp(0.3)}
               className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center"
             >
-              <Button
-                asChild
-                size="lg"
-                className="rounded-full bg-brand px-8 py-6 text-base font-semibold text-white shadow-[0_0_30px_rgba(31,191,159,0.4)] hover:bg-brand-hover hover:shadow-[0_0_40px_rgba(31,191,159,0.5)] transition-all"
+              <Link
+                href="/ai-match"
+                className={cn(
+                  buttonVariants({ size: "lg" }),
+                  "rounded-full bg-brand px-8 py-6 text-base font-semibold text-white shadow-[0_0_30px_rgba(31,191,159,0.4)] transition-all hover:bg-brand-hover hover:shadow-[0_0_40px_rgba(31,191,159,0.5)]",
+                )}
               >
-                <Link href="/ai-match">
-                  Start AI Match
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-              <Button
-                asChild
-                variant="outline"
-                size="lg"
-                className="rounded-full border-white/15 bg-white/5 px-8 py-6 text-base font-medium text-white hover:bg-white/10 hover:border-white/25"
+                Start AI Match
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+              <Link
+                href="/vehicles"
+                className={cn(
+                  buttonVariants({ variant: "outline", size: "lg" }),
+                  "rounded-full border-white/15 bg-white/5 px-8 py-6 text-base font-medium text-white hover:border-white/25 hover:bg-white/10",
+                )}
               >
-                <Link href="/vehicles">Browse EVs</Link>
-              </Button>
+                Browse EVs
+              </Link>
             </motion.div>
 
             <motion.div
@@ -110,7 +114,7 @@ export default function HeroSection({ featuredCard }: HeroSectionProps) {
             <motion.div
               initial={{ opacity: 0, x: 40 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94], delay: 0.2 }}
+              transition={{ duration: 0.8, ease: EASE, delay: 0.2 }}
               className="relative min-h-[480px] lg:min-h-[560px]"
             >
               {featuredCard}

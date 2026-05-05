@@ -4,7 +4,8 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, Calculator, TrendingDown, Zap } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { Slider } from "@/components/ui/slider";
 
 function formatGBP(value: number) {
@@ -73,15 +74,16 @@ export default function FinancePreview() {
               ))}
             </ul>
 
-            <Button
-              asChild
-              className="mt-10 rounded-full bg-brand px-8 py-6 text-base font-semibold text-white shadow-[0_0_30px_rgba(31,191,159,0.3)] hover:bg-brand-hover"
+            <Link
+              href="/finance"
+              className={cn(
+                buttonVariants(),
+                "mt-10 flex w-fit items-center gap-2 rounded-full bg-brand px-8 py-6 text-base font-semibold text-white shadow-[0_0_30px_rgba(31,191,159,0.3)] hover:bg-brand-hover",
+              )}
             >
-              <Link href="/finance" className="flex items-center gap-2">
-                Full affordability calculator
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            </Button>
+              Full affordability calculator
+              <ArrowRight className="h-4 w-4" />
+            </Link>
           </motion.div>
 
           {/* Right — calculator widget */}
@@ -125,7 +127,7 @@ export default function FinancePreview() {
                   max={30}
                   step={1}
                   value={[depositPercent]}
-                  onValueChange={([v]) => setDepositPercent(v)}
+                  onValueChange={(v) => setDepositPercent(Array.isArray(v) ? v[0] : v)}
                   className="mt-4"
                 />
                 <div className="mt-2 flex justify-between text-[10px] text-white/25">

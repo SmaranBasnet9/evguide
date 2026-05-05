@@ -5,8 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, Zap } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import VehicleImagePlaceholder from "@/components/vehicles/VehicleImagePlaceholder";
 
 interface FeaturedEVsProps {
@@ -150,19 +150,24 @@ export default function FeaturedEVs({ models }: FeaturedEVsProps) {
 
                   {/* CTAs */}
                   <div className="mt-4 flex gap-2">
-                    <Button
-                      asChild
-                      className="flex-1 rounded-full bg-brand text-sm font-semibold text-white hover:bg-brand-hover"
+                    <Link
+                      href={`/cars/${model.id}`}
+                      className={cn(
+                        buttonVariants(),
+                        "flex-1 rounded-full bg-brand text-center text-sm font-semibold text-white hover:bg-brand-hover",
+                      )}
                     >
-                      <Link href={`/cars/${model.id}`}>View Details</Link>
-                    </Button>
-                    <Button
-                      asChild
-                      variant="outline"
-                      className="flex-1 rounded-full border-white/10 bg-transparent text-sm font-semibold text-white hover:bg-white/5 hover:border-white/20"
+                      View Details
+                    </Link>
+                    <Link
+                      href={`/compare?carA=${model.id}`}
+                      className={cn(
+                        buttonVariants({ variant: "outline" }),
+                        "flex-1 rounded-full border-white/10 bg-transparent text-center text-sm font-semibold text-white hover:border-white/20 hover:bg-white/5",
+                      )}
                     >
-                      <Link href={`/compare?carA=${model.id}`}>Compare</Link>
-                    </Button>
+                      Compare
+                    </Link>
                   </div>
                 </div>
               </motion.article>
@@ -172,16 +177,16 @@ export default function FeaturedEVs({ models }: FeaturedEVsProps) {
 
         {/* Bottom CTA */}
         <div className="mt-10 flex justify-center">
-          <Button
-            asChild
-            variant="outline"
-            className="rounded-full border-white/10 bg-white/[0.03] px-8 py-6 text-sm font-semibold text-white hover:bg-white/[0.06] hover:border-white/20"
+          <Link
+            href="/compare"
+            className={cn(
+              buttonVariants({ variant: "outline" }),
+              "flex items-center gap-2 rounded-full border-white/10 bg-white/[0.03] px-8 py-6 text-sm font-semibold text-white hover:border-white/20 hover:bg-white/[0.06]",
+            )}
           >
-            <Link href="/compare" className="flex items-center gap-2">
-              Compare EVs side by side
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </Button>
+            Compare EVs side by side
+            <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
       </div>
     </section>

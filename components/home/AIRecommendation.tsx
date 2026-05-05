@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, BrainCircuit, CheckCircle2, PoundSterling, Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const BENEFITS = [
   "Personalised EV matches based on your real priorities",
@@ -52,15 +53,16 @@ export default function AIRecommendation() {
                 ))}
               </div>
 
-              <Button
-                asChild
-                className="mt-10 rounded-full bg-brand px-8 py-6 text-base font-semibold text-white shadow-[0_0_30px_rgba(31,191,159,0.3)] hover:bg-brand-hover"
+              <Link
+                href="/ai-match"
+                className={cn(
+                  buttonVariants(),
+                  "mt-10 flex w-fit items-center gap-2 rounded-full bg-brand px-8 py-6 text-base font-semibold text-white shadow-[0_0_30px_rgba(31,191,159,0.3)] hover:bg-brand-hover",
+                )}
               >
-                <Link href="/ai-match" className="flex items-center gap-2">
-                  Start Match
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              </Button>
+                Start Match
+                <ArrowRight className="h-4 w-4" />
+              </Link>
             </div>
 
             {/* Right — mock UI */}

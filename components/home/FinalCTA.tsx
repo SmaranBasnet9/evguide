@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export default function FinalCTA() {
   return (
@@ -48,24 +49,25 @@ export default function FinalCTA() {
             </div>
 
             <div className="flex shrink-0 flex-col gap-3 sm:flex-row lg:flex-col xl:flex-row">
-              <Button
-                asChild
-                size="lg"
-                className="rounded-full bg-brand px-8 py-6 text-base font-semibold text-white shadow-[0_0_40px_rgba(31,191,159,0.4)] hover:bg-brand-hover"
+              <Link
+                href="/ai-match"
+                className={cn(
+                  buttonVariants({ size: "lg" }),
+                  "flex items-center gap-2 rounded-full bg-brand px-8 py-6 text-base font-semibold text-white shadow-[0_0_40px_rgba(31,191,159,0.4)] hover:bg-brand-hover",
+                )}
               >
-                <Link href="/ai-match" className="flex items-center gap-2">
-                  Start Match
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              </Button>
-              <Button
-                asChild
-                variant="outline"
-                size="lg"
-                className="rounded-full border-white/15 bg-white/5 px-8 py-6 text-base font-medium text-white hover:bg-white/10"
+                Start Match
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link
+                href="/vehicles"
+                className={cn(
+                  buttonVariants({ variant: "outline", size: "lg" }),
+                  "rounded-full border-white/15 bg-white/5 px-8 py-6 text-base font-medium text-white hover:bg-white/10",
+                )}
               >
-                <Link href="/vehicles">Browse EVs</Link>
-              </Button>
+                Browse EVs
+              </Link>
             </div>
           </div>
         </motion.div>
