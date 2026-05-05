@@ -2,10 +2,13 @@
 
 import type { ReactNode } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+
+const HeroScene = dynamic(() => import("./HeroScene"), { ssr: false });
 
 interface HeroSectionProps {
   featuredCard?: ReactNode;
@@ -22,19 +25,24 @@ const fadeUp = (delay = 0) => ({
 export default function HeroSection({ featuredCard }: HeroSectionProps) {
   return (
     <section className="relative flex min-h-screen items-center overflow-hidden bg-[#0A0A0A] pt-20">
-      {/* Background glows */}
+      {/* 3D background scene — full viewport, pointer-events off */}
+      <HeroScene />
+
+      {/* Fallback colour glows behind the canvas */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute left-1/4 top-1/4 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand/10 blur-[120px]" />
-        <div className="absolute right-1/4 bottom-1/4 h-[400px] w-[400px] rounded-full bg-cyan-500/8 blur-[100px]" />
-        {/* Grid overlay */}
+        <div className="absolute left-1/4 top-1/4 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand/8 blur-[140px]" />
+        <div className="absolute right-1/4 bottom-1/4 h-[400px] w-[400px] rounded-full bg-cyan-500/6 blur-[120px]" />
+        {/* Subtle grid */}
         <div
-          className="absolute inset-0 opacity-[0.03]"
+          className="absolute inset-0 opacity-[0.025]"
           style={{
             backgroundImage:
-              "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
+              "linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px)",
             backgroundSize: "60px 60px",
           }}
         />
+        {/* Dark vignette so text stays readable over the 3D */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0A0A0A] via-[#0A0A0A]/70 to-transparent" />
       </div>
 
       <div className="relative mx-auto w-full max-w-7xl px-4 pb-24 pt-16 sm:px-6 lg:px-8 lg:pt-20">
