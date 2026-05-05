@@ -30,6 +30,14 @@ const productionOnlySecurityHeaders = [
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   ...(localBuildDistDir ? { distDir: localBuildDistDir } : {}),
+  webpack(config: { resolve: { extensionAlias: Record<string, string[]> } }) {
+    // Allow webpack to resolve .mjs files from packages like lucide-react v1.x
+    config.resolve.extensionAlias = {
+      ...config.resolve.extensionAlias,
+      ".js": [".js", ".mjs", ".ts", ".tsx"],
+    };
+    return config;
+  },
   async headers() {
     return [
       {
