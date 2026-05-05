@@ -1,6 +1,7 @@
 "use client";
 
-import { CheckCircle2, Minus } from "lucide-react";
+import React from "react";
+import { BatteryCharging, Car, CheckCircle2, ClipboardList, Gauge, Minus, PoundSterling, Zap } from "lucide-react";
 import type { EVModel } from "@/types";
 import { applyEvEnrichment } from "@/data/evEnrichment";
 import { calcTCO } from "@/lib/ev-intelligence";
@@ -150,11 +151,11 @@ function SpecRow({ row }: { row: RowData }) {
 
 function SpecGroup({
   title,
-  icon,
+  icon: Icon,
   rows,
 }: {
   title: string;
-  icon: string;
+  icon: React.ElementType;
   rows: RowData[];
 }) {
   return (
@@ -162,7 +163,7 @@ function SpecGroup({
       {/* Group header */}
       <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] border-b border-[#E5E7EB] bg-[#F8FAF9]">
         <div className="flex items-center gap-2 px-5 py-3">
-          <span className="text-base">{icon}</span>
+          <Icon className="h-4 w-4 text-[#1FBF9F]" />
           <span className="text-xs font-bold uppercase tracking-[0.12em] text-[#374151]">
             {title}
           </span>
@@ -396,12 +397,12 @@ export default function PremiumCompareTable({ modelA, modelB }: Props) {
         </div>
 
         <div className="space-y-3">
-          <SpecGroup title="Price & Cost" icon="💰" rows={priceGroups} />
-          <SpecGroup title="Range & Battery" icon="🔋" rows={rangeGroups} />
-          <SpecGroup title="Charging" icon="⚡" rows={chargingGroups} />
-          <SpecGroup title="Performance" icon="🏎" rows={perfGroups} />
-          <SpecGroup title="Practicality" icon="🚗" rows={practicalGroups} />
-          <SpecGroup title="Ownership" icon="📋" rows={ownershipGroups} />
+          <SpecGroup title="Price & Cost" icon={PoundSterling} rows={priceGroups} />
+          <SpecGroup title="Range & Battery" icon={BatteryCharging} rows={rangeGroups} />
+          <SpecGroup title="Charging" icon={Zap} rows={chargingGroups} />
+          <SpecGroup title="Performance" icon={Gauge} rows={perfGroups} />
+          <SpecGroup title="Practicality" icon={Car} rows={practicalGroups} />
+          <SpecGroup title="Ownership" icon={ClipboardList} rows={ownershipGroups} />
         </div>
 
         <p className="mt-4 text-xs text-[#9CA3AF]">

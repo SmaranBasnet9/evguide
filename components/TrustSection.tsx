@@ -1,21 +1,24 @@
-const TRUST_ITEMS = [
+import { CheckCircle2, Landmark, Lock, RefreshCw } from "lucide-react";
+import type { ElementType } from "react";
+
+const TRUST_ITEMS: { icon: ElementType; title: string; desc: string }[] = [
   {
-    icon: "🔄",
+    icon: RefreshCw,
     title: "Updated Daily",
     desc: "EV specs, prices, and live news refreshed every 24 hours from verified sources.",
   },
   {
-    icon: "✅",
+    icon: CheckCircle2,
     title: "Verified Reviews",
     desc: "Every user review is moderated and approved by our team before going public.",
   },
   {
-    icon: "🏦",
+    icon: Landmark,
     title: "UK Finance Insights",
     desc: "Finance rates and loan offers sourced from real UK-based lenders, not estimates.",
   },
   {
-    icon: "🔒",
+    icon: Lock,
     title: "Secure & Private",
     desc: "We never sell your data. Your comparisons and searches stay between you and us.",
   },
@@ -36,16 +39,21 @@ export default function TrustSection() {
         </div>
 
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {TRUST_ITEMS.map((item) => (
-            <div
-              key={item.title}
-              className="rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm"
-            >
-              <span className="text-4xl">{item.icon}</span>
-              <h3 className="mt-4 font-bold text-slate-900">{item.title}</h3>
-              <p className="mt-2 text-sm leading-6 text-slate-500">{item.desc}</p>
-            </div>
-          ))}
+          {TRUST_ITEMS.map((item) => {
+            const Icon = item.icon;
+            return (
+              <div
+                key={item.title}
+                className="rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm"
+              >
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl border border-blue-100 bg-blue-50 text-blue-600">
+                  <Icon className="h-5 w-5" />
+                </div>
+                <h3 className="mt-4 font-bold text-slate-900">{item.title}</h3>
+                <p className="mt-2 text-sm leading-6 text-slate-500">{item.desc}</p>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>

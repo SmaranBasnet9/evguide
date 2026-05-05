@@ -1,5 +1,14 @@
 import Link from "next/link";
 import { Globe, Mail, MessageCircle, Zap } from "lucide-react";
+
+function EvGuideLogo() {
+  return (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+      <rect width="28" height="28" rx="8" fill="#1FBF9F" />
+      <path d="M16 4L8 15.5H14L12 24L20 12.5H14L16 4Z" fill="white" />
+    </svg>
+  );
+}
 import CookieSettingsButton from "@/components/legal/CookieSettingsButton";
 import GradientDivider from "@/components/design-system/GradientDivider";
 
@@ -34,12 +43,10 @@ export default function PremiumFooter() {
 
           {/* Brand column */}
           <div className="col-span-2 lg:col-span-2">
-            <div className="mb-6 flex items-center gap-2">
-              <Zap className="h-5 w-5 text-brand" />
-              <Link href="/" className="text-xl font-bold tracking-tight text-white">
-                EVGuide
-              </Link>
-            </div>
+            <Link href="/" className="mb-6 flex items-center gap-2">
+              <EvGuideLogo />
+              <span className="text-xl font-bold tracking-tight text-white">EVGuide</span>
+            </Link>
             <p className="mb-8 max-w-sm text-sm leading-7 text-white/40">
               The premium EV decision platform for UK buyers. Use AI Match, Compare EVs, and
               finance tools to choose with confidence.

@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { Zap } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 export default function PremiumNavbar() {
@@ -60,15 +59,16 @@ export default function PremiumNavbar() {
     <nav className="fixed top-0 z-50 w-full border-b border-white/8 bg-[#0A0A0A]/90 backdrop-blur-xl">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-18 items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Zap className="h-5 w-5 text-brand" />
-            <Link
-              href="/"
-              className="text-lg font-bold tracking-tight text-white transition-colors hover:text-brand"
-            >
+          <Link href="/" className="flex items-center gap-2 group">
+            {/* Custom EV bolt logo mark */}
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+              <rect width="28" height="28" rx="8" fill="#1FBF9F" />
+              <path d="M16 4L8 15.5H14L12 24L20 12.5H14L16 4Z" fill="white" />
+            </svg>
+            <span className="text-lg font-bold tracking-tight text-white transition-colors group-hover:text-brand">
               EVGuide
-            </Link>
-          </div>
+            </span>
+          </Link>
 
           <div className="hidden items-center gap-7 md:flex">
             {[

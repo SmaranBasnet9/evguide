@@ -1,8 +1,17 @@
 import Link from "next/link";
+import { GitCompareArrows, Landmark, PoundSterling, Star } from "lucide-react";
+import type { ElementType } from "react";
 
-const ACTIONS = [
+const ACTIONS: {
+  icon: ElementType;
+  title: string;
+  desc: string;
+  href: string;
+  iconBg: string;
+  cta: string;
+}[] = [
   {
-    icon: "⚡",
+    icon: GitCompareArrows,
     title: "Compare EVs",
     desc: "Side-by-side specs, range, price, and charging times for all major models.",
     href: "/compare",
@@ -10,7 +19,7 @@ const ACTIONS = [
     cta: "text-blue-600",
   },
   {
-    icon: "£",
+    icon: PoundSterling,
     title: "Calculate EMI",
     desc: "Estimate monthly payments instantly with your deposit, tenure, and APR.",
     href: "/finance",
@@ -18,7 +27,7 @@ const ACTIONS = [
     cta: "text-emerald-600",
   },
   {
-    icon: "🏦",
+    icon: Landmark,
     title: "Loan Offers",
     desc: "Browse the latest UK bank EV finance rates and apply in minutes.",
     href: "/finance",
@@ -26,7 +35,7 @@ const ACTIONS = [
     cta: "text-purple-600",
   },
   {
-    icon: "★",
+    icon: Star,
     title: "Owner Reviews",
     desc: "Trusted, verified stories from real UK EV owners — no paid posts.",
     href: "/blog",
@@ -40,26 +49,29 @@ export default function QuickActionsSection() {
     <section className="border-b border-slate-200 bg-white">
       <div className="mx-auto max-w-7xl px-6 py-12">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {ACTIONS.map((action) => (
-            <Link
-              key={action.title}
-              href={action.href}
-              className="group flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-md"
-            >
-              <span
-                className={`flex h-12 w-12 items-center justify-center rounded-xl border text-xl ${action.iconBg}`}
+          {ACTIONS.map((action) => {
+            const Icon = action.icon;
+            return (
+              <Link
+                key={action.title}
+                href={action.href}
+                className="group flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-md"
               >
-                {action.icon}
-              </span>
-              <div>
-                <p className="font-bold text-slate-900">{action.title}</p>
-                <p className="mt-1 text-sm leading-5 text-slate-500">{action.desc}</p>
-              </div>
-              <p className={`mt-auto text-sm font-semibold transition group-hover:underline ${action.cta}`}>
-                Get started →
-              </p>
-            </Link>
-          ))}
+                <span
+                  className={`flex h-12 w-12 items-center justify-center rounded-xl border ${action.iconBg}`}
+                >
+                  <Icon className="h-5 w-5" />
+                </span>
+                <div>
+                  <p className="font-bold text-slate-900">{action.title}</p>
+                  <p className="mt-1 text-sm leading-5 text-slate-500">{action.desc}</p>
+                </div>
+                <p className={`mt-auto text-sm font-semibold transition group-hover:underline ${action.cta}`}>
+                  Get started →
+                </p>
+              </Link>
+            );
+          })}
         </div>
       </div>
     </section>

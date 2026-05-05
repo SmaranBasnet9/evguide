@@ -81,12 +81,12 @@ export default function FindMyEVDrawer({ open, onClose }: Props) {
         {/* Trust strip */}
         <div className="flex shrink-0 items-center justify-center gap-6 border-b border-slate-100 bg-white px-6 py-2.5">
           {[
-            { icon: "⚡", label: "Instant results" },
-            { icon: "🔒", label: "No account needed" },
-            { icon: "🎯", label: "Personalised to you" },
+            { label: "Instant results" },
+            { label: "No account needed" },
+            { label: "Personalised to you" },
           ].map((item) => (
             <span key={item.label} className="flex items-center gap-1.5 text-xs text-slate-500">
-              <span>{item.icon}</span>
+              <span className="h-1.5 w-1.5 rounded-full bg-brand" />
               {item.label}
             </span>
           ))}

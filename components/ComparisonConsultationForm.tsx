@@ -146,15 +146,15 @@ export default function ComparisonConsultationForm({ modelA, modelB }: Props) {
 
           <div className="grid gap-4 sm:grid-cols-3 my-8">
             {[
-              { icon: "✓", bg: "emerald", text: "Free Support" },
-              { icon: "◉", bg: "blue", text: "No Obligation" },
-              { icon: "⚡", bg: "purple", text: "24h Response" },
+              { label: "Free Support", className: "bg-emerald-100 text-emerald-600", symbol: "✓" },
+              { label: "No Obligation", className: "bg-blue-100 text-blue-600", symbol: "○" },
+              { label: "24h Response", className: "bg-purple-100 text-purple-600", symbol: "⚡" },
             ].map((item) => (
-              <div key={item.text} className="flex items-center gap-3">
-                <div className={`h-10 w-10 rounded-full bg-${item.bg}-100 flex items-center justify-center text-${item.bg}-600`}>
-                  {item.icon}
+              <div key={item.label} className="flex items-center gap-3">
+                <div className={`h-10 w-10 rounded-full flex items-center justify-center text-sm font-bold ${item.className}`}>
+                  {item.symbol}
                 </div>
-                <p className="text-sm font-semibold text-slate-700">{item.text}</p>
+                <p className="text-sm font-semibold text-slate-700">{item.label}</p>
               </div>
             ))}
           </div>

@@ -10,8 +10,9 @@
  * models real EV economics. This is EVGuide's key differentiator.
  */
 
+import React from "react";
 import { useState } from "react";
-import { PoundSterling, TrendingDown, Zap, ChevronDown, ChevronUp } from "lucide-react";
+import { ClipboardList, CreditCard, PoundSterling, Settings, Shield, TrendingDown, Wrench, Zap, ChevronDown, ChevronUp } from "lucide-react";
 import { calcTCO, DEFAULT_ENERGY_RATE_PENCE, DEFAULT_FUEL_PRICE_GBP } from "@/lib/ev-intelligence";
 import type { TCOResult } from "@/types";
 
@@ -164,17 +165,17 @@ export default function TCOCalculator({ vehiclePrice, batteryKWh, rangeKm }: Pro
                   Monthly running costs
                 </div>
                 <div className="divide-y divide-slate-100">
-                  <CostRow label="Energy (electricity)" value={result.monthlyEnergyCostGbp} icon="⚡" />
-                  <CostRow label="Insurance (estimated)" value={result.annualInsuranceEstGbp / 12} icon="🛡" />
-                  <CostRow label="Servicing (estimated)" value={result.annualServicingEstGbp / 12} icon="🔧" />
+                  <CostRow label="Energy (electricity)" value={result.monthlyEnergyCostGbp} icon={Zap} />
+                  <CostRow label="Insurance (estimated)" value={result.annualInsuranceEstGbp / 12} icon={Shield} />
+                  <CostRow label="Servicing (estimated)" value={result.annualServicingEstGbp / 12} icon={Wrench} />
                   <CostRow
                     label="Vehicle Excise Duty"
                     value={result.annualVedGbp / 12}
-                    icon="📋"
+                    icon={ClipboardList}
                     note={result.annualVedGbp === 0 ? "£0 for EVs under £40k" : undefined}
                   />
                   {result.monthlyFinanceGbp > 0 && (
-                    <CostRow label="Finance repayment" value={result.monthlyFinanceGbp} icon="💳" />
+                    <CostRow label="Finance repayment" value={result.monthlyFinanceGbp} icon={CreditCard} />
                   )}
                   <div className="flex items-center justify-between px-4 py-3 bg-slate-50">
                     <span className="text-sm font-bold text-slate-900">Total per month</span>
@@ -221,18 +222,18 @@ export default function TCOCalculator({ vehiclePrice, batteryKWh, rangeKm }: Pro
 function CostRow({
   label,
   value,
-  icon,
+  icon: Icon,
   note,
 }: {
   label: string;
   value: number;
-  icon: string;
+  icon: React.ElementType;
   note?: string;
 }) {
   return (
     <div className="flex items-center justify-between px-4 py-3">
       <div className="flex items-center gap-2">
-        <span className="text-base">{icon}</span>
+        <Icon className="h-4 w-4 text-slate-400" />
         <span className="text-sm text-slate-700">{label}</span>
         {note && <span className="text-xs text-emerald-600 font-medium">({note})</span>}
       </div>

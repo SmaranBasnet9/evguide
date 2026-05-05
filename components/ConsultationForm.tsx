@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { Landmark, Zap } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { trackEvent } from "@/lib/tracking/client";
 import LoginModal from "@/components/LoginModal";
@@ -163,10 +164,10 @@ export default function ConsultationForm({ evModels }: Props) {
           <div className="grid grid-cols-2 gap-3">
             {(
               [
-                { key: "bank", icon: "🏦", title: "Bank Finance", desc: "Get EV loan advice from our partner banks" },
-                { key: "vehicle", icon: "⚡", title: "EV Vehicle", desc: "Personalised guidance on choosing an EV" },
+                { key: "bank", Icon: Landmark, title: "Bank Finance", desc: "Get EV loan advice from our partner banks" },
+                { key: "vehicle", Icon: Zap, title: "EV Vehicle", desc: "Personalised guidance on choosing an EV" },
               ] as const
-            ).map(({ key, icon, title, desc }) => (
+            ).map(({ key, Icon, title, desc }) => (
               <button
                 key={key}
                 type="button"
@@ -188,7 +189,9 @@ export default function ConsultationForm({ evModels }: Props) {
                     : "border-slate-200 hover:border-slate-300 hover:bg-slate-50"
                 }`}
               >
-                <span className="text-2xl">{icon}</span>
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-100 text-blue-600">
+                  <Icon className="h-4.5 w-4.5" />
+                </div>
                 <p className="mt-2 font-semibold text-slate-900">{title}</p>
                 <p className="mt-0.5 text-xs text-slate-500">{desc}</p>
               </button>

@@ -110,7 +110,7 @@ export default function EVIntelligenceBadges({ vehicle, variant = "card" }: Prop
         {/* Annual energy cost */}
         {vehicle.annualEnergyCostGbp && (
           <IntelBadge
-            icon={<span className="text-base">⚡</span>}
+            icon={<Zap className="h-4 w-4" />}
             label="Annual energy cost"
             value={`£${Math.round(vehicle.annualEnergyCostGbp)}`}
             sub="At 7,500 mi, 28p/kWh"
