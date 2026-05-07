@@ -35,8 +35,46 @@ import {
 
 export const revalidate = 3600; // ISR — revalidate cached page every hour
 
+const BASE_URL = "https://evguide.co.uk";
+
 interface Props {
   params: Promise<{ id: string }>;
+}
+
+export async function generateMetadata({ params }: Props) {
+  const { id } = await params;
+  const supabase = createPublicServerClient();
+  if (!supabase) return {};
+  const { data } = await supabase
+    .from("ev_models")
+    .select("brand, model, price, rangeKm, heroImage, bodyType, batteryKWh")
+    .eq("id", id)
+    .maybeSingle();
+  if (!data) return { title: "Vehicle not found | EVGuide" };
+
+  const name = `${data.brand} ${data.model}`;
+  const title = `${name} Review, Price & Specs ${new Date().getFullYear()} | EVGuide`;
+  const description = `${name}: from £${(data.price as number).toLocaleString("en-GB")} · ${data.rangeKm} km WLTP range · ${data.batteryKWh} kWh battery. Real-world range, finance estimates, charging times, and TCO vs petrol — UK buyer's guide.`;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: `${BASE_URL}/cars/${id}`,
+      siteName: "EVGuide",
+      images: data.heroImage ? [{ url: data.heroImage, alt: name }] : [],
+      type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: data.heroImage ? [data.heroImage] : [],
+    },
+    alternates: { canonical: `${BASE_URL}/cars/${id}` },
+  };
 }
 
 /** Resolves to `fallback` if `fn` takes longer than `ms` milliseconds. */

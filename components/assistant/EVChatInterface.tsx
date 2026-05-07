@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowRight,
   ArrowUp,
@@ -118,15 +119,28 @@ function CarCard({ result }: { result: MatchResult }) {
 
   return (
     <div className="flex flex-col overflow-hidden rounded-2xl border border-[#E5E7EB] bg-white shadow-sm transition hover:shadow-md hover:-translate-y-0.5">
-      {/* Gradient image placeholder */}
-      <div className={`relative flex h-28 items-center justify-center bg-gradient-to-br ${gradient}`}>
-        <span className="text-3xl font-black text-white/90 tracking-tight select-none">
-          {model.brand[0]}{model.model[0]}
-        </span>
+      {/* Image / gradient fallback */}
+      <div className={`relative h-36 overflow-hidden bg-gradient-to-br ${gradient}`}>
+        {model.heroImage ? (
+          <Image
+            src={model.heroImage}
+            alt={`${model.brand} ${model.model}`}
+            fill
+            sizes="(max-width: 640px) 100vw, 280px"
+            className="object-cover"
+          />
+        ) : (
+          <div className="flex h-full items-center justify-center">
+            <span className="text-4xl font-black text-white/80 tracking-tight select-none">
+              {model.brand[0]}{model.model[0]}
+            </span>
+          </div>
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
         <span className={`absolute top-2 right-2 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${tag.color}`}>
           {tag.label}
         </span>
-        <span className="absolute top-2 left-2 rounded-full bg-black/30 px-2 py-0.5 text-[10px] font-bold text-white">
+        <span className="absolute top-2 left-2 rounded-full bg-black/40 px-2 py-0.5 text-[10px] font-bold text-white backdrop-blur-sm">
           {matchScore}% match
         </span>
       </div>
@@ -480,7 +494,7 @@ export default function EVChatInterface({ navOffset = 73 }: EVChatInterfaceProps
         className="relative flex flex-col items-center justify-center overflow-hidden bg-[#07090B] px-4 py-16"
         style={{ minHeight: `calc(100vh - ${navOffset}px)` }}
       >
-        <div className="pointer-events-none absolute top-1/3 left-1/2 h-[500px] w-[700px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#1FBF9F]/10 blur-[120px]" />
+        <div className="pointer-events-none absolute top-1/3 left-1/2 h-[300px] w-[min(700px,100vw)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#1FBF9F]/10 blur-[100px] sm:h-[500px]" />
 
         <div className="relative z-10 flex w-full max-w-2xl flex-col items-center gap-8">
           <div className="inline-flex items-center gap-2 rounded-full border border-[#1FBF9F]/30 bg-[#1FBF9F]/10 px-4 py-1.5">
@@ -489,8 +503,8 @@ export default function EVChatInterface({ navOffset = 73 }: EVChatInterfaceProps
           </div>
 
           <div className="text-center">
-            <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl">Find your perfect EV</h1>
-            <p className="mt-3 text-base text-zinc-400">Answer a few quick questions and we&apos;ll match you instantly.</p>
+            <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl">Find your perfect EV</h1>
+            <p className="mt-3 text-sm text-zinc-400 sm:text-base">Answer a few quick questions and we&apos;ll match you instantly.</p>
           </div>
 
           {/* Quick starters */}
@@ -526,10 +540,10 @@ export default function EVChatInterface({ navOffset = 73 }: EVChatInterfaceProps
 
   // ── Chat screen ─────────────────────────────────────────────────────────────
   return (
-    <div className="flex flex-col bg-[#F8FAF9]" style={{ height: `calc(100vh - ${navOffset}px)` }}>
+    <div className="flex flex-col bg-[#F8FAF9]" style={{ height: `calc(100dvh - ${navOffset}px)` }}>
 
       {/* Top bar */}
-      <div className="flex items-center justify-between border-b border-[#E5E7EB] bg-white px-5 py-3 shadow-sm">
+      <div className="flex items-center justify-between border-b border-[#E5E7EB] bg-white px-3 py-3 shadow-sm sm:px-5">
         <div className="flex items-center gap-2.5">
           <div className="flex h-8 w-8 items-center justify-center rounded-full border border-[#D1F2EB] bg-[#E8F8F5]">
             <Bot className="h-4 w-4 text-[#1FBF9F]" />
@@ -577,7 +591,7 @@ export default function EVChatInterface({ navOffset = 73 }: EVChatInterfaceProps
                 : <Bot  className="h-4 w-4 text-[#6B7280]" />}
             </div>
 
-            <div className={`flex max-w-[85%] flex-col gap-3 ${msg.role === "user" ? "items-end" : "items-start"}`}>
+            <div className={`flex flex-col gap-3 ${msg.results ? "w-full" : "max-w-[85%]"} ${msg.role === "user" ? "items-end" : "items-start"}`}>
 
               {/* Bubble */}
               <div className={`rounded-2xl px-4 py-3 text-sm leading-7 ${
@@ -590,12 +604,12 @@ export default function EVChatInterface({ navOffset = 73 }: EVChatInterfaceProps
                 ))}
               </div>
 
-              {/* Car result cards */}
+              {/* Car result cards — full width, responsive grid */}
               {msg.results && msg.results.length > 0 && (
-                <div className={`grid gap-3 w-full ${
+                <div className={`grid w-full gap-3 ${
                   msg.results.length === 1 ? "max-w-xs" :
-                  msg.results.length === 2 ? "sm:grid-cols-2 max-w-lg" :
-                  "sm:grid-cols-3"
+                  msg.results.length === 2 ? "grid-cols-1 sm:grid-cols-2" :
+                  "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
                 }`}>
                   {msg.results.map((r) => <CarCard key={r.model.id} result={r} />)}
                 </div>
@@ -623,7 +637,7 @@ export default function EVChatInterface({ navOffset = 73 }: EVChatInterfaceProps
       </div>
 
       {/* Input bar */}
-      <div className="border-t border-[#E5E7EB] bg-white px-4 py-4">
+      <div className="border-t border-[#E5E7EB] bg-white px-3 pb-4 pt-3 sm:px-4 sm:pb-4">
         <div className="mx-auto max-w-3xl">
           <div className="flex items-end gap-3 rounded-2xl border border-[#E5E7EB] bg-[#F8FAF9] px-4 py-3 transition focus-within:border-[#1FBF9F] focus-within:ring-2 focus-within:ring-[#D1F2EB]">
             <textarea
