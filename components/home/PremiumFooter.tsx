@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { Globe, Mail, MessageCircle, Zap } from "lucide-react";
+import CookieSettingsButton from "@/components/legal/CookieSettingsButton";
+import GradientDivider from "@/components/design-system/GradientDivider";
 
 function EvGuideLogo() {
   return (
@@ -9,8 +11,6 @@ function EvGuideLogo() {
     </svg>
   );
 }
-import CookieSettingsButton from "@/components/legal/CookieSettingsButton";
-import GradientDivider from "@/components/design-system/GradientDivider";
 
 const LINKS = {
   Platform: [
@@ -23,8 +23,8 @@ const LINKS = {
   ],
   Resources: [
     { href: "/blog", label: "Blog" },
-    { href: "/blog", label: "Buying Guides" },
-    { href: "/finance", label: "Affordability Tools" },
+    { href: "/blog?category=buying-guides", label: "Buying Guides" },
+    { href: "/finance?section=tools", label: "Affordability Tools" },
     { href: "/support", label: "Support" },
   ],
   Company: [
@@ -34,6 +34,12 @@ const LINKS = {
     { href: "/terms", label: "Terms of Service" },
   ],
 };
+
+const SOCIAL_LINKS = [
+  { Icon: MessageCircle, label: "Chat with us" },
+  { Icon: Globe, label: "Visit our website" },
+  { Icon: Mail, label: "Email us" },
+];
 
 export default function PremiumFooter() {
   return (
@@ -52,10 +58,12 @@ export default function PremiumFooter() {
               finance tools to choose with confidence.
             </p>
             <div className="flex items-center gap-3">
-              {[MessageCircle, Globe, Mail].map((Icon, i) => (
+              {SOCIAL_LINKS.map(({ Icon, label }) => (
                 <Link
-                  key={i}
+                  key={label}
                   href="#"
+                  aria-label={label}
+                  onClick={(e) => e.preventDefault()}
                   className="flex h-9 w-9 items-center justify-center rounded-full border border-white/8 bg-white/[0.04] text-white/40 transition-all hover:border-brand/30 hover:bg-brand/10 hover:text-brand"
                 >
                   <Icon className="h-4 w-4" />
