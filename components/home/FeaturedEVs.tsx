@@ -51,14 +51,14 @@ export default function FeaturedEVs({ models }: FeaturedEVsProps) {
   const displayModels = models.slice(0, 3);
 
   return (
-    <section className="bg-[#0A0A0A] py-24 lg:py-32">
+    <section className="bg-[#0A0A0A] py-14 sm:py-24 lg:py-32">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
         {/* Header */}
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div className="max-w-2xl">
             <p className="text-xs font-semibold uppercase tracking-[0.3em] text-brand">Featured EVs</p>
-            <h2 className="mt-4 text-4xl font-semibold text-white sm:text-5xl">
+            <h2 className="mt-4 text-2xl font-semibold text-white sm:text-4xl lg:text-5xl">
               Top EVs for UK buyers right now
             </h2>
             <p className="mt-4 text-lg leading-8 text-white/50">
@@ -97,7 +97,7 @@ export default function FeaturedEVs({ models }: FeaturedEVsProps) {
                       src={model.heroImage}
                       alt={`${model.brand} ${model.model}`}
                       fill
-                      unoptimized
+                      sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
                       className="object-cover transition duration-700 group-hover:scale-105"
                     />
                   ) : (
@@ -128,7 +128,7 @@ export default function FeaturedEVs({ models }: FeaturedEVsProps) {
                 {/* Content */}
                 <div className="p-5">
                   {/* Specs grid */}
-                  <div className="grid grid-cols-4 gap-2">
+                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                     {specs.map((spec) => (
                       <div
                         key={spec.label}

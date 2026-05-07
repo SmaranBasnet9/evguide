@@ -11,8 +11,6 @@ interface Props {
   modelB: EVModel;
 }
 
-// ── helpers ──────────────────────────────────────────────────────────────────
-
 function parseAccel(s: string): number | null {
   const m = String(s).match(/([0-9.]+)/);
   return m ? parseFloat(m[1]) : null;
@@ -48,11 +46,8 @@ function computeDiff(
 ): DiffResult {
   if (numA === null || numB === null || numA === numB) return { text: "", side: "tie" };
   const aWins = lowerBetter ? numA < numB : numA > numB;
-  const diff = Math.abs(numA - numB);
-  return { text: fmt(diff, aWins ? "A" : "B"), side: aWins ? "A" : "B" };
+  return { text: fmt(Math.abs(numA - numB), aWins ? "A" : "B"), side: aWins ? "A" : "B" };
 }
-
-// ── row component ─────────────────────────────────────────────────────────────
 
 type RowData = {
   label: string;
@@ -66,79 +61,44 @@ type RowData = {
 
 function SpecRow({ row }: { row: RowData }) {
   const { displayA, displayB, numA, numB, lowerBetter, diff } = row;
-
-  const aWins =
-    numA !== null && numB !== null
-      ? lowerBetter
-        ? numA < numB
-        : numA > numB
-      : false;
-  const bWins =
-    numA !== null && numB !== null
-      ? lowerBetter
-        ? numB < numA
-        : numB > numA
-      : false;
+  const aWins = numA !== null && numB !== null ? (lowerBetter ? numA < numB : numA > numB) : false;
+  const bWins = numA !== null && numB !== null ? (lowerBetter ? numB < numA : numB > numA) : false;
   const tie = !aWins && !bWins;
 
   return (
-    <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] items-center gap-0 border-b border-[#F0F0F0] last:border-0 hover:bg-[#FAFFFE] transition-colors">
+    <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] border-b border-white/5 last:border-0 transition-colors hover:bg-white/[0.02]">
       {/* Label */}
-      <div className="px-5 py-4">
-        <span className="text-sm font-medium text-[#374151]">{row.label}</span>
+      <div className="px-3 py-3 sm:px-5 sm:py-4">
+        <span className="text-xs text-white/50 sm:text-sm">{row.label}</span>
       </div>
 
       {/* Car A */}
-      <div
-        className={`px-5 py-4 border-l border-[#F0F0F0] ${
-          aWins ? "bg-[#F0FDF9]" : ""
-        }`}
-      >
+      <div className={`border-l border-white/5 px-3 py-3 sm:px-5 sm:py-4 ${aWins ? "bg-brand/[0.06]" : ""}`}>
         <div className="flex items-center gap-2">
-          {aWins && <CheckCircle2 className="h-4 w-4 shrink-0 text-[#1FBF9F]" />}
-          {tie && <Minus className="h-4 w-4 shrink-0 text-[#D1D5DB]" />}
-          <span
-            className={`text-sm font-semibold ${
-              aWins
-                ? "text-[#0F9B77]"
-                : tie
-                ? "text-[#6B7280]"
-                : "text-[#9CA3AF]"
-            }`}
-          >
+          {aWins && <CheckCircle2 className="h-4 w-4 shrink-0 text-brand" />}
+          {tie && <Minus className="h-4 w-4 shrink-0 text-white/20" />}
+          <span className={`text-sm font-semibold ${aWins ? "text-brand" : tie ? "text-white/40" : "text-white/30"}`}>
             {displayA}
           </span>
         </div>
         {diff.side === "A" && diff.text && (
-          <span className="mt-1 inline-block rounded-full bg-[#E8F8F5] px-2 py-0.5 text-[10px] font-bold text-[#0F9B77]">
+          <span className="mt-1 inline-block rounded-full border border-brand/25 bg-brand/10 px-2 py-0.5 text-[10px] font-semibold text-brand">
             {diff.text}
           </span>
         )}
       </div>
 
       {/* Car B */}
-      <div
-        className={`px-5 py-4 border-l border-[#F0F0F0] ${
-          bWins ? "bg-[#F0FDF9]" : ""
-        }`}
-      >
+      <div className={`border-l border-white/5 px-3 py-3 sm:px-5 sm:py-4 ${bWins ? "bg-brand/[0.06]" : ""}`}>
         <div className="flex items-center gap-2">
-          {bWins && <CheckCircle2 className="h-4 w-4 shrink-0 text-[#1FBF9F]" />}
-          {tie && <Minus className="h-4 w-4 shrink-0 text-[#D1D5DB]" />}
-          <span
-            className={`text-sm font-semibold ${
-              bWins
-                ? "text-[#0F9B77]"
-                : tie
-                ? "text-[#6B7280]"
-                : "text-[#9CA3AF]"
-            }`}
-          >
+          {bWins && <CheckCircle2 className="h-4 w-4 shrink-0 text-brand" />}
+          {tie && <Minus className="h-4 w-4 shrink-0 text-white/20" />}
+          <span className={`text-sm font-semibold ${bWins ? "text-brand" : tie ? "text-white/40" : "text-white/30"}`}>
             {displayB}
           </span>
         </div>
         {diff.side === "B" && diff.text && (
-          <span className="mt-1 inline-block rounded-full bg-[#E8F8F5] px-2 py-0.5 text-[10px] font-bold text-[#0F9B77]">
+          <span className="mt-1 inline-block rounded-full border border-brand/25 bg-brand/10 px-2 py-0.5 text-[10px] font-semibold text-brand">
             {diff.text}
           </span>
         )}
@@ -147,45 +107,25 @@ function SpecRow({ row }: { row: RowData }) {
   );
 }
 
-// ── group component ────────────────────────────────────────────────────────────
-
-function SpecGroup({
-  title,
-  icon: Icon,
-  rows,
-}: {
-  title: string;
-  icon: React.ElementType;
-  rows: RowData[];
-}) {
+function SpecGroup({ title, icon: Icon, rows }: { title: string; icon: React.ElementType; rows: RowData[] }) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-[#E5E7EB] bg-white shadow-sm">
-      {/* Group header */}
-      <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] border-b border-[#E5E7EB] bg-[#F8FAF9]">
+    <div className="overflow-hidden rounded-2xl border border-white/8 bg-white/[0.03]">
+      <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] border-b border-white/8 bg-white/[0.04]">
         <div className="flex items-center gap-2 px-5 py-3">
-          <Icon className="h-4 w-4 text-[#1FBF9F]" />
-          <span className="text-xs font-bold uppercase tracking-[0.12em] text-[#374151]">
-            {title}
-          </span>
+          <Icon className="h-4 w-4 text-brand" />
+          <span className="text-[11px] font-semibold uppercase tracking-[0.15em] text-white/60">{title}</span>
         </div>
-        <div className="border-l border-[#E5E7EB] px-5 py-3" />
-        <div className="border-l border-[#E5E7EB] px-5 py-3" />
+        <div className="border-l border-white/5 px-5 py-3" />
+        <div className="border-l border-white/5 px-5 py-3" />
       </div>
-
-      {/* Rows */}
-      {rows.map((row) => (
-        <SpecRow key={row.label} row={row} />
-      ))}
+      {rows.map((row) => <SpecRow key={row.label} row={row} />)}
     </div>
   );
 }
 
-// ── main component ─────────────────────────────────────────────────────────────
-
 export default function PremiumCompareTable({ modelA, modelB }: Props) {
   const eA = applyEvEnrichment(modelA);
   const eB = applyEvEnrichment(modelB);
-
   const emiA = emi(modelA.price);
   const emiB = emi(modelB.price);
   const tcoA = fiveYearTCO(modelA);
@@ -193,7 +133,6 @@ export default function PremiumCompareTable({ modelA, modelB }: Props) {
   const accelA = parseAccel(modelA.acceleration);
   const accelB = parseAccel(modelB.acceleration);
 
-  // helper builder
   function row(
     label: string,
     numA: number | null,
@@ -206,209 +145,87 @@ export default function PremiumCompareTable({ modelA, modelB }: Props) {
       label,
       displayA: numA !== null ? display(numA) : "N/A",
       displayB: numB !== null ? display(numB) : "N/A",
-      numA,
-      numB,
-      lowerBetter,
+      numA, numB, lowerBetter,
       diff: computeDiff(numA, numB, lowerBetter, diffFmt),
     };
   }
 
-  const priceGroups: RowData[] = [
-    row(
-      "Purchase Price",
-      modelA.price, modelB.price, true,
-      (n) => `£${n.toLocaleString()}`,
-      (d) => `£${d.toLocaleString()} cheaper`,
-    ),
-    row(
-      "Est. Monthly Finance",
-      emiA, emiB, true,
-      (n) => `£${n}/mo`,
-      (d) => `£${d}/mo less`,
-    ),
-    row(
-      "5-Year Running Cost",
-      tcoA, tcoB, true,
-      (n) => `£${n.toLocaleString()}`,
-      (d) => `£${d.toLocaleString()} less`,
-    ),
-  ];
-
-  const rangeGroups: RowData[] = [
-    row(
-      "WLTP Range",
-      modelA.rangeKm, modelB.rangeKm, false,
-      (n) => `${n} km`,
-      (d) => `+${d} km`,
-    ),
-    row(
-      "Real-World Range",
-      eA.realWorldRangeMiles ?? Math.round(modelA.rangeKm * 0.621 * 0.82),
-      eB.realWorldRangeMiles ?? Math.round(modelB.rangeKm * 0.621 * 0.82),
-      false,
-      (n) => `~${Math.round(n)} mi`,
-      (d) => `+${Math.round(d)} mi`,
-    ),
-    row(
-      "Battery Size",
-      modelA.batteryKWh, modelB.batteryKWh, false,
-      (n) => `${n} kWh`,
-      (d) => `+${d} kWh`,
-    ),
-    row(
-      "Annual Energy Cost",
-      eA.annualEnergyCostGbp ?? null,
-      eB.annualEnergyCostGbp ?? null,
-      true,
-      (n) => `£${Math.round(n)}/yr`,
-      (d) => `£${Math.round(d)} less/yr`,
-    ),
-  ];
-
-  const chargingGroups: RowData[] = [
-    row(
-      "DC Rapid Charging",
-      eA.chargingSpeedDcKw ?? null,
-      eB.chargingSpeedDcKw ?? null,
-      false,
-      (n) => `${n} kW`,
-      (d) => `+${d} kW`,
-    ),
-    row(
-      "AC Home Charging",
-      eA.chargingSpeedAcKw ?? null,
-      eB.chargingSpeedAcKw ?? null,
-      false,
-      (n) => `${n} kW`,
-      (d) => `+${d} kW`,
-    ),
-    ...(eA.chargeTimeTo80Mins || eB.chargeTimeTo80Mins
-      ? [
-          row(
-            "10→80% Charge Time",
-            eA.chargeTimeTo80Mins ?? null,
-            eB.chargeTimeTo80Mins ?? null,
-            true,
-            (n) => `${n} min`,
-            (d) => `${d} min faster`,
-          ),
-        ]
-      : []),
-  ];
-
-  const perfGroups: RowData[] = [
-    row(
-      "0–100 km/h",
-      accelA, accelB, true,
-      (n) => `${n.toFixed(1)}s`,
-      (d) => `${d.toFixed(1)}s faster`,
-    ),
-    row(
-      "Top Speed",
-      modelA.topSpeedKph, modelB.topSpeedKph, false,
-      (n) => `${n} km/h`,
-      (d) => `+${d} km/h`,
-    ),
-    row(
-      "Motor Power",
-      modelA.motorCapacityKw, modelB.motorCapacityKw, false,
-      (n) => `${n} kW`,
-      (d) => `+${d} kW`,
-    ),
-    row(
-      "Torque",
-      modelA.torqueNm, modelB.torqueNm, false,
-      (n) => `${n} Nm`,
-      (d) => `+${d} Nm`,
-    ),
-  ];
-
-  const practicalGroups: RowData[] = [
-    row(
-      "Seats",
-      modelA.seats, modelB.seats, false,
-      (n) => `${n}`,
-      (d) => `+${d} seats`,
-    ),
-    row(
-      "Boot Space",
-      modelA.bootLitres, modelB.bootLitres, false,
-      (n) => `${n} L`,
-      (d) => `+${d} L`,
-    ),
-    row(
-      "Ground Clearance",
-      modelA.groundClearanceMm, modelB.groundClearanceMm, false,
-      (n) => `${n} mm`,
-      (d) => `+${d} mm`,
-    ),
-  ];
-
-  // string rows (no winner logic)
   function stringRow(label: string, a: string, b: string): RowData {
-    return {
-      label,
-      displayA: a || "N/A",
-      displayB: b || "N/A",
-      numA: null,
-      numB: null,
-      lowerBetter: false,
-      diff: { text: "", side: "tie" },
-    };
+    return { label, displayA: a || "N/A", displayB: b || "N/A", numA: null, numB: null, lowerBetter: false, diff: { text: "", side: "tie" } };
   }
-
-  const ownershipGroups: RowData[] = [
-    stringRow("Warranty", modelA.warranty, modelB.warranty),
-    stringRow("Body Type", modelA.bodyType ?? "—", modelB.bodyType ?? "—"),
-    stringRow("Charging Port", modelA.chargePortType ?? modelA.chargingStandard, modelB.chargePortType ?? modelB.chargingStandard),
-  ];
 
   const nameA = `${modelA.brand} ${modelA.model}`;
   const nameB = `${modelB.brand} ${modelB.model}`;
 
   return (
-    <section className="bg-[#F8FAF9] py-12">
+    <section className="bg-[#0A0A0A] py-14">
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
 
-        {/* Section header */}
+        {/* Header */}
         <div className="mb-8">
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#1FBF9F]">Spec Comparison</p>
-          <h2 className="mt-1 text-2xl font-bold text-[#1A1A1A] sm:text-3xl">
-            Detailed side-by-side
-          </h2>
-          <p className="mt-1 text-sm text-[#6B7280]">
-            Green rows show the winner — diff labels show exactly how much better.
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-brand">Spec Comparison</p>
+          <h2 className="mt-3 text-2xl font-semibold text-white sm:text-3xl">Detailed side-by-side</h2>
+          <p className="mt-1.5 text-sm text-white/40">
+            Teal rows show the winner — diff badges show exactly how much better.
           </p>
         </div>
 
         {/* Sticky column headers */}
-        <div className="mb-3 grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] rounded-2xl border border-[#E5E7EB] bg-white shadow-sm overflow-hidden">
-          <div className="px-5 py-4 text-xs font-bold uppercase tracking-[0.12em] text-[#6B7280]">
-            Spec
+        <div className="overflow-x-auto">
+        <div className="min-w-[420px]">
+        <div className="mb-3 grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] overflow-hidden rounded-2xl border border-white/10 bg-white/[0.06]">
+          <div className="px-3 py-4 text-[11px] font-semibold uppercase tracking-[0.15em] text-white/40 sm:px-5">Spec</div>
+          <div className="border-l border-white/8 px-3 py-4 sm:px-5">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-white/40">{modelA.brand}</p>
+            <p className="text-sm font-semibold text-white">{modelA.model}</p>
           </div>
-          <div className="border-l border-[#E5E7EB] px-5 py-4">
-            <p className="text-xs font-bold uppercase tracking-wider text-[#374151]">{modelA.brand}</p>
-            <p className="text-sm font-extrabold text-[#1A1A1A]">{modelA.model}</p>
-          </div>
-          <div className="border-l border-[#E5E7EB] px-5 py-4">
-            <p className="text-xs font-bold uppercase tracking-wider text-[#374151]">{modelB.brand}</p>
-            <p className="text-sm font-extrabold text-[#1A1A1A]">{modelB.model}</p>
+          <div className="border-l border-white/8 px-3 py-4 sm:px-5">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-white/40">{modelB.brand}</p>
+            <p className="text-sm font-semibold text-white">{modelB.model}</p>
           </div>
         </div>
 
         <div className="space-y-3">
-          <SpecGroup title="Price & Cost" icon={PoundSterling} rows={priceGroups} />
-          <SpecGroup title="Range & Battery" icon={BatteryCharging} rows={rangeGroups} />
-          <SpecGroup title="Charging" icon={Zap} rows={chargingGroups} />
-          <SpecGroup title="Performance" icon={Gauge} rows={perfGroups} />
-          <SpecGroup title="Practicality" icon={Car} rows={practicalGroups} />
-          <SpecGroup title="Ownership" icon={ClipboardList} rows={ownershipGroups} />
+          <SpecGroup title="Price & Cost" icon={PoundSterling} rows={[
+            row("Purchase Price", modelA.price, modelB.price, true, (n) => `£${n.toLocaleString()}`, (d) => `£${d.toLocaleString()} cheaper`),
+            row("Est. Monthly Finance", emiA, emiB, true, (n) => `£${n}/mo`, (d) => `£${d}/mo less`),
+            row("5-Year Running Cost", tcoA, tcoB, true, (n) => `£${n.toLocaleString()}`, (d) => `£${d.toLocaleString()} less`),
+          ]} />
+          <SpecGroup title="Range & Battery" icon={BatteryCharging} rows={[
+            row("WLTP Range", modelA.rangeKm, modelB.rangeKm, false, (n) => `${n} km`, (d) => `+${d} km`),
+            row("Real-World Range", eA.realWorldRangeMiles ?? Math.round(modelA.rangeKm * 0.51), eB.realWorldRangeMiles ?? Math.round(modelB.rangeKm * 0.51), false, (n) => `~${Math.round(n)} mi`, (d) => `+${Math.round(d)} mi`),
+            row("Battery Size", modelA.batteryKWh, modelB.batteryKWh, false, (n) => `${n} kWh`, (d) => `+${d} kWh`),
+            row("Annual Energy Cost", eA.annualEnergyCostGbp ?? null, eB.annualEnergyCostGbp ?? null, true, (n) => `£${Math.round(n)}/yr`, (d) => `£${Math.round(d)} less/yr`),
+          ]} />
+          <SpecGroup title="Charging" icon={Zap} rows={[
+            row("DC Rapid Charging", eA.chargingSpeedDcKw ?? null, eB.chargingSpeedDcKw ?? null, false, (n) => `${n} kW`, (d) => `+${d} kW`),
+            row("AC Home Charging", eA.chargingSpeedAcKw ?? null, eB.chargingSpeedAcKw ?? null, false, (n) => `${n} kW`, (d) => `+${d} kW`),
+            ...(eA.chargeTimeTo80Mins || eB.chargeTimeTo80Mins ? [row("10→80% Charge Time", eA.chargeTimeTo80Mins ?? null, eB.chargeTimeTo80Mins ?? null, true, (n) => `${n} min`, (d) => `${d} min faster`)] : []),
+          ]} />
+          <SpecGroup title="Performance" icon={Gauge} rows={[
+            row("0–100 km/h", accelA, accelB, true, (n) => `${n.toFixed(1)}s`, (d) => `${d.toFixed(1)}s faster`),
+            row("Top Speed", modelA.topSpeedKph, modelB.topSpeedKph, false, (n) => `${n} km/h`, (d) => `+${d} km/h`),
+            row("Motor Power", modelA.motorCapacityKw, modelB.motorCapacityKw, false, (n) => `${n} kW`, (d) => `+${d} kW`),
+            row("Torque", modelA.torqueNm, modelB.torqueNm, false, (n) => `${n} Nm`, (d) => `+${d} Nm`),
+          ]} />
+          <SpecGroup title="Practicality" icon={Car} rows={[
+            row("Seats", modelA.seats, modelB.seats, false, (n) => `${n}`, (d) => `+${d} seats`),
+            row("Boot Space", modelA.bootLitres, modelB.bootLitres, false, (n) => `${n} L`, (d) => `+${d} L`),
+            row("Ground Clearance", modelA.groundClearanceMm, modelB.groundClearanceMm, false, (n) => `${n} mm`, (d) => `+${d} mm`),
+          ]} />
+          <SpecGroup title="Ownership" icon={ClipboardList} rows={[
+            stringRow("Warranty", modelA.warranty, modelB.warranty),
+            stringRow("Body Type", modelA.bodyType ?? "—", modelB.bodyType ?? "—"),
+            stringRow("Charging Port", modelA.chargePortType ?? modelA.chargingStandard, modelB.chargePortType ?? modelB.chargingStandard),
+          ]} />
         </div>
 
-        <p className="mt-4 text-xs text-[#9CA3AF]">
+        </div>
+        </div>
+
+        <p className="mt-5 text-xs text-white/20">
           Finance est. at 9.9% APR, 48 months, 10% deposit · Real-world range = 82% of WLTP ·
-          5-yr TCO at 7,500 mi/yr, 28p/kWh home rate.
-          {nameA} vs {nameB}.
+          5-yr TCO at 7,500 mi/yr, 28p/kWh · {nameA} vs {nameB}.
         </p>
       </div>
     </section>

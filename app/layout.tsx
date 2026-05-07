@@ -7,6 +7,7 @@ import TrackEngagement from "@/components/tracking/TrackEngagement";
 import TrackPageView from "@/components/tracking/TrackPageView";
 import TrackRepeatVisit from "@/components/tracking/TrackRepeatVisit";
 import PlatformSessionInit from "@/components/platform/PlatformSessionInit";
+import MobileBottomNav from "@/components/home/MobileBottomNav";
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
 
@@ -24,13 +25,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={cn("h-full antialiased", "font-sans", geist.variable)}>
-      <body suppressHydrationWarning className="min-h-full flex flex-col">
+      <body suppressHydrationWarning className="min-h-full flex flex-col pb-20 md:pb-0">
         <CookieConsentProvider>
           <PlatformSessionInit />
           <TrackPageView />
           <TrackEngagement />
           <TrackRepeatVisit />
           {children}
+          <MobileBottomNav />
           <BookTestDriveWidget />
           <CookieBanner />
         </CookieConsentProvider>
