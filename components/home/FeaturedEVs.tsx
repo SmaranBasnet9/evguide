@@ -88,8 +88,12 @@ export default function FeaturedEVs({ models }: FeaturedEVsProps) {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
                 whileHover={{ y: -4 }}
-                className="group overflow-hidden rounded-[1.75rem] border border-white/8 bg-white/[0.03] transition-all duration-300 hover:border-brand/25 hover:bg-white/[0.05] hover:shadow-[0_24px_60px_rgba(0,0,0,0.4)]"
+                className="group relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-white/[0.06] shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_24px_48px_rgba(0,0,0,0.4)] backdrop-blur-sm transition-all duration-300 hover:border-brand/30 hover:bg-white/[0.09] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_32px_80px_rgba(0,0,0,0.6),0_0_40px_rgba(31,191,159,0.08)]"
               >
+                {/* Corner glows */}
+                <div className="pointer-events-none absolute -right-6 -top-6 z-10 h-28 w-28 rounded-full bg-brand/20 blur-2xl opacity-60 transition-opacity duration-300 group-hover:opacity-100" />
+                <div className="pointer-events-none absolute -bottom-6 -left-6 z-10 h-20 w-20 rounded-full bg-cyan-500/15 blur-2xl opacity-40 transition-opacity duration-300 group-hover:opacity-80" />
+
                 {/* Image */}
                 <div className="relative aspect-[16/11] overflow-hidden bg-[#111]">
                   {model.heroImage ? (

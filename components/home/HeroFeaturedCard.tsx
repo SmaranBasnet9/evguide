@@ -43,14 +43,20 @@ export default function HeroFeaturedCard({ model }: HeroFeaturedCardProps) {
       transition={{ duration: 0.6, delay: 0.3 }}
       className="relative"
     >
-      {/* Outer glow */}
-      <div className="pointer-events-none absolute -inset-4 rounded-[2.5rem] bg-brand/10 blur-3xl" />
+      {/* Outer ambient glow */}
+      <div className="pointer-events-none absolute -inset-6 rounded-[3rem] bg-brand/15 blur-[60px]" />
+      <div className="pointer-events-none absolute -right-8 -top-8 h-40 w-40 rounded-full bg-brand/20 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-8 -left-8 h-32 w-32 rounded-full bg-cyan-400/15 blur-3xl" />
 
       {/* Card */}
-      <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.06] p-5 backdrop-blur-xl shadow-[0_32px_80px_rgba(0,0,0,0.5)]">
+      <div className="relative overflow-hidden rounded-[2rem] border border-white/12 bg-white/[0.08] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_32px_80px_rgba(0,0,0,0.6),0_0_60px_rgba(31,191,159,0.1)] backdrop-blur-2xl">
+
+        {/* Inner corner glows */}
+        <div className="pointer-events-none absolute -right-4 -top-4 h-24 w-24 rounded-full bg-brand/25 blur-2xl" />
+        <div className="pointer-events-none absolute -bottom-4 -left-4 h-20 w-20 rounded-full bg-cyan-400/15 blur-xl" />
 
         {/* Header */}
-        <div className="flex items-start justify-between gap-3">
+        <div className="relative flex items-start justify-between gap-3">
           <div>
             <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-white/40">
               Featured EV
@@ -66,7 +72,7 @@ export default function HeroFeaturedCard({ model }: HeroFeaturedCardProps) {
         </div>
 
         {/* Best for tag */}
-        <div className="mt-3 flex items-center gap-2">
+        <div className="relative mt-3 flex items-center gap-2">
           <MapPin className="h-3.5 w-3.5 text-white/30" />
           <span className="text-sm text-white/50">Best for {model.bestFor.toLowerCase()}</span>
         </div>

@@ -109,7 +109,7 @@ function SpecRow({ row }: { row: RowData }) {
 
 function SpecGroup({ title, icon: Icon, rows }: { title: string; icon: React.ElementType; rows: RowData[] }) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-white/8 bg-white/[0.03]">
+    <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.05] shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_4px_24px_rgba(0,0,0,0.3)]">
       <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] border-b border-white/8 bg-white/[0.04]">
         <div className="flex items-center gap-2 px-5 py-3">
           <Icon className="h-4 w-4 text-brand" />
@@ -173,7 +173,7 @@ export default function PremiumCompareTable({ modelA, modelB }: Props) {
         {/* Sticky column headers */}
         <div className="overflow-x-auto">
         <div className="min-w-[420px]">
-        <div className="mb-3 grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] overflow-hidden rounded-2xl border border-white/10 bg-white/[0.06]">
+        <div className="mb-3 grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] overflow-hidden rounded-2xl border border-white/12 bg-white/[0.08] shadow-[inset_0_1px_0_rgba(255,255,255,0.10),0_8px_32px_rgba(0,0,0,0.4)] backdrop-blur-sm">
           <div className="px-3 py-4 text-[11px] font-semibold uppercase tracking-[0.15em] text-white/40 sm:px-5">Spec</div>
           <div className="border-l border-white/8 px-3 py-4 sm:px-5">
             <p className="text-[10px] font-semibold uppercase tracking-wider text-white/40">{modelA.brand}</p>
