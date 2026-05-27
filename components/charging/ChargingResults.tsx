@@ -16,14 +16,14 @@ export default function ChargingResults({
     <div>
       {/* Results count bar */}
       <div className="mb-6 flex items-center justify-between">
-        <p className="text-sm font-medium text-[#374151]">
-          <span className="font-bold text-[#1A1A1A]">{stations.length}</span> charging station
+        <p className="text-sm font-medium text-gray-500">
+          <span className="font-bold text-gray-900">{stations.length}</span> charging station
           {stations.length !== 1 ? "s" : ""} found
           {stations.length < totalBeforeFilter && (
-            <span className="text-[#6B7280]"> (filtered from {totalBeforeFilter})</span>
+            <span className="text-gray-400"> (filtered from {totalBeforeFilter})</span>
           )}
         </p>
-        <span className="text-xs text-[#6B7280]">Sorted by distance</span>
+        <span className="text-xs text-gray-400">Sorted by distance</span>
       </div>
 
       {/* Grid */}

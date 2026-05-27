@@ -1,5 +1,5 @@
 ﻿import Image from "next/image";
-import { Battery, Gauge, Zap, TrendingUp, Info, ShieldCheck } from "lucide-react";
+import { Battery, Gauge, ShieldCheck, TrendingUp, Zap } from "lucide-react";
 import type { EVModel } from "@/types";
 import VehicleImagePlaceholder from "@/components/vehicles/VehicleImagePlaceholder";
 
@@ -8,99 +8,122 @@ interface PremiumCompareSummaryProps {
   modelB: EVModel;
 }
 
+function formatGBP(n: number) {
+  return new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP", maximumFractionDigits: 0 }).format(n);
+}
+
 function computeEmi(price: number) {
-  return Math.round((price * 0.8) / 60);
+  return Math.round((price * 0.9 * (0.099 / 12) * Math.pow(1 + 0.099 / 12, 48)) / (Math.pow(1 + 0.099 / 12, 48) - 1));
 }
 
-function computeMockScore(m: EVModel) {
-  let score = 50;
-  if (m.tier === "affordable") score += 20;
-  if (computeEmi(m.price) < 500) score += 10;
-  if (m.rangeKm > 400) score += 10;
-  score += Math.min(10, m.rangeKm / 50);
-  return Math.max(10, Math.min(99, Math.round(score)));
+function computeScore(m: EVModel) {
+  let s = Math.max(0, 40 - Math.round(m.price / 2000));
+  s += Math.min(25, Math.round(m.rangeKm / 20));
+  if (m.batteryKWh > 0 && m.rangeKm > 0) s += Math.min(15, Math.round((m.rangeKm / m.batteryKWh) * 2));
+  const a = parseFloat(String(m.acceleration).match(/([0-9.]+)/)?.[1] ?? "10") || 10;
+  s += Math.max(0, 20 - Math.round(a * 2));
+  return Math.max(10, Math.min(99, s));
 }
 
-function SummaryCard({ model }: { model: EVModel }) {
-  const score = computeMockScore(model);
-  const isHighMatch = score >= 80;
-  const isGreatMatch = score >= 60 && score < 80;
-
-  const scoreBadge = isHighMatch ? { text: "Better value", color: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" }
-    : isGreatMatch ? { text: "Balanced pick", color: "bg-cyan-500/20 text-cyan-400 border-cyan-500/30" }
-    : { text: "Premium choice", color: "bg-zinc-500/20 text-[#6B7280] border-zinc-500/30" };
+function SummaryCard({ model, isWinner }: { model: EVModel; isWinner: boolean }) {
+  const score = computeScore(model);
+  const emi = computeEmi(model.price);
 
   return (
-    <div className="relative flex flex-col overflow-hidden rounded-[2rem] border border-[#E5E7EB] bg-white p-4 transition-all duration-300">
-      <div className="pointer-events-none absolute top-1/2 left-1/2 h-48 w-48 -translate-x-1/2 -translate-y-1/2 rounded-full bg-emerald-500/5 blur-[80px]" />
+    <div className={`relative flex flex-col overflow-hidden rounded-[2rem] border transition-all duration-300 ${
+      isWinner
+        ? "border-brand/30 bg-white shadow-[0_0_60px_rgba(31,191,159,0.12)]"
+        : "border-gray-200 bg-gray-50"
+    }`}>
+      {isWinner && (
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand/60 to-transparent" />
+      )}
 
-      <div className="relative mb-6 w-full aspect-[4/3] overflow-hidden rounded-[1.5rem] border border-[#E5E7EB] bg-[#F8FAF9]">
+      {/* Image */}
+      <div className="relative aspect-[16/10] w-full overflow-hidden">
         {model.heroImage ? (
           <Image
             src={model.heroImage}
             alt={`${model.brand} ${model.model}`}
             fill
+            sizes="(max-width: 768px) 100vw, 50vw"
             className="object-cover"
           />
         ) : (
           <VehicleImagePlaceholder brand={model.brand} model={model.model} className="absolute inset-0" />
         )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
-        <div className="absolute top-4 left-4 z-10">
-          <div className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-bold uppercase tracking-wider backdrop-blur-md shadow-lg ${scoreBadge.color}`}>
-            <TrendingUp className="w-3.5 h-3.5" />
-            {scoreBadge.text}
-          </div>
+        {/* Score badge */}
+        <div className="absolute left-4 top-4">
+          <span className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold backdrop-blur-md ${
+            isWinner ? "border-brand/40 bg-brand/20 text-brand" : "border-gray-200 bg-gray-100 text-gray-700"
+          }`}>
+            <TrendingUp className="h-3 w-3" />
+            {isWinner ? "Winner" : "Contender"}
+          </span>
         </div>
 
-        {model.bestFor ? (
-          <div className="absolute bottom-4 left-4 z-10 max-w-[80%]">
-            <div className="inline-flex items-center gap-1.5 rounded-lg border border-[#E5E7EB] bg-black/60 px-2.5 py-1.5 text-xs font-medium text-[#6B7280] backdrop-blur-md">
-              <Info className="w-3.5 h-3.5 flex-shrink-0 text-emerald-400" />
-              <span className="truncate">Best for {model.bestFor.toLowerCase()}</span>
-            </div>
+        {/* Best for */}
+        {model.bestFor && (
+          <div className="absolute bottom-4 left-4">
+            <span className="rounded-full border border-white/15 bg-black/40 px-2.5 py-1 text-[11px] text-white/70 backdrop-blur-md">
+              Best for {model.bestFor.toLowerCase()}
+            </span>
           </div>
-        ) : null}
+        )}
+
+        {/* Score number */}
+        <div className="absolute bottom-4 right-4 text-right">
+          <p className={`text-3xl font-bold ${isWinner ? "text-brand" : "text-white/60"}`}>
+            {score}
+            <span className="text-sm font-medium text-white/30">/99</span>
+          </p>
+        </div>
       </div>
 
-      <div className="relative z-20 flex flex-grow flex-col">
-        <div className="mb-1 text-sm font-semibold uppercase tracking-wider text-[#6B7280]">{model.brand}</div>
-        <h3 className="mb-4 text-3xl font-extrabold text-white">{model.model}</h3>
+      {/* Content */}
+      <div className="flex flex-1 flex-col p-5">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.25em] text-gray-400">{model.brand}</p>
+        <h3 className="mt-1 text-2xl font-semibold text-gray-900">{model.model}</h3>
 
-        <div className="mb-4 rounded-[1.25rem] border border-emerald-400/15 bg-emerald-400/[0.06] px-4 py-3 text-sm leading-6 text-[#1A1A1A]">
-          <div className="flex items-start gap-3">
-            <ShieldCheck className="mt-0.5 h-4.5 w-4.5 text-emerald-300" />
-            <span>This option feels easiest to justify if you want a confident balance of cost, range, and daily practicality.</span>
-          </div>
+        {/* Why */}
+        <div className="mt-3 flex items-start gap-2.5 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3">
+          <ShieldCheck className={`mt-0.5 h-4 w-4 shrink-0 ${isWinner ? "text-brand" : "text-gray-400"}`} />
+          <p className="text-sm leading-6 text-gray-500">
+            {isWinner
+              ? "Stronger overall balance of cost, range, and efficiency."
+              : "A solid contender — worth comparing on your specific priorities."}
+          </p>
         </div>
 
-        <div className="mb-6 flex items-end justify-between border-b border-[#E5E7EB] pb-6">
+        {/* Price row */}
+        <div className="mt-4 flex items-end justify-between border-b border-gray-200 pb-4">
           <div>
-            <div className="mb-1 text-xs font-medium uppercase tracking-wider text-[#6B7280]">Price</div>
-            <div className="text-2xl font-bold tracking-tight text-white">GBP{model.price.toLocaleString()}</div>
+            <p className="text-[10px] uppercase tracking-[0.2em] text-gray-400">Price</p>
+            <p className="mt-1 text-xl font-semibold text-gray-900">{formatGBP(model.price)}</p>
           </div>
           <div className="text-right">
-            <div className="mb-1 text-xs font-medium uppercase tracking-wider text-[#6B7280]">Estimated monthly</div>
-            <div className="text-2xl font-bold tracking-tight text-emerald-400">GBP{computeEmi(model.price)}<span className="text-base font-medium text-[#6B7280]">/mo</span></div>
+            <p className="text-[10px] uppercase tracking-[0.2em] text-gray-400">Est. monthly</p>
+            <p className={`mt-1 text-xl font-semibold ${isWinner ? "text-brand" : "text-gray-700"}`}>
+              {formatGBP(emi)}<span className="text-sm text-gray-300">/mo</span>
+            </p>
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-3">
-          <div className="rounded-xl border border-[#E5E7EB] bg-[#F8FAF9]/50 p-3 text-center">
-            <Battery className="mx-auto mb-2 h-5 w-5 text-[#6B7280]" />
-            <div className="text-lg font-bold text-white">{model.rangeKm}</div>
-            <div className="text-[10px] font-semibold uppercase text-[#6B7280]">Range (km)</div>
-          </div>
-          <div className="rounded-xl border border-[#E5E7EB] bg-[#F8FAF9]/50 p-3 text-center">
-            <Zap className="mx-auto mb-2 h-5 w-5 text-[#6B7280]" />
-            <div className="text-lg font-bold text-white">{model.batteryKWh}</div>
-            <div className="text-[10px] font-semibold uppercase text-[#6B7280]">Battery (kWh)</div>
-          </div>
-          <div className="rounded-xl border border-[#E5E7EB] bg-[#F8FAF9]/50 p-3 text-center">
-            <Gauge className="mx-auto mb-2 h-5 w-5 text-[#6B7280]" />
-            <div className="text-lg font-bold text-white">{model.topSpeedKph}</div>
-            <div className="text-[10px] font-semibold uppercase text-[#6B7280]">Speed (kph)</div>
-          </div>
+        {/* Stat tiles */}
+        <div className="mt-4 grid grid-cols-3 gap-2">
+          {[
+            { icon: Battery, label: "Range", value: `${model.rangeKm} km` },
+            { icon: Zap, label: "Battery", value: `${model.batteryKWh} kWh` },
+            { icon: Gauge, label: "Speed", value: `${model.topSpeedKph} km/h` },
+          ].map(({ icon: Icon, label, value }) => (
+            <div key={label} className="flex flex-col items-center rounded-xl border border-gray-200 bg-gray-50 py-3">
+              <Icon className={`mb-1.5 h-3.5 w-3.5 ${isWinner ? "text-brand/70" : "text-gray-400"}`} />
+              <p className="text-sm font-semibold text-gray-900">{value}</p>
+              <p className="text-[10px] uppercase tracking-wider text-gray-400">{label}</p>
+            </div>
+          ))}
         </div>
       </div>
     </div>
@@ -108,16 +131,33 @@ function SummaryCard({ model }: { model: EVModel }) {
 }
 
 export default function PremiumCompareSummary({ modelA, modelB }: PremiumCompareSummaryProps) {
+  const scoreA = computeScore(modelA);
+  const scoreB = computeScore(modelB);
+
   return (
-    <section className="relative z-20 -mt-10 bg-[#F8FAF9] py-12">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <div className="mb-8 rounded-[2rem] border border-[#E5E7EB] bg-[#F8FAF9] p-6 text-center">
-          <h2 className="text-3xl font-bold text-white">A clearer side-by-side decision</h2>
-          <p className="mt-3 text-sm leading-7 text-[#6B7280]">Use this comparison to decide which EV feels easier to live with, easier to afford, and easier to justify.</p>
+    <section className="bg-white py-14">
+      <div className="mx-auto max-w-5xl px-4 sm:px-6">
+        {/* Section label */}
+        <div className="mb-8 text-center">
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-brand">Side by side</p>
+          <h2 className="mt-3 text-3xl font-semibold text-gray-900">A clearer decision</h2>
+          <p className="mt-2 text-sm text-gray-400">
+            Compare cost, range, and daily fit — then pick the one that makes sense.
+          </p>
         </div>
-        <div className="grid gap-8 md:grid-cols-2 md:gap-12">
-          <SummaryCard model={modelA} />
-          <SummaryCard model={modelB} />
+
+        {/* Cards with VS badge */}
+        <div className="relative grid gap-5 md:grid-cols-2">
+          <SummaryCard model={modelA} isWinner={scoreA >= scoreB} />
+
+          {/* VS badge */}
+          <div className="pointer-events-none absolute left-1/2 top-1/2 z-10 hidden -translate-x-1/2 -translate-y-1/2 md:flex">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-xs font-bold text-gray-500 shadow-xl">
+              VS
+            </div>
+          </div>
+
+          <SummaryCard model={modelB} isWinner={scoreB > scoreA} />
         </div>
       </div>
     </section>

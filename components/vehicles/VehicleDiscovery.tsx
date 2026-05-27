@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useDeferredValue, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -26,11 +26,12 @@ const TIER_META = {
 type Props = {
   vehicles: PersonalizedVehicleCard[];
   segment: VehicleListingSegment;
+  initialFilters?: AllVehiclesFilters;
 };
 
-export default function VehicleDiscovery({ vehicles }: Props) {
-  const [filters, setFilters] = useState<AllVehiclesFilters>(defaultFilters);
-  const [search, setSearch] = useState("");
+export default function VehicleDiscovery({ vehicles, initialFilters }: Props) {
+  const [filters, setFilters] = useState<AllVehiclesFilters>(initialFilters ?? defaultFilters());
+  const [search, setSearch] = useState(initialFilters?.search ?? "");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const deferredSearch = useDeferredValue(search);
 
@@ -86,11 +87,23 @@ export default function VehicleDiscovery({ vehicles }: Props) {
             <p className="text-xs font-semibold uppercase tracking-[0.3em] text-brand">
               EV Marketplace
             </p>
-            <h1 className="mt-2 text-3xl font-semibold text-white sm:text-4xl">
-              Browse{" "}
-              <span className="text-gradient-brand">{vehicles.length} electric cars</span>
+            <h1 className="mt-2 text-3xl font-semibold text-gray-900 sm:text-4xl">
+              {initialFilters?.search
+                ? <>Showing <span className="text-gradient-brand capitalize">{initialFilters.search}</span> vehicles</>
+                : initialFilters?.bodyType
+                ? <>{initialFilters.bodyType} <span className="text-gradient-brand">EVs</span></>
+                : initialFilters?.budgetMax
+                ? <>EVs <span className="text-gradient-brand">under £{initialFilters.budgetMax.toLocaleString()}</span></>
+                : initialFilters?.sort === "range"
+                ? <>EVs by <span className="text-gradient-brand">longest range</span></>
+                : initialFilters?.sort === "best_value"
+                ? <><span className="text-gradient-brand">Best value</span> EVs</>
+                : initialFilters?.sort === "newest"
+                ? <><span className="text-gradient-brand">New</span> EVs</>
+                : <>Browse <span className="text-gradient-brand">{vehicles.length} electric cars</span></>
+              }
             </h1>
-            <p className="mt-1.5 text-sm text-white/40">
+            <p className="mt-1.5 text-sm text-gray-500">
               Real-world range · monthly cost · AI match signal — for UK buyers
             </p>
           </div>
@@ -99,7 +112,7 @@ export default function VehicleDiscovery({ vehicles }: Props) {
           <button
             type="button"
             onClick={() => setSidebarOpen(true)}
-            className="flex items-center gap-2 self-start rounded-full border border-white/10 bg-white/[0.05] px-4 py-2.5 text-sm font-medium text-white transition hover:border-brand/30 hover:bg-brand/10 lg:hidden"
+            className="flex items-center gap-2 self-start rounded-full border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm font-medium text-gray-900 transition hover:border-brand/30 hover:bg-brand/10 lg:hidden"
           >
             <SlidersHorizontal className="h-4 w-4" />
             Filters
@@ -114,18 +127,18 @@ export default function VehicleDiscovery({ vehicles }: Props) {
         {/* Search + sort bar */}
         <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
           <div className="relative flex-1 group">
-            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/30 transition-colors group-focus-within:text-brand" />
+            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 transition-colors group-focus-within:text-brand" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search brand, model, body type..."
-              className="w-full rounded-full border border-white/10 bg-white/[0.05] py-3 pl-11 pr-4 text-sm text-white placeholder-white/30 outline-none transition focus:border-brand/40 focus:bg-white/[0.08] focus:ring-2 focus:ring-brand/20"
+              className="w-full rounded-full border border-gray-200 bg-gray-50 py-3 pl-11 pr-4 text-sm text-gray-900 placeholder-gray-400 outline-none transition focus:border-brand/40 focus:bg-white focus:ring-2 focus:ring-brand/20"
             />
             {search && (
               <button
                 onClick={() => setSearch("")}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-white/30 hover:text-white"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-900"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -170,11 +183,11 @@ export default function VehicleDiscovery({ vehicles }: Props) {
                 animate={{ x: 0 }}
                 exit={{ x: "-100%" }}
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                className="fixed inset-y-0 left-0 z-50 w-[min(320px,calc(100vw-48px))] overflow-y-auto bg-[#111] p-5 lg:hidden"
+                className="fixed inset-y-0 left-0 z-50 w-[min(320px,calc(100vw-48px))] overflow-y-auto bg-white p-5 lg:hidden"
               >
                 <div className="mb-5 flex items-center justify-between">
-                  <span className="text-base font-semibold text-white">Filters</span>
-                  <button onClick={() => setSidebarOpen(false)} className="text-white/40 hover:text-white">
+                  <span className="text-base font-semibold text-gray-900">Filters</span>
+                  <button onClick={() => setSidebarOpen(false)} className="text-gray-400 hover:text-gray-900">
                     <X className="h-5 w-5" />
                   </button>
                 </div>
@@ -194,13 +207,13 @@ export default function VehicleDiscovery({ vehicles }: Props) {
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex flex-col items-center rounded-[2rem] border border-white/8 bg-white/[0.03] p-16 text-center"
+              className="flex flex-col items-center rounded-[2rem] border border-gray-200 bg-gray-50 p-16 text-center"
             >
-              <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.05]">
-                <Search className="h-7 w-7 text-white/30" />
+              <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-gray-200 bg-gray-100">
+                <Search className="h-7 w-7 text-gray-400" />
               </div>
-              <h3 className="text-2xl font-semibold text-white">No matches found</h3>
-              <p className="mx-auto mt-3 max-w-sm text-sm leading-7 text-white/40">
+              <h3 className="text-2xl font-semibold text-gray-900">No matches found</h3>
+              <p className="mx-auto mt-3 max-w-sm text-sm leading-7 text-gray-500">
                 Try broadening your filters to see more EVs.
               </p>
               <button
@@ -270,9 +283,9 @@ function TierSection({
         >
           {icon}
         </div>
-        <h2 className="text-xl font-semibold text-white">{title}</h2>
-        <span className="text-sm text-white/30">({vehicles.length})</span>
-        <div className="ml-2 h-px flex-1 bg-white/6" />
+        <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
+        <span className="text-sm text-gray-400">({vehicles.length})</span>
+        <div className="ml-2 h-px flex-1 bg-gray-200" />
       </div>
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
         {vehicles.map((v) => (

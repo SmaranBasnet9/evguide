@@ -18,7 +18,7 @@ export default function StepBudget({ state, onChange }: Props) {
     <div className="space-y-6">
       {/* Quick presets */}
       <div>
-        <p className="mb-3 text-xs font-medium uppercase tracking-[0.18em] text-[#6B7280]">
+        <p className="mb-3 text-xs font-medium uppercase tracking-[0.18em] text-white/40">
           Quick select
         </p>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
@@ -35,10 +35,10 @@ export default function StepBudget({ state, onChange }: Props) {
                     budget_max_gbp: p.max,
                   })
                 }
-                className={`rounded-[1rem] border px-3 py-2.5 text-sm font-medium transition-all ${
+                className={`rounded-2xl border px-3 py-2.5 text-sm font-medium transition-all ${
                   isActive
-                    ? "border-[#1FBF9F] bg-[#E8F8F5] text-[#1FBF9F]"
-                    : "border-[#E5E7EB] bg-white text-[#374151] hover:border-[#1FBF9F]/40"
+                    ? "border-brand bg-brand/15 text-brand"
+                    : "border-white/10 bg-white/[0.04] text-white/70 hover:border-brand/40 hover:text-white"
                 }`}
               >
                 {p.label}
@@ -49,8 +49,8 @@ export default function StepBudget({ state, onChange }: Props) {
       </div>
 
       {/* Manual range */}
-      <div className="rounded-[1.5rem] border border-[#E5E7EB] bg-[#F8FAF9] p-5 space-y-4">
-        <p className="text-xs font-medium uppercase tracking-[0.18em] text-[#6B7280]">
+      <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 space-y-4">
+        <p className="text-xs font-medium uppercase tracking-[0.18em] text-white/40">
           Or enter manually
         </p>
         <div className="grid gap-4 sm:grid-cols-2">
@@ -74,12 +74,12 @@ export default function StepBudget({ state, onChange }: Props) {
       </div>
 
       {/* Monthly target */}
-      <div className="rounded-[1.5rem] border border-[#E5E7EB] bg-white p-5">
-        <p className="text-sm font-medium text-[#1A1A1A]">
+      <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
+        <p className="text-sm font-medium text-white">
           Target monthly payment{" "}
-          <span className="font-normal text-[#6B7280]">(optional)</span>
+          <span className="font-normal text-white/50">(optional)</span>
         </p>
-        <p className="mt-1 text-xs leading-5 text-[#6B7280]">
+        <p className="mt-1 text-xs leading-5 text-white/40">
           If you&apos;re financing, what monthly payment would feel comfortable?
         </p>
         <div className="mt-4">

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import { BatteryCharging, Car, CheckCircle2, ClipboardList, Gauge, Minus, PoundSterling, Zap } from "lucide-react";
@@ -66,18 +66,18 @@ function SpecRow({ row }: { row: RowData }) {
   const tie = !aWins && !bWins;
 
   return (
-    <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] border-b border-white/5 last:border-0 transition-colors hover:bg-white/[0.02]">
+    <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] border-b border-gray-100 last:border-0 transition-colors hover:bg-gray-50">
       {/* Label */}
       <div className="px-3 py-3 sm:px-5 sm:py-4">
-        <span className="text-xs text-white/50 sm:text-sm">{row.label}</span>
+        <span className="text-xs text-gray-500 sm:text-sm">{row.label}</span>
       </div>
 
       {/* Car A */}
-      <div className={`border-l border-white/5 px-3 py-3 sm:px-5 sm:py-4 ${aWins ? "bg-brand/[0.06]" : ""}`}>
+      <div className={`border-l border-gray-100 px-3 py-3 sm:px-5 sm:py-4 ${aWins ? "bg-brand/[0.06]" : ""}`}>
         <div className="flex items-center gap-2">
           {aWins && <CheckCircle2 className="h-4 w-4 shrink-0 text-brand" />}
-          {tie && <Minus className="h-4 w-4 shrink-0 text-white/20" />}
-          <span className={`text-sm font-semibold ${aWins ? "text-brand" : tie ? "text-white/40" : "text-white/30"}`}>
+          {tie && <Minus className="h-4 w-4 shrink-0 text-gray-300" />}
+          <span className={`text-sm font-semibold ${aWins ? "text-brand" : tie ? "text-gray-400" : "text-gray-400"}`}>
             {displayA}
           </span>
         </div>
@@ -89,11 +89,11 @@ function SpecRow({ row }: { row: RowData }) {
       </div>
 
       {/* Car B */}
-      <div className={`border-l border-white/5 px-3 py-3 sm:px-5 sm:py-4 ${bWins ? "bg-brand/[0.06]" : ""}`}>
+      <div className={`border-l border-gray-100 px-3 py-3 sm:px-5 sm:py-4 ${bWins ? "bg-brand/[0.06]" : ""}`}>
         <div className="flex items-center gap-2">
           {bWins && <CheckCircle2 className="h-4 w-4 shrink-0 text-brand" />}
-          {tie && <Minus className="h-4 w-4 shrink-0 text-white/20" />}
-          <span className={`text-sm font-semibold ${bWins ? "text-brand" : tie ? "text-white/40" : "text-white/30"}`}>
+          {tie && <Minus className="h-4 w-4 shrink-0 text-gray-300" />}
+          <span className={`text-sm font-semibold ${bWins ? "text-brand" : tie ? "text-gray-400" : "text-gray-400"}`}>
             {displayB}
           </span>
         </div>
@@ -109,14 +109,14 @@ function SpecRow({ row }: { row: RowData }) {
 
 function SpecGroup({ title, icon: Icon, rows }: { title: string; icon: React.ElementType; rows: RowData[] }) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.05] shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_4px_24px_rgba(0,0,0,0.3)]">
-      <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] border-b border-white/8 bg-white/[0.04]">
+    <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-[0_4px_24px_rgba(0,0,0,0.06)]">
+      <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] border-b border-gray-200 bg-gray-50">
         <div className="flex items-center gap-2 px-5 py-3">
           <Icon className="h-4 w-4 text-brand" />
-          <span className="text-[11px] font-semibold uppercase tracking-[0.15em] text-white/60">{title}</span>
+          <span className="text-[11px] font-semibold uppercase tracking-[0.15em] text-gray-500">{title}</span>
         </div>
-        <div className="border-l border-white/5 px-5 py-3" />
-        <div className="border-l border-white/5 px-5 py-3" />
+        <div className="border-l border-gray-100 px-5 py-3" />
+        <div className="border-l border-gray-100 px-5 py-3" />
       </div>
       {rows.map((row) => <SpecRow key={row.label} row={row} />)}
     </div>
@@ -158,14 +158,14 @@ export default function PremiumCompareTable({ modelA, modelB }: Props) {
   const nameB = `${modelB.brand} ${modelB.model}`;
 
   return (
-    <section className="bg-[#0A0A0A] py-14">
+    <section className="bg-gray-50 py-14">
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
 
         {/* Header */}
         <div className="mb-8">
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-brand">Spec Comparison</p>
-          <h2 className="mt-3 text-2xl font-semibold text-white sm:text-3xl">Detailed side-by-side</h2>
-          <p className="mt-1.5 text-sm text-white/40">
+          <h2 className="mt-3 text-2xl font-semibold text-gray-900 sm:text-3xl">Detailed side-by-side</h2>
+          <p className="mt-1.5 text-sm text-gray-400">
             Teal rows show the winner — diff badges show exactly how much better.
           </p>
         </div>
@@ -173,15 +173,15 @@ export default function PremiumCompareTable({ modelA, modelB }: Props) {
         {/* Sticky column headers */}
         <div className="overflow-x-auto">
         <div className="min-w-[420px]">
-        <div className="mb-3 grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] overflow-hidden rounded-2xl border border-white/12 bg-white/[0.08] shadow-[inset_0_1px_0_rgba(255,255,255,0.10),0_8px_32px_rgba(0,0,0,0.4)] backdrop-blur-sm">
-          <div className="px-3 py-4 text-[11px] font-semibold uppercase tracking-[0.15em] text-white/40 sm:px-5">Spec</div>
-          <div className="border-l border-white/8 px-3 py-4 sm:px-5">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-white/40">{modelA.brand}</p>
-            <p className="text-sm font-semibold text-white">{modelA.model}</p>
+        <div className="mb-3 grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-[0_8px_32px_rgba(0,0,0,0.08)]">
+          <div className="px-3 py-4 text-[11px] font-semibold uppercase tracking-[0.15em] text-gray-400 sm:px-5">Spec</div>
+          <div className="border-l border-gray-200 px-3 py-4 sm:px-5">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">{modelA.brand}</p>
+            <p className="text-sm font-semibold text-gray-900">{modelA.model}</p>
           </div>
-          <div className="border-l border-white/8 px-3 py-4 sm:px-5">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-white/40">{modelB.brand}</p>
-            <p className="text-sm font-semibold text-white">{modelB.model}</p>
+          <div className="border-l border-gray-200 px-3 py-4 sm:px-5">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">{modelB.brand}</p>
+            <p className="text-sm font-semibold text-gray-900">{modelB.model}</p>
           </div>
         </div>
 
@@ -223,7 +223,7 @@ export default function PremiumCompareTable({ modelA, modelB }: Props) {
         </div>
         </div>
 
-        <p className="mt-5 text-xs text-white/20">
+        <p className="mt-5 text-xs text-gray-300">
           Finance est. at 9.9% APR, 48 months, 10% deposit · Real-world range = 82% of WLTP ·
           5-yr TCO at 7,500 mi/yr, 28p/kWh · {nameA} vs {nameB}.
         </p>

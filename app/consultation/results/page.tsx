@@ -1,4 +1,4 @@
-/**
+﻿/**
  * /consultation/results?consultation_id=<uuid>
  *
  * Server component — fetches the consultation row from the DB, runs the
@@ -15,6 +15,7 @@ import { Sparkles } from "lucide-react";
 import PremiumNavbar from "@/components/home/PremiumNavbar";
 import PremiumFooter from "@/components/home/PremiumFooter";
 import RecommendationResultsPanel from "@/components/consultation/RecommendationResultsPanel";
+import HomeChargerCTA from "@/components/vehicles/HomeChargerCTA";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { runRecommendationEngine } from "@/lib/recommendation-engine";
 import {
@@ -93,7 +94,7 @@ export default async function ConsultationResultsPage({ searchParams }: PageProp
   // ── Render ──────────────────────────────────────────────────────────────────
 
   return (
-    <main className="min-h-screen bg-[#F8FAF9]">
+    <main className="min-h-screen bg-surface-base">
       <PremiumNavbar />
 
       <div className="mx-auto max-w-5xl px-4 pb-24 pt-32 sm:px-6">
@@ -101,11 +102,16 @@ export default async function ConsultationResultsPage({ searchParams }: PageProp
         {!state || !initialResults || initialResults.length === 0 ? (
           <NoResultsFallback hasId={!!consultationId} />
         ) : (
-          <RecommendationResultsPanel
-            consultationId={consultationId!}
-            state={state}
-            initialResults={initialResults}
-          />
+          <>
+            <RecommendationResultsPanel
+              consultationId={consultationId!}
+              state={state}
+              initialResults={initialResults}
+            />
+            <div className="mx-auto max-w-3xl px-4 pb-12">
+              <HomeChargerCTA vehicleLabel="your matched EV" />
+            </div>
+          </>
         )}
       </div>
 
@@ -119,14 +125,14 @@ export default async function ConsultationResultsPage({ searchParams }: PageProp
 function NoResultsFallback({ hasId }: { hasId: boolean }) {
   return (
     <div className="flex flex-col items-center gap-6 py-20 text-center">
-      <div className="flex h-14 w-14 items-center justify-center rounded-full border border-[#D1F2EB] bg-[#E8F8F5]">
-        <Sparkles className="h-6 w-6 text-[#1FBF9F]" />
+      <div className="flex h-14 w-14 items-center justify-center rounded-full border border-brand/20 bg-brand/10">
+        <Sparkles className="h-6 w-6 text-brand" />
       </div>
       <div>
-        <h1 className="text-2xl font-semibold text-[#1A1A1A]">
+        <h1 className="text-2xl font-semibold text-white">
           {hasId ? "No matches found" : "Start your consultation first"}
         </h1>
-        <p className="mt-3 max-w-sm text-base leading-7 text-[#6B7280]">
+        <p className="mt-3 max-w-sm text-base leading-7 text-white/60">
           {hasId
             ? "We couldn't find EVs matching your criteria. Try adjusting your budget or preferences."
             : "Answer five quick questions so we can match you to the right EV."}
@@ -134,7 +140,7 @@ function NoResultsFallback({ hasId }: { hasId: boolean }) {
       </div>
       <Link
         href="/consultation"
-        className="inline-flex items-center gap-2 rounded-full bg-[#1FBF9F] px-7 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-[#17A589]"
+        className="inline-flex items-center gap-2 rounded-full bg-brand px-7 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-brand-hover"
       >
         <Sparkles className="h-4 w-4" />
         {hasId ? "Retake consultation" : "Start consultation"}

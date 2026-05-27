@@ -21,7 +21,7 @@ export default function CompareCTA({ title, description, compareHref, viewHref }
           <p className="mt-3 text-base leading-8 text-zinc-300">{description}</p>
         </div>
         <div className="flex flex-wrap gap-3">
-          <Link href={compareHref} className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-black transition hover:bg-zinc-200">
+          <Link href={compareHref} className="rounded-full bg-brand px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-hover">
             Compare now
           </Link>
           <Link href={viewHref} className="rounded-full border border-white/10 bg-black/20 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10">

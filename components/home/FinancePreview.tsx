@@ -25,20 +25,20 @@ const HIGHLIGHTS = [
 export default function FinancePreview() {
   const vehiclePrice = 38995;
   const [depositPercent, setDepositPercent] = useState(12);
+  const [termMonths, setTermMonths] = useState(48);
 
   const result = useMemo(() => {
     const depositAmount = vehiclePrice * (depositPercent / 100);
     const principal = vehiclePrice - depositAmount;
     const monthlyRate = 0.069 / 12;
-    const months = 48;
     const payment =
-      (principal * monthlyRate * Math.pow(1 + monthlyRate, months)) /
-      (Math.pow(1 + monthlyRate, months) - 1);
+      (principal * monthlyRate * Math.pow(1 + monthlyRate, termMonths)) /
+      (Math.pow(1 + monthlyRate, termMonths) - 1);
     return {
       depositAmount: Math.round(depositAmount),
       monthlyCost: Math.round(payment + 112),
     };
-  }, [depositPercent]);
+  }, [depositPercent, termMonths]);
 
   return (
     <section className="bg-[#0D0D0D] py-24 lg:py-32">
@@ -133,6 +133,26 @@ export default function FinancePreview() {
                 <div className="mt-2 flex justify-between text-[10px] text-white/25">
                   <span>5%</span>
                   <span>30%</span>
+                </div>
+              </div>
+
+              {/* Finance term */}
+              <div className="rounded-xl border border-white/6 bg-white/[0.03] px-4 py-4">
+                <p className="mb-3 text-[10px] uppercase tracking-[0.18em] text-white/40">Finance term</p>
+                <div className="flex gap-2">
+                  {[24, 36, 48].map((t) => (
+                    <button
+                      key={t}
+                      onClick={() => setTermMonths(t)}
+                      className={`flex-1 rounded-lg py-2 text-xs font-semibold transition-all ${
+                        termMonths === t
+                          ? "border border-brand/40 bg-brand/20 text-brand"
+                          : "border border-white/10 bg-white/[0.03] text-white/50 hover:text-white"
+                      }`}
+                    >
+                      {t} mo
+                    </button>
+                  ))}
                 </div>
               </div>
 

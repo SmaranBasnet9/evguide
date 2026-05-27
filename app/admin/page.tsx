@@ -114,7 +114,7 @@ export default async function AdminDashboardPage() {
       detailB: `${recentEVs.length} recent listed`,
       href: "/admin/evs",
       actionLabel: "Manage EVs",
-      tone: "border-blue-200 bg-blue-50 text-blue-900",
+      tone: "border-blue-500/20 bg-blue-500/10 text-blue-300",
     },
     {
       title: "Blog Posts",
@@ -123,7 +123,7 @@ export default async function AdminDashboardPage() {
       detailB: `${draftBlogPosts} drafts`,
       href: "/admin/blog",
       actionLabel: "Manage Blog",
-      tone: "border-indigo-200 bg-indigo-50 text-indigo-900",
+      tone: "border-indigo-500/20 bg-indigo-500/10 text-indigo-300",
     },
     {
       title: "Feedback",
@@ -132,7 +132,7 @@ export default async function AdminDashboardPage() {
       detailB: `${pendingFeedback} pending`,
       href: "/admin/feedback",
       actionLabel: "Moderate Feedback",
-      tone: "border-emerald-200 bg-emerald-50 text-emerald-900",
+      tone: "border-emerald-500/20 bg-emerald-500/10 text-emerald-300",
     },
     {
       title: "Consultations",
@@ -141,7 +141,7 @@ export default async function AdminDashboardPage() {
       detailB: `${activeConsultations} active`,
       href: "/admin/consultations",
       actionLabel: "Manage Consultations",
-      tone: "border-amber-200 bg-amber-50 text-amber-900",
+      tone: "border-amber-500/20 bg-amber-500/10 text-amber-300",
     },
     {
       title: "Vehicle Queries",
@@ -150,7 +150,7 @@ export default async function AdminDashboardPage() {
       detailB: `${totalVehicleQueries - newVehicleQueries} actioned`,
       href: "/admin/vehicle-queries",
       actionLabel: "View Queries",
-      tone: "border-violet-200 bg-violet-50 text-violet-900",
+      tone: "border-violet-500/20 bg-violet-500/10 text-violet-300",
     },
     {
       title: "SEO Pages",
@@ -159,7 +159,7 @@ export default async function AdminDashboardPage() {
       detailB: `${totalSeoPages - activeSeoPages} inactive`,
       href: "/admin/seo",
       actionLabel: "Manage SEO",
-      tone: "border-rose-200 bg-rose-50 text-rose-900",
+      tone: "border-rose-500/20 bg-rose-500/10 text-rose-300",
     },
     {
       title: "GEO Regions",
@@ -168,7 +168,7 @@ export default async function AdminDashboardPage() {
       detailB: `${totalGeoRegions - activeGeoRegions} inactive`,
       href: "/admin/geo",
       actionLabel: "Manage GEO",
-      tone: "border-teal-200 bg-teal-50 text-teal-900",
+      tone: "border-teal-500/20 bg-teal-500/10 text-teal-300",
     },
   ];
 
@@ -207,19 +207,19 @@ export default async function AdminDashboardPage() {
 
   return (
     <div className="mx-auto max-w-6xl">
-      <h1 className="text-3xl font-bold text-slate-900">Dashboard</h1>
-      <p className="mt-1 text-slate-500">Overview of your EV Guide database.</p>
+      <h1 className="text-3xl font-bold text-white">Dashboard</h1>
+      <p className="mt-1 text-white/50">Overview of your EV Guide database.</p>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         {moduleCards.map((card) => (
-          <div key={card.title} className={`rounded-2xl border p-6 shadow-sm ${card.tone}`}>
+          <div key={card.title} className={`rounded-2xl border p-6 backdrop-blur-sm ${card.tone}`}>
             <p className="text-sm font-semibold">{card.title}</p>
             <p className="mt-3 text-4xl font-bold">{card.total}</p>
-            <p className="mt-3 text-sm opacity-90">{card.detailA}</p>
-            <p className="text-sm opacity-90">{card.detailB}</p>
+            <p className="mt-3 text-sm opacity-80">{card.detailA}</p>
+            <p className="text-sm opacity-80">{card.detailB}</p>
             <Link
               href={card.href}
-              className="mt-5 inline-flex rounded-xl bg-white px-3 py-2 text-sm font-semibold text-slate-900 transition hover:bg-slate-100"
+              className="mt-5 inline-flex rounded-xl bg-white/[0.08] px-3 py-2 text-sm font-semibold text-white transition hover:bg-white/[0.15]"
             >
               {card.actionLabel}
             </Link>
@@ -227,38 +227,38 @@ export default async function AdminDashboardPage() {
         ))}
       </div>
 
-      <div className="mt-10 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <div className="border-b border-slate-100 px-6 py-4">
-          <h2 className="text-xl font-bold text-slate-900">Task Completion Report</h2>
-          <p className="mt-1 text-sm text-slate-500">
+      <div className="mt-10 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-sm">
+        <div className="border-b border-white/10 px-6 py-4">
+          <h2 className="text-xl font-bold text-white">Task Completion Report</h2>
+          <p className="mt-1 text-sm text-white/50">
             Done vs pending status for each admin task area.
           </p>
         </div>
 
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-slate-100 bg-slate-50 text-left">
-              <th className="px-6 py-3 font-semibold text-slate-600">Task Area</th>
-              <th className="px-6 py-3 font-semibold text-slate-600">Done</th>
-              <th className="px-6 py-3 font-semibold text-slate-600">Pending</th>
-              <th className="px-6 py-3 font-semibold text-slate-600">Report</th>
+            <tr className="border-b border-white/10 bg-white/[0.03] text-left">
+              <th className="px-6 py-3 font-semibold text-white/60">Task Area</th>
+              <th className="px-6 py-3 font-semibold text-white/60">Done</th>
+              <th className="px-6 py-3 font-semibold text-white/60">Pending</th>
+              <th className="px-6 py-3 font-semibold text-white/60">Report</th>
             </tr>
           </thead>
           <tbody>
             {taskReport.map((item) => (
-              <tr key={item.task} className="border-b border-slate-100 last:border-b-0">
-                <td className="px-6 py-4 font-medium text-slate-900">{item.task}</td>
+              <tr key={item.task} className="border-b border-white/[0.06] last:border-b-0 hover:bg-white/[0.06]">
+                <td className="px-6 py-4 font-medium text-white">{item.task}</td>
                 <td className="px-6 py-4">
-                  <span className="rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700">
+                  <span className="rounded-full bg-green-500/20 px-2.5 py-1 text-xs font-semibold text-green-400">
                     {item.done}
                   </span>
                 </td>
                 <td className="px-6 py-4">
-                  <span className="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-700">
+                  <span className="rounded-full bg-amber-500/20 px-2.5 py-1 text-xs font-semibold text-amber-400">
                     {item.pending}
                   </span>
                 </td>
-                <td className="px-6 py-4 text-slate-600">{item.note}</td>
+                <td className="px-6 py-4 text-white/50">{item.note}</td>
               </tr>
             ))}
           </tbody>
@@ -268,19 +268,19 @@ export default async function AdminDashboardPage() {
       <div className="mt-6 flex flex-wrap gap-3">
         <Link
           href="/admin/audit"
-          className="rounded-xl border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700 transition hover:bg-blue-100"
+          className="rounded-xl border border-blue-500/30 bg-blue-500/10 px-4 py-2 text-sm font-semibold text-blue-400 transition hover:bg-blue-500/20"
         >
           Run System Audit
         </Link>
         <Link
           href="/admin/evs/new"
-          className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
+          className="rounded-xl bg-brand px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-hover"
         >
           Add New EV
         </Link>
         <Link
           href="/admin/blog/new"
-          className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-800 transition hover:bg-slate-50"
+          className="rounded-xl border border-white/10 bg-white/[0.06] px-4 py-2 text-sm font-semibold text-white/80 transition hover:bg-white/[0.10]"
         >
           Create Blog Post
         </Link>
@@ -288,43 +288,43 @@ export default async function AdminDashboardPage() {
 
       <div className="mt-10">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-slate-900">Recently Added</h2>
-          <Link href="/admin/evs" className="text-sm font-medium text-blue-600 hover:underline">
+          <h2 className="text-xl font-bold text-white">Recently Added</h2>
+          <Link href="/admin/evs" className="text-sm font-medium text-brand hover:underline">
             View all
           </Link>
         </div>
 
         {recentEVs.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-slate-300 bg-white py-16 text-center">
-            <p className="text-slate-500">No EV models in the database yet.</p>
+          <div className="rounded-2xl border border-dashed border-white/10 bg-white/[0.03] py-16 text-center">
+            <p className="text-white/50">No EV models in the database yet.</p>
             <Link
               href="/admin/evs/new"
-              className="mt-4 inline-block rounded-xl bg-blue-600 px-5 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+              className="mt-4 inline-block rounded-xl bg-brand px-5 py-2 text-sm font-semibold text-white hover:bg-brand-hover"
             >
               Add your first EV
             </Link>
           </div>
         ) : (
-          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-sm">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-slate-100 bg-slate-50 text-left">
-                  <th className="px-6 py-3 font-semibold text-slate-600">Brand</th>
-                  <th className="px-6 py-3 font-semibold text-slate-600">Model</th>
-                  <th className="px-6 py-3 font-semibold text-slate-600">Price</th>
-                  <th className="px-6 py-3 font-semibold text-slate-600">Range</th>
-                  <th className="px-6 py-3 font-semibold text-slate-600"></th>
+                <tr className="border-b border-white/10 bg-white/[0.03] text-left">
+                  <th className="px-6 py-3 font-semibold text-white/60">Brand</th>
+                  <th className="px-6 py-3 font-semibold text-white/60">Model</th>
+                  <th className="px-6 py-3 font-semibold text-white/60">Price</th>
+                  <th className="px-6 py-3 font-semibold text-white/60">Range</th>
+                  <th className="px-6 py-3 font-semibold text-white/60"></th>
                 </tr>
               </thead>
               <tbody>
                 {recentEVs.map((ev) => (
-                  <tr key={ev.id} className="border-b border-slate-100 last:border-b-0 hover:bg-slate-50">
-                    <td className="px-6 py-4 font-medium text-slate-900">{ev.brand}</td>
-                    <td className="px-6 py-4 text-slate-700">{ev.model}</td>
-                    <td className="px-6 py-4 text-slate-700">GBP {ev.price?.toLocaleString()}</td>
-                    <td className="px-6 py-4 text-slate-700">{ev.range_km} km</td>
+                  <tr key={ev.id} className="border-b border-white/[0.06] last:border-b-0 hover:bg-white/[0.06]">
+                    <td className="px-6 py-4 font-medium text-white">{ev.brand}</td>
+                    <td className="px-6 py-4 text-white/70">{ev.model}</td>
+                    <td className="px-6 py-4 text-white/70">GBP {ev.price?.toLocaleString()}</td>
+                    <td className="px-6 py-4 text-white/70">{ev.range_km} km</td>
                     <td className="px-6 py-4 text-right">
-                      <Link href={`/admin/evs/${ev.id}`} className="text-blue-600 hover:underline">
+                      <Link href={`/admin/evs/${ev.id}`} className="text-brand hover:underline">
                         Edit
                       </Link>
                     </td>

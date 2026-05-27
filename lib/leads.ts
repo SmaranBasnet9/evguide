@@ -1,4 +1,4 @@
-export const LEAD_INTEREST_TYPES = ["test_drive", "finance", "compare", "sell", "quote"] as const;
+export const LEAD_INTEREST_TYPES = ["test_drive", "finance", "compare", "sell", "quote", "general", "exchange"] as const;
 
 export type LeadInterestType = (typeof LEAD_INTEREST_TYPES)[number];
 

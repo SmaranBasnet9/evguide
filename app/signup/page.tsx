@@ -23,9 +23,7 @@ export default function SignupPage() {
     const { error } = await supabase.auth.signUp({
       email,
       password,
-      options: {
-        data: { full_name: fullName },
-      },
+      options: { data: { full_name: fullName } },
     });
 
     if (error) {
@@ -49,19 +47,18 @@ export default function SignupPage() {
     setOauthLoading(null);
   };
 
-  return (
-    <main className="min-h-screen bg-slate-50 px-6 py-16 text-slate-900">
-      <div className="mx-auto w-full max-w-md rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-        <h1 className="text-3xl font-bold">Create account</h1>
-        <p className="mt-2 text-sm text-slate-600">Sign up to get started.</p>
+  const inputCls = "w-full rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 text-sm text-white placeholder:text-white/40 focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20 transition";
+  const oauthCls = "flex w-full items-center justify-center gap-3 rounded-2xl border border-white/10 bg-white/[0.06] px-5 py-3 text-sm font-medium text-white/80 transition hover:bg-white/[0.10] hover:text-white disabled:opacity-60";
 
-        {/* OAuth buttons */}
+  return (
+    <main className="min-h-screen bg-surface-base px-6 py-16 text-white">
+      <div className="mx-auto w-full max-w-md rounded-2xl border border-white/10 bg-white/[0.06] p-8 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_32px_80px_rgba(0,0,0,0.5)] backdrop-blur-xl">
+        <p className="text-xs font-semibold uppercase tracking-widest text-brand">EV Guide</p>
+        <h1 className="mt-2 text-3xl font-bold text-white">Create account</h1>
+        <p className="mt-1 text-sm text-white/50">Sign up to get started.</p>
+
         <div className="mt-7 space-y-3">
-          <button
-            onClick={() => handleOAuth("google")}
-            disabled={oauthLoading !== null}
-            className="flex w-full items-center justify-center gap-3 rounded-2xl border border-slate-300 bg-white px-5 py-3 font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-60"
-          >
+          <button onClick={() => handleOAuth("google")} disabled={oauthLoading !== null} className={oauthCls}>
             <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
               <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -71,11 +68,7 @@ export default function SignupPage() {
             {oauthLoading === "google" ? "Redirecting..." : "Continue with Google"}
           </button>
 
-          <button
-            onClick={() => handleOAuth("apple")}
-            disabled={oauthLoading !== null}
-            className="flex w-full items-center justify-center gap-3 rounded-2xl border border-slate-300 bg-white px-5 py-3 font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-60"
-          >
+          <button onClick={() => handleOAuth("apple")} disabled={oauthLoading !== null} className={oauthCls}>
             <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
             </svg>
@@ -84,66 +77,49 @@ export default function SignupPage() {
         </div>
 
         <div className="my-6 flex items-center gap-4">
-          <span className="h-px flex-1 bg-slate-200" />
-          <span className="text-xs text-slate-400">or sign up with email</span>
-          <span className="h-px flex-1 bg-slate-200" />
+          <span className="h-px flex-1 bg-white/10" />
+          <span className="text-xs text-white/40">or sign up with email</span>
+          <span className="h-px flex-1 bg-white/10" />
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="mb-2 block text-sm font-medium">Full name</label>
-            <input
-              type="text"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              required
-              className="w-full rounded-2xl border border-slate-300 px-4 py-3"
-              placeholder="Your name"
-            />
+            <label className="mb-2 block text-sm font-medium text-white/70">Full name</label>
+            <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} required className={inputCls} placeholder="Your name" />
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium">Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full rounded-2xl border border-slate-300 px-4 py-3"
-              placeholder="you@example.com"
-            />
+            <label className="mb-2 block text-sm font-medium text-white/70">Email</label>
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className={inputCls} placeholder="you@example.com" />
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={6}
-              className="w-full rounded-2xl border border-slate-300 px-4 py-3"
-              placeholder="At least 6 characters"
-            />
+            <label className="mb-2 block text-sm font-medium text-white/70">Password</label>
+            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} className={inputCls} placeholder="At least 6 characters" />
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-2xl bg-blue-600 px-5 py-3 font-semibold text-white hover:bg-blue-700 disabled:opacity-60"
-          >
+          <button type="submit" disabled={loading} className="w-full rounded-2xl bg-brand px-5 py-3 font-semibold text-white transition hover:bg-brand-hover disabled:opacity-60">
             {loading ? "Creating account..." : "Create account"}
           </button>
 
-          {message ? <p className="text-sm text-slate-700">{message}</p> : null}
+          {message ? <p className="text-sm text-white/60">{message}</p> : null}
         </form>
 
-        <p className="mt-6 text-sm text-slate-600">
+        <p className="mt-6 text-sm text-white/50">
           Already have an account?{" "}
-          <Link href="/login" className="font-semibold text-blue-700 hover:text-blue-800">
+          <Link href="/login" className="font-semibold text-brand hover:text-brand-hover">
             Sign in
           </Link>
         </p>
+
+        <div className="mt-4 border-t border-white/[0.06] pt-4">
+          <p className="text-sm text-white/40">
+            Are you a dealer?{" "}
+            <Link href="/dealer/register" className="font-semibold text-white/60 hover:text-brand">
+              Register your dealership
+            </Link>
+          </p>
+        </div>
       </div>
     </main>
   );

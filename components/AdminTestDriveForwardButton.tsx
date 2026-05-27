@@ -58,13 +58,13 @@ export default function AdminTestDriveForwardButton({
 
   return (
     <div className="mt-2 space-y-2">
-      <p className="text-[11px] font-medium text-slate-500">Forward MG lead to dealer</p>
+      <p className="text-[11px] font-medium text-white/50">Forward MG lead to dealer</p>
       <input
         type="email"
         value={emailTo}
         onChange={(event) => setEmailTo(event.target.value)}
         placeholder="Enter MG dealer email"
-        className="w-56 rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs text-slate-700 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-200"
+        className="w-56 rounded-lg border border-white/15 px-2.5 py-1.5 text-xs text-white/80 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-200"
       />
       <button
         type="button"
@@ -74,7 +74,7 @@ export default function AdminTestDriveForwardButton({
       >
         {loading ? "Forwarding..." : "Forward to MG Dealer"}
       </button>
-      <p className="text-[11px] text-slate-400">
+      <p className="text-[11px] text-white/40">
         {customerName} · {customerEmail} · {vehicleLabel ?? "Unknown vehicle"} · {location} · {preferredDate} {preferredTimeSlot}
       </p>
       {message ? <p className="text-xs text-emerald-700">{message}</p> : null}

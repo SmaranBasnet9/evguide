@@ -9,10 +9,6 @@ interface Props {
   children: ReactNode;
 }
 
-/**
- * Shared wrapper for every wizard step.
- * Renders: step counter, progress bar, title, subtitle, content, error message.
- */
 export default function ConsultationStep({
   currentStep,
   title,
@@ -27,7 +23,7 @@ export default function ConsultationStep({
     <div className="flex flex-col gap-6">
       {/* Progress */}
       <div className="space-y-3">
-        <div className="flex items-center justify-between text-xs font-medium text-[#6B7280]">
+        <div className="flex items-center justify-between text-xs font-medium text-white/50">
           <span>
             Step {currentStep} of {total}
           </span>
@@ -40,7 +36,7 @@ export default function ConsultationStep({
             <div
               key={step.id}
               className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
-                step.id <= currentStep ? "bg-[#1FBF9F]" : "bg-[#E5E7EB]"
+                step.id <= currentStep ? "bg-brand" : "bg-white/10"
               }`}
             />
           ))}
@@ -49,11 +45,11 @@ export default function ConsultationStep({
 
       {/* Heading */}
       <div>
-        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#1FBF9F]">
+        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-brand">
           Step {currentStep}
         </p>
-        <h2 className="mt-2 text-2xl font-semibold text-[#1A1A1A] sm:text-3xl">{title}</h2>
-        <p className="mt-2 text-base leading-7 text-[#6B7280]">{subtitle}</p>
+        <h2 className="mt-2 text-2xl font-semibold text-white sm:text-3xl">{title}</h2>
+        <p className="mt-2 text-base leading-7 text-white/50">{subtitle}</p>
       </div>
 
       {/* Step content */}
@@ -61,7 +57,7 @@ export default function ConsultationStep({
 
       {/* Validation error */}
       {error && (
-        <p className="rounded-[1rem] border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
+        <p className="rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm font-medium text-red-400">
           {error}
         </p>
       )}
@@ -84,18 +80,18 @@ export function OptionCard({ selected, onClick, icon, label, description }: Opti
     <button
       type="button"
       onClick={onClick}
-      className={`group flex w-full items-start gap-4 rounded-[1.5rem] border p-4 text-left transition-all duration-150 ${
+      className={`group flex w-full items-start gap-4 rounded-2xl border p-4 text-left transition-all duration-150 ${
         selected
-          ? "border-[#1FBF9F] bg-[#E8F8F5] shadow-sm"
-          : "border-[#E5E7EB] bg-white hover:border-[#1FBF9F]/40 hover:bg-[#F8FAF9]"
+          ? "border-brand bg-brand/15 shadow-sm shadow-brand/10"
+          : "border-white/10 bg-white/[0.04] hover:border-brand/40 hover:bg-white/[0.08]"
       }`}
     >
       {icon && (
         <span
           className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border transition-colors ${
             selected
-              ? "border-[#1FBF9F]/30 bg-white text-[#1FBF9F]"
-              : "border-[#E5E7EB] bg-[#F8FAF9] text-[#6B7280] group-hover:border-[#1FBF9F]/30 group-hover:text-[#1FBF9F]"
+              ? "border-brand/30 bg-brand/10 text-brand"
+              : "border-white/10 bg-white/[0.06] text-white/50 group-hover:border-brand/30 group-hover:text-brand"
           }`}
         >
           {icon}
@@ -104,19 +100,19 @@ export function OptionCard({ selected, onClick, icon, label, description }: Opti
       <div className="min-w-0 flex-1">
         <p
           className={`text-sm font-semibold leading-snug transition-colors ${
-            selected ? "text-[#1FBF9F]" : "text-[#1A1A1A]"
+            selected ? "text-brand" : "text-white"
           }`}
         >
           {label}
         </p>
         {description && (
-          <p className="mt-1 text-xs leading-5 text-[#6B7280]">{description}</p>
+          <p className="mt-1 text-xs leading-5 text-white/50">{description}</p>
         )}
       </div>
       {/* Selection indicator */}
       <span
         className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-all ${
-          selected ? "border-[#1FBF9F] bg-[#1FBF9F]" : "border-[#D1D5DB] bg-white"
+          selected ? "border-brand bg-brand" : "border-white/20 bg-white/[0.06]"
         }`}
       >
         {selected && (
@@ -154,10 +150,10 @@ export function NumberField({
 }: NumberFieldProps) {
   return (
     <div className="space-y-1.5">
-      <label className="block text-sm font-medium text-[#374151]">{label}</label>
-      <div className="flex items-center overflow-hidden rounded-[1rem] border border-[#E5E7EB] bg-white transition-all focus-within:border-[#1FBF9F] focus-within:ring-2 focus-within:ring-[#1FBF9F]/20">
+      <label className="block text-sm font-medium text-white/70">{label}</label>
+      <div className="flex items-center overflow-hidden rounded-2xl border border-white/10 bg-white/[0.06] transition-all focus-within:border-brand focus-within:ring-2 focus-within:ring-brand/20">
         {prefix && (
-          <span className="select-none border-r border-[#E5E7EB] bg-[#F8FAF9] px-3 py-3 text-sm font-medium text-[#6B7280]">
+          <span className="select-none border-r border-white/10 bg-white/[0.04] px-3 py-3 text-sm font-medium text-white/50">
             {prefix}
           </span>
         )}
@@ -171,10 +167,10 @@ export function NumberField({
             const raw = e.target.value;
             onChange(raw === "" ? null : Number(raw));
           }}
-          className="min-w-0 flex-1 bg-transparent px-3 py-3 text-sm text-[#1A1A1A] outline-none placeholder:text-[#9CA3AF]"
+          className="min-w-0 flex-1 bg-transparent px-3 py-3 text-sm text-white outline-none placeholder:text-white/30"
         />
         {suffix && (
-          <span className="select-none border-l border-[#E5E7EB] bg-[#F8FAF9] px-3 py-3 text-sm font-medium text-[#6B7280]">
+          <span className="select-none border-l border-white/10 bg-white/[0.04] px-3 py-3 text-sm font-medium text-white/50">
             {suffix}
           </span>
         )}

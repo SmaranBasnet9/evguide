@@ -50,7 +50,7 @@ export default function FooterNewsletter() {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="your@email.com"
-        className="h-9 min-w-0 flex-1 rounded-lg border border-white/10 bg-white/[0.04] px-3 text-sm text-white placeholder:text-white/25 outline-none focus:border-brand/40 focus:ring-2 focus:ring-brand/20 disabled:opacity-50"
+        className="h-9 min-w-0 flex-1 rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none focus:border-brand/40 focus:ring-2 focus:ring-brand/20 disabled:opacity-50"
         disabled={status === "loading"}
       />
       <button

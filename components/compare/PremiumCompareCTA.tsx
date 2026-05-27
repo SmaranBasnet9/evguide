@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -23,7 +23,6 @@ export default function PremiumCompareCTA({ modelA, modelB, winner, onReset, aut
   const [quoteOpen, setQuoteOpen] = useState(false);
   const [expertOpen, setExpertOpen] = useState(false);
 
-  // Auto-open the modal after returning from login
   useEffect(() => {
     if (!autoOpenQuote) return;
     void supabase.auth.getUser().then(({ data: { user } }) => {
@@ -44,36 +43,32 @@ export default function PremiumCompareCTA({ modelA, modelB, winner, onReset, aut
   }
 
   return (
-    <section className="bg-[#F8FAF9] py-16">
+    <section className="bg-white py-16">
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
-        <div className="relative overflow-hidden rounded-3xl border border-[#1FBF9F]/25 bg-gradient-to-br from-[#E8F8F5] via-white to-white p-8 shadow-sm sm:p-12">
+        <div className="relative overflow-hidden rounded-[2rem] border border-brand/20 bg-gray-50">
+          {/* Top glow line */}
+          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand/50 to-transparent" />
+          {/* Background glow */}
+          <div className="pointer-events-none absolute -right-16 -top-16 hidden h-56 w-56 rounded-full bg-brand/8 blur-[50px] sm:block" />
 
-          {/* Decorative glow */}
-          <div className="pointer-events-none absolute -top-16 -right-16 h-64 w-64 rounded-full bg-[#1FBF9F]/10 blur-[80px]" />
-
-          <div className="relative z-10 flex flex-col items-start gap-8 md:flex-row md:items-center">
-
+          <div className="relative z-10 flex flex-col gap-8 p-8 md:flex-row md:items-center sm:p-12">
             {/* Left — copy */}
             <div className="flex-1">
               <div className="flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-[#1FBF9F]" />
-                <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#1FBF9F]">
-                  Next Step
-                </p>
+                <Sparkles className="h-4 w-4 text-brand" />
+                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-brand">Next Step</p>
               </div>
-              <h2 className="mt-2 text-2xl font-extrabold text-[#1A1A1A] sm:text-3xl">
-                Want the best deal for the{" "}
-                <span className="text-[#1FBF9F]">{winnerLabel}</span>?
+              <h2 className="mt-3 text-2xl font-semibold text-gray-900 sm:text-3xl">
+                Want the best deal on the{" "}
+                <span className="text-brand">{winnerLabel}</span>?
               </h2>
-              <p className="mt-3 max-w-lg text-[#4B5563]">
-                Get a no-obligation quote with full pricing — vehicle cost, finance at the best available
-                bank rate, and insurance estimate — or speak directly with an EV expert.
+              <p className="mt-3 max-w-lg text-sm leading-7 text-gray-500">
+                Get a no-obligation quote with full pricing — vehicle cost, finance at the best
+                available bank rate, and insurance estimate — or speak directly with an EV expert.
               </p>
-
-              {/* Finance link */}
               <Link
                 href={`/finance?car=${winner.id}`}
-                className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-[#1FBF9F] hover:underline"
+                className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-brand transition hover:text-brand-hover"
               >
                 Check monthly payments for the {winner.model}
                 <ArrowRight className="h-3.5 w-3.5" />
@@ -81,11 +76,11 @@ export default function PremiumCompareCTA({ modelA, modelB, winner, onReset, aut
             </div>
 
             {/* Right — CTAs */}
-            <div className="flex w-full flex-col gap-3 sm:w-auto">
+            <div className="flex w-full shrink-0 flex-col gap-3 sm:w-auto">
               <button
                 type="button"
                 onClick={handleGetQuotation}
-                className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#1FBF9F] px-8 py-4 text-sm font-bold text-white shadow-md transition hover:bg-[#17A589] sm:w-auto"
+                className="flex items-center justify-center gap-2 rounded-2xl bg-brand px-8 py-4 text-sm font-semibold text-white shadow-[0_0_30px_rgba(31,191,159,0.3)] transition hover:bg-brand-hover hover:shadow-[0_0_40px_rgba(31,191,159,0.4)]"
               >
                 Get Quotation
                 <ArrowRight className="h-4 w-4" />
@@ -93,21 +88,21 @@ export default function PremiumCompareCTA({ modelA, modelB, winner, onReset, aut
               <button
                 type="button"
                 onClick={() => setExpertOpen(true)}
-                className="flex w-full items-center justify-center gap-2 rounded-2xl border border-[#E5E7EB] bg-white px-8 py-4 text-sm font-semibold text-[#374151] transition hover:bg-[#F8FAF9] sm:w-auto"
+                className="flex items-center justify-center gap-2 rounded-2xl border border-gray-200 bg-white px-8 py-4 text-sm font-medium text-gray-700 transition hover:border-gray-300 hover:bg-gray-100 hover:text-gray-900"
               >
-                <MessageCircle className="h-4 w-4 text-[#6B7280]" />
+                <MessageCircle className="h-4 w-4" />
                 Talk to an Expert
               </button>
             </div>
           </div>
 
           {/* Compare another pair */}
-          <div className="relative z-10 mt-10 border-t border-[#E5E7EB] pt-6 text-center">
-            <p className="text-sm text-[#9CA3AF]">Still weighing your options?</p>
+          <div className="relative z-10 border-t border-gray-200 px-8 py-5 text-center sm:px-12">
+            <p className="text-sm text-gray-300">Still weighing your options?</p>
             <button
               type="button"
               onClick={onReset}
-              className="mt-2 inline-flex items-center gap-2 text-sm font-semibold text-[#6B7280] hover:text-[#1A1A1A] transition-colors"
+              className="mt-1.5 inline-flex items-center gap-2 text-sm font-medium text-gray-400 transition hover:text-gray-900"
             >
               <RotateCcw className="h-3.5 w-3.5" />
               Compare a different pair
@@ -116,7 +111,6 @@ export default function PremiumCompareCTA({ modelA, modelB, winner, onReset, aut
         </div>
       </div>
 
-      {/* Quotation modal — auth-gated, includes full pricing breakdown */}
       <CompareQuotationModal
         open={quoteOpen}
         onClose={() => setQuoteOpen(false)}
@@ -124,8 +118,6 @@ export default function PremiumCompareCTA({ modelA, modelB, winner, onReset, aut
         modelA={modelA}
         modelB={modelB}
       />
-
-      {/* Talk to Expert modal */}
       <LeadCaptureModal
         open={expertOpen}
         onClose={() => setExpertOpen(false)}

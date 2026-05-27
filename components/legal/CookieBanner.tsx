@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useCookieConsent } from "@/components/legal/CookieConsentProvider";
 import {
   CONSENT_MAX_AGE_SECONDS,
@@ -16,7 +16,10 @@ import {
   hasDismissedCookieBanner,
   TRACKING_SESSION_ID_KEY,
 } from "@/lib/privacy/consent";
+import { Shield, X, ChevronDown } from "lucide-react";
 
+// ── Native script: runs before React hydration so the banner can be hidden
+// immediately if consent already exists — eliminates flash of unwanted banner.
 const COOKIE_BANNER_NATIVE_SCRIPT = `
 (() => {
   if (window.__evguideCookieBannerNativeBound) return;
@@ -44,25 +47,12 @@ const COOKIE_BANNER_NATIVE_SCRIPT = `
   }
 
   function clearCookie(name) {
-    const secure = window.location.protocol === "https:";
     document.cookie = [
       name + "=",
       "Max-Age=0",
       "Path=/",
       "SameSite=Lax",
-      secure ? "Secure" : "",
-    ].filter(Boolean).join("; ");
-  }
-
-  function scheduleAfterPaint(task) {
-    if (typeof window.requestAnimationFrame === "function") {
-      window.requestAnimationFrame(() => {
-        window.setTimeout(task, 0);
-      });
-      return;
-    }
-
-    window.setTimeout(task, 0);
+    ].join("; ");
   }
 
   function hideBanner() {
@@ -70,116 +60,71 @@ const COOKIE_BANNER_NATIVE_SCRIPT = `
     if (!banner) return;
     banner.setAttribute("data-native-closed", "1");
     banner.style.opacity = "0";
+    banner.style.transform = "translateY(20px)";
     banner.style.pointerEvents = "none";
-    banner.style.transform = "translateY(24px)";
-    window.setTimeout(() => {
-      if (banner) banner.style.display = "none";
-    }, 0);
+    window.setTimeout(() => { if (banner) banner.style.display = "none"; }, 320);
   }
 
-  function clearNonEssentialState(preferences) {
-    if (!preferences.analytics) {
-      try {
-        window.localStorage.removeItem(firstVisitKey);
-      } catch {}
+  function clearNonEssentialState(prefs) {
+    if (!prefs.analytics) {
+      try { window.localStorage.removeItem(firstVisitKey); } catch {}
     }
-
-    if (!preferences.analytics && !preferences.personalization) {
-      try {
-        window.localStorage.removeItem(trackingSessionIdKey);
-      } catch {}
+    if (!prefs.analytics && !prefs.personalization) {
+      try { window.localStorage.removeItem(trackingSessionIdKey); } catch {}
       clearCookie(trackingSessionIdKey);
     }
   }
 
-  function persistConsent(preferences) {
-    const serialized = JSON.stringify(preferences);
-
-    try {
-      window.localStorage.setItem(consentStorageKey, serialized);
-    } catch {}
-
-    setCookie(consentCookieKey, serialized, consentMaxAgeSeconds);
-
-    try {
-      window.localStorage.setItem(dismissedStorageKey, "1");
-    } catch {}
-
+  function persistConsent(prefs) {
+    const s = JSON.stringify(prefs);
+    try { window.localStorage.setItem(consentStorageKey, s); } catch {}
+    setCookie(consentCookieKey, s, consentMaxAgeSeconds);
+    try { window.localStorage.setItem(dismissedStorageKey, "1"); } catch {}
     setCookie(dismissedCookieKey, "1", consentMaxAgeSeconds);
-    clearNonEssentialState(preferences);
+    clearNonEssentialState(prefs);
   }
 
-  function broadcastConsent(preferences) {
-    try {
-      window.dispatchEvent(new CustomEvent(consentEvent, { detail: preferences }));
-    } catch {}
+  function broadcastConsent(prefs) {
+    try { window.dispatchEvent(new CustomEvent(consentEvent, { detail: prefs })); } catch {}
   }
 
-  function notifyServer(preferences, method) {
-    const body = JSON.stringify({
-      analytics: preferences.analytics,
-      personalization: preferences.personalization,
-      method,
-    });
-
+  function notifyServer(prefs, method) {
+    const body = JSON.stringify({ analytics: prefs.analytics, personalization: prefs.personalization, method });
     try {
       if (navigator.sendBeacon) {
-        const blob = new Blob([body], { type: "application/json" });
-        navigator.sendBeacon("/api/consent", blob);
+        navigator.sendBeacon("/api/consent", new Blob([body], { type: "application/json" }));
         return;
       }
     } catch {}
-
-    try {
-      fetch("/api/consent", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body,
-        keepalive: true,
-      }).catch(() => {});
-    } catch {}
+    try { fetch("/api/consent", { method: "POST", headers: { "Content-Type": "application/json" }, body, keepalive: true }).catch(() => {}); } catch {}
   }
 
   function applyDecision(action) {
-    if (action !== "accept-all" && action !== "reject-non-essential") {
-      return;
-    }
-
-    const preferences = {
+    if (action !== "accept-all" && action !== "reject-non-essential") return;
+    const prefs = {
       essential: true,
       analytics: action === "accept-all",
       personalization: action === "accept-all",
       timestamp: Date.now(),
       version: consentVersion,
     };
-
     hideBanner();
-    persistConsent(preferences);
-    scheduleAfterPaint(() => {
-      broadcastConsent(preferences);
-      notifyServer(
-        preferences,
-        action === "accept-all" ? "banner_accept_all" : "banner_reject",
-      );
+    persistConsent(prefs);
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        broadcastConsent(prefs);
+        notifyServer(prefs, action === "accept-all" ? "banner_accept_all" : "banner_reject");
+      }, 0);
     });
   }
 
-  document.addEventListener("click", (event) => {
-    const target = event.target instanceof Element
-      ? event.target.closest("[data-cookie-action]")
-      : null;
-
+  document.addEventListener("click", (e) => {
+    const target = e.target instanceof Element ? e.target.closest("[data-cookie-action]") : null;
     if (!target) return;
-
     const action = target.getAttribute("data-cookie-action");
-    if (!action) return;
-
-    if (action === "customize-settings") {
-      return;
-    }
-
-    event.preventDefault();
-    event.stopPropagation();
+    if (!action || action === "customize-settings") return;
+    e.preventDefault();
+    e.stopPropagation();
     applyDecision(action);
   }, true);
 })();
@@ -196,211 +141,225 @@ export default function CookieBanner() {
     savePreferences,
     closeSettings,
   } = useCookieConsent();
+
   const bannerRef = useRef<HTMLDivElement | null>(null);
   const decisionHandledRef = useRef(false);
   const [draftAnalytics, setDraftAnalytics] = useState(preferences.analytics);
   const [draftPersonalization, setDraftPersonalization] = useState(preferences.personalization);
   const [isDismissed, setIsDismissed] = useState(() => hasDismissedCookieBanner());
+  const [visible, setVisible] = useState(false);
 
-  const shouldShowBanner = !hasMadeChoice || isSettingsOpen;
-  const isAdminSurface = pathname.startsWith("/admin") || pathname === "/admin-login";
-  const heading = useMemo(
-    () => (hasMadeChoice ? "Manage your privacy choices" : "Help us improve EVGuide"),
-    [hasMadeChoice],
-  );
+  // Sync drafts when settings panel opens
+  useEffect(() => {
+    if (isSettingsOpen) {
+      setDraftAnalytics(preferences.analytics);
+      setDraftPersonalization(preferences.personalization);
+    }
+  }, [isSettingsOpen, preferences.analytics, preferences.personalization]);
 
+  // Re-allow decision after settings re-open
   useEffect(() => {
     if (isSettingsOpen || !hasMadeChoice) {
       decisionHandledRef.current = false;
     }
   }, [hasMadeChoice, isSettingsOpen]);
 
-  function scheduleConsentAction(action: () => void) {
-    if (typeof window === "undefined") {
-      action();
-      return;
+  // Trigger entrance animation after mount
+  useEffect(() => {
+    if (!isDismissed && (!hasMadeChoice || isSettingsOpen)) {
+      const t = setTimeout(() => setVisible(true), 120);
+      return () => clearTimeout(t);
     }
+  }, [isDismissed, hasMadeChoice, isSettingsOpen]);
 
-    if (typeof window.requestAnimationFrame === "function") {
-      window.requestAnimationFrame(() => {
-        window.setTimeout(action, 0);
-      });
-      return;
-    }
+  const isAdminSurface = pathname.startsWith("/admin") || pathname === "/admin-login";
+  const isLocallyClosed = isDismissed && !isSettingsOpen;
 
-    window.setTimeout(action, 0);
+  if (isAdminSurface || isLocallyClosed || (!hasMadeChoice === false && !isSettingsOpen)) {
+    // Don't render when not needed
+    if (hasMadeChoice && !isSettingsOpen) return null;
   }
+  if (isAdminSurface || isLocallyClosed) return null;
+  if (hasMadeChoice && !isSettingsOpen) return null;
 
   function hideBannerImmediately() {
-    if (decisionHandledRef.current) {
-      return false;
-    }
-
+    if (decisionHandledRef.current) return false;
     decisionHandledRef.current = true;
     setIsDismissed(true);
-
     const banner = bannerRef.current;
     if (banner) {
       banner.style.opacity = "0";
+      banner.style.transform = "translateY(20px)";
       banner.style.pointerEvents = "none";
-      banner.style.transform = "translateY(24px)";
     }
-
     return true;
   }
 
   function handleDecision(action: () => void) {
-    if (!hideBannerImmediately()) {
-      return;
-    }
-
-    scheduleConsentAction(action);
-  }
-
-  const isLocallyClosed = isDismissed && !isSettingsOpen;
-
-  if (isAdminSurface || isLocallyClosed || !shouldShowBanner) {
-    return null;
+    if (!hideBannerImmediately()) return;
+    requestAnimationFrame(() => setTimeout(action, 0));
   }
 
   return (
-    <div
-      id="cookie-banner"
-      ref={bannerRef}
-      data-native-closed="0"
-      className="fixed inset-x-4 bottom-4 z-[70] mx-auto max-w-5xl rounded-[2rem] border border-white/10 bg-[#0E1113]/95 p-5 shadow-[0_30px_90px_rgba(0,0,0,0.55)] backdrop-blur-xl sm:inset-x-6"
-    >
-      <script dangerouslySetInnerHTML={{ __html: COOKIE_BANNER_NATIVE_SCRIPT }} />
-      <div className="flex flex-col gap-6">
-        <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-          <div className="max-w-3xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-zinc-500">Privacy choices</p>
-            <h2 className="mt-2 text-xl font-semibold text-white">{heading}</h2>
-            <p className="mt-3 text-sm leading-7 text-zinc-400">
-              Essential cookies stay active so login, security, and core platform behaviour keep working.
-              With your permission, we can also use analytics and personalization storage to measure usage,
-              remember AI Match context, and tailor EV recommendations. Read our{" "}
-              <Link href="/cookies" className="text-emerald-300 transition hover:text-emerald-200">
+    <>
+      {/* Backdrop — subtle overlay on mobile */}
+      <div
+        className={`fixed inset-0 z-[69] bg-black/10 backdrop-blur-[2px] transition-opacity duration-300 md:hidden ${
+          visible ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
+        aria-hidden="true"
+      />
+
+      <div
+        id="cookie-banner"
+        ref={bannerRef}
+        role="dialog"
+        aria-modal="false"
+        aria-label="Cookie consent"
+        data-native-closed="0"
+        className={`fixed inset-x-3 bottom-3 z-[70] mx-auto max-w-4xl transition-all duration-300 ease-out sm:inset-x-4 sm:bottom-4 ${
+          visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5 pointer-events-none"
+        }`}
+      >
+        <script dangerouslySetInnerHTML={{ __html: COOKIE_BANNER_NATIVE_SCRIPT }} />
+
+        <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-[0_8px_40px_rgba(0,0,0,0.12)]">
+          {/* Top accent line */}
+          <div className="h-1 w-full bg-gradient-to-r from-brand via-brand/60 to-transparent" />
+
+          <div className="p-4 sm:p-5">
+            {/* Header row */}
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-center gap-2.5">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand/10">
+                  <Shield className="h-4 w-4 text-brand" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-brand">Privacy</p>
+                  <h2 className="text-sm font-bold text-gray-900 leading-snug">
+                    {hasMadeChoice ? "Manage your privacy choices" : "We value your privacy"}
+                  </h2>
+                </div>
+              </div>
+              {hasMadeChoice && (
+                <button
+                  type="button"
+                  onClick={closeSettings}
+                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-gray-200 text-gray-400 transition hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700"
+                  aria-label="Close privacy settings"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
+
+            {/* Body text */}
+            <p className="mt-3 text-xs leading-relaxed text-gray-500">
+              We use essential cookies to keep the site working. With your permission, we also use analytics to improve EVGuide
+              and personalization to remember your AI Match preferences.{" "}
+              <Link href="/cookies" className="text-brand font-medium transition hover:text-brand-hover underline underline-offset-2">
                 Cookie Policy
               </Link>{" "}
-              and{" "}
-              <Link href="/privacy" className="text-emerald-300 transition hover:text-emerald-200">
+              ·{" "}
+              <Link href="/privacy" className="text-brand font-medium transition hover:text-brand-hover underline underline-offset-2">
                 Privacy Policy
               </Link>
-              .
             </p>
-          </div>
 
-          {hasMadeChoice && (
-            <button
-              id="cookie-close"
-              type="button"
-              onClick={closeSettings}
-              className="self-start rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-zinc-300 transition hover:border-white/20 hover:bg-white/[0.06]"
-            >
-              Close
-            </button>
-          )}
+            {/* Action buttons — default view */}
+            {!isSettingsOpen && (
+              <div className="mt-4 flex flex-wrap items-center gap-2">
+                <button
+                  id="cookie-accept-all"
+                  data-cookie-action="accept-all"
+                  type="button"
+                  onClick={() => handleDecision(acceptAll)}
+                  className="rounded-full bg-brand px-5 py-2.5 text-xs font-bold text-white shadow-sm transition hover:bg-brand-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand"
+                >
+                  Accept All
+                </button>
+                <button
+                  id="cookie-reject-non-essential"
+                  data-cookie-action="reject-non-essential"
+                  type="button"
+                  onClick={() => handleDecision(rejectNonEssential)}
+                  className="rounded-full border border-gray-200 bg-gray-50 px-5 py-2.5 text-xs font-semibold text-gray-700 transition hover:border-gray-300 hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-400"
+                >
+                  Essential Only
+                </button>
+                <a
+                  id="cookie-customize"
+                  data-cookie-action="customize-settings"
+                  href="/cookies#manage-cookie-settings"
+                  className="inline-flex items-center gap-1 rounded-full px-4 py-2.5 text-xs font-semibold text-gray-400 transition hover:text-gray-700"
+                >
+                  Customize <ChevronDown className="h-3 w-3" />
+                </a>
+              </div>
+            )}
+
+            {/* Settings panel */}
+            {isSettingsOpen && (
+              <div className="mt-4 space-y-3">
+                <div className="grid gap-2.5 sm:grid-cols-3">
+                  <ConsentCard
+                    title="Essential"
+                    description="Login, security & core platform — always on."
+                    enabled
+                    locked
+                  />
+                  <ConsentCard
+                    title="Analytics"
+                    description="Page tracking to understand how EVGuide is used."
+                    enabled={draftAnalytics}
+                    onToggle={() => setDraftAnalytics((v) => !v)}
+                  />
+                  <ConsentCard
+                    title="Personalization"
+                    description="AI Match memory and tailored EV recommendations."
+                    enabled={draftPersonalization}
+                    onToggle={() => setDraftPersonalization((v) => !v)}
+                  />
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2 pt-1">
+                  <button
+                    id="cookie-save-preferences"
+                    type="button"
+                    onClick={() =>
+                      handleDecision(() =>
+                        savePreferences({ analytics: draftAnalytics, personalization: draftPersonalization }),
+                      )
+                    }
+                    className="rounded-full bg-brand px-5 py-2.5 text-xs font-bold text-white shadow-sm transition hover:bg-brand-hover"
+                  >
+                    Save Preferences
+                  </button>
+                  <button
+                    id="cookie-settings-accept-all"
+                    data-cookie-action="accept-all"
+                    type="button"
+                    onClick={() => handleDecision(acceptAll)}
+                    className="rounded-full border border-gray-200 bg-gray-50 px-5 py-2.5 text-xs font-semibold text-gray-700 transition hover:bg-gray-100"
+                  >
+                    Accept All
+                  </button>
+                  <button
+                    id="cookie-settings-reject"
+                    data-cookie-action="reject-non-essential"
+                    type="button"
+                    onClick={() => handleDecision(rejectNonEssential)}
+                    className="rounded-full border border-gray-200 bg-gray-50 px-5 py-2.5 text-xs font-semibold text-gray-700 transition hover:bg-gray-100"
+                  >
+                    Essential Only
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
-
-        {!isSettingsOpen && (
-          <div className="flex flex-wrap items-center gap-3">
-            <button
-              id="cookie-accept-all"
-              data-cookie-action="accept-all"
-              type="button"
-              onClick={() => handleDecision(acceptAll)}
-              className="rounded-full bg-emerald-500 px-5 py-3 text-sm font-semibold text-black transition hover:bg-emerald-400"
-            >
-              Accept All
-            </button>
-            <button
-              id="cookie-reject-non-essential"
-              data-cookie-action="reject-non-essential"
-              type="button"
-              onClick={() => handleDecision(rejectNonEssential)}
-              className="rounded-full border border-white/10 bg-white/[0.03] px-5 py-3 text-sm font-semibold text-zinc-200 transition hover:border-white/20 hover:bg-white/[0.06] hover:text-white"
-            >
-              Reject Non-Essential
-            </button>
-            <a
-              id="cookie-customize"
-              data-cookie-action="customize-settings"
-              href="/cookies#manage-cookie-settings"
-              className="rounded-full border border-cyan-400/20 bg-cyan-400/10 px-5 py-3 text-sm font-semibold text-cyan-200 transition hover:bg-cyan-400/15"
-            >
-              Customize Settings
-            </a>
-          </div>
-        )}
-
-        {isSettingsOpen && (
-          <div className="grid gap-4 rounded-[1.75rem] border border-white/8 bg-black/20 p-4 md:grid-cols-3">
-            <ConsentCard
-              title="Essential"
-              description="Authentication, session, and security cookies required for the product to operate."
-              enabled
-              locked
-            />
-            <ConsentCard
-              title="Analytics"
-              description="Page tracking and behavioural analytics used to understand product usage and improve journeys."
-              enabled={draftAnalytics}
-              onToggle={() => setDraftAnalytics((current) => !current)}
-            />
-            <ConsentCard
-              title="Personalization / AI"
-              description="AI Match preferences, recommendation memory, and user profiling features that tailor the experience."
-              enabled={draftPersonalization}
-              onToggle={() => setDraftPersonalization((current) => !current)}
-            />
-            <div className="md:col-span-3 flex flex-wrap items-center gap-3 pt-2">
-              <button
-                id="cookie-save-preferences"
-                type="button"
-                onPointerDown={() =>
-                  handleDecision(() =>
-                    savePreferences({
-                      analytics: draftAnalytics,
-                      personalization: draftPersonalization,
-                    }),
-                  )
-                }
-                onClick={() =>
-                  handleDecision(() =>
-                    savePreferences({
-                      analytics: draftAnalytics,
-                      personalization: draftPersonalization,
-                    }),
-                  )
-                }
-                className="rounded-full bg-emerald-500 px-5 py-3 text-sm font-semibold text-black transition hover:bg-emerald-400"
-              >
-                Save Preferences
-              </button>
-              <button
-                id="cookie-settings-accept-all"
-                data-cookie-action="accept-all"
-                type="button"
-                onClick={() => handleDecision(acceptAll)}
-                className="rounded-full border border-white/10 bg-white/[0.03] px-5 py-3 text-sm font-semibold text-zinc-200 transition hover:border-white/20 hover:bg-white/[0.06]"
-              >
-                Accept All
-              </button>
-              <button
-                id="cookie-settings-reject"
-                data-cookie-action="reject-non-essential"
-                type="button"
-                onClick={() => handleDecision(rejectNonEssential)}
-                className="rounded-full border border-white/10 bg-white/[0.03] px-5 py-3 text-sm font-semibold text-zinc-200 transition hover:border-white/20 hover:bg-white/[0.06]"
-              >
-                Reject Non-Essential
-              </button>
-            </div>
-          </div>
-        )}
       </div>
-    </div>
+    </>
   );
 }
 
@@ -418,31 +377,34 @@ function ConsentCard({
   onToggle?: () => void;
 }) {
   return (
-    <div className="rounded-[1.5rem] border border-white/8 bg-white/[0.03] p-4">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h3 className="text-base font-semibold text-white">{title}</h3>
-          <p className="mt-2 text-sm leading-6 text-zinc-400">{description}</p>
+    <div className="rounded-xl border border-gray-100 bg-gray-50 p-3">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-xs font-semibold text-gray-900">{title}</p>
+          <p className="mt-0.5 text-[11px] leading-relaxed text-gray-400">{description}</p>
         </div>
         <button
           type="button"
           onClick={locked ? undefined : onToggle}
           disabled={locked}
           aria-pressed={enabled}
-          className={`relative inline-flex h-8 w-14 shrink-0 items-center rounded-full border transition ${
+          aria-label={`${title} cookies ${enabled ? "enabled" : "disabled"}${locked ? " (required)" : ""}`}
+          className={`relative mt-0.5 inline-flex h-6 w-11 shrink-0 items-center rounded-full border transition-colors duration-200 ${
             enabled
-              ? "border-emerald-400/40 bg-emerald-500/80"
-              : "border-white/10 bg-white/[0.06]"
-          } ${locked ? "cursor-not-allowed opacity-80" : "cursor-pointer"}`}
+              ? "border-brand/40 bg-brand"
+              : "border-gray-200 bg-gray-200"
+          } ${locked ? "cursor-not-allowed opacity-60" : "cursor-pointer"}`}
         >
           <span
-            className={`inline-block h-6 w-6 rounded-full bg-white shadow transition ${
-              enabled ? "translate-x-7" : "translate-x-1"
+            className={`inline-block h-4 w-4 rounded-full bg-white shadow-sm transition-transform duration-200 ${
+              enabled ? "translate-x-6" : "translate-x-0.5"
             }`}
           />
         </button>
       </div>
-      {locked && <p className="mt-3 text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">Always active</p>}
+      {locked && (
+        <p className="mt-1.5 text-[10px] font-semibold uppercase tracking-wider text-brand/70">Always active</p>
+      )}
     </div>
   );
 }

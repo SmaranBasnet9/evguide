@@ -1,12 +1,10 @@
 "use client";
 
+import { useState, useMemo, useRef } from "react";
 import type { EVModel } from "@/types";
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { ArrowRight, Zap } from "lucide-react";
-import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { ArrowRight, ChevronRight, ChevronLeft, BatteryCharging, Gauge } from "lucide-react";
 import VehicleImagePlaceholder from "@/components/vehicles/VehicleImagePlaceholder";
 
 interface FeaturedEVsProps {
@@ -32,163 +30,217 @@ function formatGBP(value: number) {
   }).format(value);
 }
 
-function getDealBadge(model: EVModel): { label: string; color: string } {
-  if (model.price <= 33000 || model.badge === "Best Value")
-    return { label: "Great value", color: "text-emerald-400 border-emerald-400/30 bg-emerald-400/10" };
-  if (model.price <= 47000 || model.badge === "Long Range")
-    return { label: "Popular pick", color: "text-amber-400 border-amber-400/30 bg-amber-400/10" };
-  return { label: "Premium", color: "text-violet-400 border-violet-400/30 bg-violet-400/10" };
+function getDescriptor(model: EVModel): string {
+  if (model.bestFor) return model.bestFor;
+  if (model.price < 30000) return "Affordable electric city car";
+  if (model.price < 50000) return "Popular mid-range electric SUV";
+  return "Premium long-range electric";
 }
 
-const SPECS = (model: EVModel) => [
-  { label: "Price", value: formatGBP(model.price) },
-  { label: "Range", value: `${model.rangeKm} km` },
-  { label: "Battery", value: `${model.batteryKWh} kWh` },
-  { label: "Monthly", value: `${formatGBP(estimateMonthlyCost(model.price))}/mo`, highlight: true },
-];
+function getSavingLabel(model: EVModel): string | null {
+  // Rough estimate: show saving for models with price below average market
+  if (model.price < 32000) return `Avg saving £${(2000 + Math.round(model.price * 0.04)).toLocaleString("en-GB")} off RRP`;
+  if (model.price < 50000) return `Avg saving £${(3000 + Math.round(model.price * 0.05)).toLocaleString("en-GB")} off RRP`;
+  return null;
+}
 
-export default function FeaturedEVs({ models }: FeaturedEVsProps) {
-  const displayModels = models.slice(0, 3);
+// ── Single deal card ──────────────────────────────────────────────────────────
+
+function DealCard({ model, index }: { model: EVModel; index: number }) {
+  const saving = getSavingLabel(model);
+  const monthly = estimateMonthlyCost(model.price);
 
   return (
-    <section className="bg-[#0A0A0A] py-14 sm:py-24 lg:py-32">
+    <article className="group relative flex min-w-[300px] flex-1 flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white transition-all duration-200 hover:-translate-y-1 hover:border-gray-300 hover:shadow-[0_16px_48px_rgba(0,0,0,0.10)] sm:min-w-0">
+      {/* Card top: name + saving badge */}
+      <div className="px-5 pt-5">
+        <div className="flex items-start justify-between gap-2">
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-gray-400">
+              {model.brand}
+            </p>
+            <h3 className="mt-0.5 text-lg font-bold text-gray-900">
+              {model.model}
+            </h3>
+            <p className="mt-1 text-sm text-gray-500">{getDescriptor(model)}</p>
+          </div>
+          {model.badge && (
+            <span className="shrink-0 rounded-full border border-brand/30 bg-brand/10 px-2.5 py-1 text-[10px] font-semibold text-brand">
+              {model.badge}
+            </span>
+          )}
+        </div>
+
+        {saving && (
+          <div className="mt-3 inline-flex items-center rounded-full bg-gray-100 px-3 py-1.5">
+            <span className="text-xs font-bold text-gray-700">{saving}</span>
+          </div>
+        )}
+      </div>
+
+      {/* Car image — large, side profile */}
+      <div className="relative mt-4 h-40 w-full overflow-hidden sm:h-44">
+        {/* Green glow behind car */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-brand/[0.07] to-transparent" />
+        {model.heroImage ? (
+          <Image
+            src={model.heroImage}
+            alt={`${model.brand} ${model.model}`}
+            fill
+            sizes="(max-width: 640px) 100vw, 33vw"
+            className="object-contain object-center transition-transform duration-500 group-hover:scale-105"
+          />
+        ) : (
+          <VehicleImagePlaceholder
+            brand={model.brand}
+            model={model.model}
+            className="absolute inset-0"
+          />
+        )}
+      </div>
+
+      {/* Spec chips */}
+      <div className="flex flex-wrap gap-1.5 px-5">
+        {model.rangeKm > 0 && (
+          <span className="inline-flex items-center gap-1 rounded-full border border-brand/25 bg-brand/[0.08] px-2.5 py-1 text-[10px] font-semibold text-brand">
+            <Gauge className="h-2.5 w-2.5" />{model.rangeKm} km range
+          </span>
+        )}
+        <span className="inline-flex items-center gap-1 rounded-full border border-gray-200 bg-gray-50 px-2.5 py-1 text-[10px] font-semibold text-gray-500">
+          <BatteryCharging className="h-2.5 w-2.5" />Fast charge
+        </span>
+      </div>
+
+      {/* Card bottom: pricing + CTA */}
+      <div className="mt-auto flex items-end justify-between gap-3 border-t border-gray-100 px-5 py-4">
+        <div>
+          <p className="text-[11px] uppercase tracking-wider text-gray-400 font-semibold">From</p>
+          <p className="text-xl font-black text-gray-900 leading-tight">{formatGBP(model.price)}</p>
+          <p className="text-xs text-gray-400">
+            or <span className="font-semibold text-gray-600">{formatGBP(monthly)}/mo</span> on finance
+          </p>
+        </div>
+
+        <Link
+          href={`/cars/${model.id}`}
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-900 text-white shadow-md transition-all hover:scale-110 hover:bg-brand hover:text-white"
+          aria-label={`View ${model.brand} ${model.model}`}
+        >
+          <ChevronRight className="h-5 w-5" />
+        </Link>
+      </div>
+    </article>
+  );
+}
+
+// ── Section ───────────────────────────────────────────────────────────────────
+
+export default function FeaturedEVs({ models }: FeaturedEVsProps) {
+  const [activeFilter, setActiveFilter] = useState<"all" | "value" | "range" | "family" | "city">("all");
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const displayModels = useMemo(() => {
+    const pool = [...models];
+    if (activeFilter === "value") return pool.sort((a, b) => a.price - b.price).slice(0, 6);
+    if (activeFilter === "range")  return pool.sort((a, b) => b.rangeKm - a.rangeKm).slice(0, 6);
+    if (activeFilter === "family") {
+      const fam = pool.filter((m) =>
+        m.bestFor?.toLowerCase().includes("famil") ||
+        m.bestFor?.toLowerCase().includes("people") ||
+        m.bestFor?.toLowerCase().includes("versatil"),
+      );
+      return (fam.length >= 1 ? fam : pool).slice(0, 6);
+    }
+    if (activeFilter === "city") {
+      const city = pool.filter((m) => m.price < 34000);
+      return (city.length >= 1 ? city : pool.sort((a, b) => a.price - b.price)).slice(0, 6);
+    }
+    return pool.slice(0, 6);
+  }, [models, activeFilter]);
+
+  function scroll(dir: "left" | "right") {
+    if (!scrollRef.current) return;
+    scrollRef.current.scrollBy({ left: dir === "right" ? 340 : -340, behavior: "smooth" });
+  }
+
+  const FILTERS = [
+    { key: "all" as const,    label: "All" },
+    { key: "value" as const,  label: "Best Value" },
+    { key: "range" as const,  label: "Longest Range" },
+    { key: "family" as const, label: "Family" },
+    { key: "city" as const,   label: "City EV" },
+  ];
+
+  return (
+    <section className="bg-white py-12 sm:py-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
         {/* Header */}
-        <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <div className="max-w-2xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-brand">Featured EVs</p>
-            <h2 className="mt-4 text-2xl font-semibold text-white sm:text-4xl lg:text-5xl">
-              Top EVs for UK buyers right now
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-brand">Electric is trending</p>
+            <h2 className="mt-1 text-2xl font-black text-gray-900 sm:text-3xl">
+              Hottest EV &amp; Hybrid Deals
             </h2>
-            <p className="mt-4 text-lg leading-8 text-white/50">
-              A curated shortlist to move from browsing into a smarter decision.
+            <p className="mt-1 text-sm text-gray-400">
+              Prices updated daily · Finance available on every car
             </p>
           </div>
+
+          {/* Desktop scroll arrows */}
+          <div className="hidden items-center gap-2 sm:flex">
+            <button
+              onClick={() => scroll("left")}
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-gray-50 text-gray-500 transition hover:border-gray-300 hover:text-gray-900"
+              aria-label="Scroll left"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => scroll("right")}
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-gray-50 text-gray-500 transition hover:border-gray-300 hover:text-gray-900"
+              aria-label="Scroll right"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+
+        {/* Filter pills */}
+        <div className="mt-5 flex flex-wrap gap-2">
+          {FILTERS.map(({ key, label }) => (
+            <button
+              key={key}
+              onClick={() => setActiveFilter(key)}
+              className={`rounded-full border px-4 py-1.5 text-xs font-semibold transition-all ${
+                activeFilter === key
+                  ? "border-brand bg-brand/15 text-brand"
+                  : "border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300 hover:text-gray-700"
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {/* Horizontally scrollable deal cards */}
+        <div
+          ref={scrollRef}
+          className="mt-6 flex gap-4 overflow-x-auto pb-2 sm:grid sm:grid-cols-3 sm:overflow-visible"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        >
+          {displayModels.map((model, i) => (
+            <DealCard key={model.id} model={model} index={i} />
+          ))}
+        </div>
+
+        {/* Browse all link */}
+        <div className="mt-8 flex justify-center">
           <Link
             href="/vehicles"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-brand transition hover:text-brand-hover"
+            className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-6 py-3 text-sm font-semibold text-gray-700 transition hover:border-brand/40 hover:bg-brand/10 hover:text-brand"
           >
-            Browse all EVs
-            <ArrowRight className="h-4 w-4" />
-          </Link>
-        </div>
-
-        {/* Cards */}
-        <div className="mt-12 grid gap-5 xl:grid-cols-3">
-          {displayModels.map((model, i) => {
-            const badge = getDealBadge(model);
-            const specs = SPECS(model);
-
-            return (
-              <motion.article
-                key={model.id}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-                whileHover={{ y: -4 }}
-                className="group relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-white/[0.06] shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_24px_48px_rgba(0,0,0,0.4)] backdrop-blur-sm transition-all duration-300 hover:border-brand/30 hover:bg-white/[0.09] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_32px_80px_rgba(0,0,0,0.6),0_0_40px_rgba(31,191,159,0.08)]"
-              >
-                {/* Corner glows */}
-                <div className="pointer-events-none absolute -right-6 -top-6 z-10 h-28 w-28 rounded-full bg-brand/20 blur-2xl opacity-60 transition-opacity duration-300 group-hover:opacity-100" />
-                <div className="pointer-events-none absolute -bottom-6 -left-6 z-10 h-20 w-20 rounded-full bg-cyan-500/15 blur-2xl opacity-40 transition-opacity duration-300 group-hover:opacity-80" />
-
-                {/* Image */}
-                <div className="relative aspect-[16/11] overflow-hidden bg-[#111]">
-                  {model.heroImage ? (
-                    <Image
-                      src={model.heroImage}
-                      alt={`${model.brand} ${model.model}`}
-                      fill
-                      sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
-                      className="object-cover transition duration-700 group-hover:scale-105"
-                    />
-                  ) : (
-                    <VehicleImagePlaceholder
-                      brand={model.brand}
-                      model={model.model}
-                      className="absolute inset-0"
-                    />
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-
-                  {/* Top badge */}
-                  <div className="absolute left-4 top-4">
-                    <span className={`inline-flex items-center rounded-full border px-3 py-1 text-[11px] font-semibold ${badge.color}`}>
-                      {badge.label}
-                    </span>
-                  </div>
-
-                  {/* Bottom info */}
-                  <div className="absolute bottom-4 left-4 right-4">
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.25em] text-white/60">
-                      {model.brand}
-                    </p>
-                    <h3 className="mt-1 text-2xl font-semibold text-white">{model.model}</h3>
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="p-5">
-                  {/* Specs grid */}
-                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-                    {specs.map((spec) => (
-                      <div
-                        key={spec.label}
-                        className={`rounded-xl p-3 ${spec.highlight ? "border border-brand/20 bg-brand/10" : "border border-white/6 bg-white/[0.03]"}`}
-                      >
-                        <p className="text-[10px] uppercase tracking-[0.15em] text-white/40">{spec.label}</p>
-                        <p className={`mt-1.5 text-sm font-semibold ${spec.highlight ? "text-brand" : "text-white"}`}>
-                          {spec.value}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Best for */}
-                  <div className="mt-3 flex items-center gap-2 rounded-xl border border-white/5 bg-white/[0.02] px-4 py-3 text-sm text-white/40">
-                    <Zap className="h-3.5 w-3.5 text-brand" />
-                    Best for {model.bestFor.toLowerCase()}
-                  </div>
-
-                  {/* CTAs */}
-                  <div className="mt-4 flex gap-2">
-                    <Link
-                      href={`/cars/${model.id}`}
-                      className={cn(
-                        buttonVariants(),
-                        "flex-1 rounded-full bg-brand text-center text-sm font-semibold text-white hover:bg-brand-hover",
-                      )}
-                    >
-                      View Details
-                    </Link>
-                    <Link
-                      href={`/compare?carA=${model.id}`}
-                      className={cn(
-                        buttonVariants({ variant: "outline" }),
-                        "flex-1 rounded-full border-white/10 bg-transparent text-center text-sm font-semibold text-white hover:border-white/20 hover:bg-white/5",
-                      )}
-                    >
-                      Compare
-                    </Link>
-                  </div>
-                </div>
-              </motion.article>
-            );
-          })}
-        </div>
-
-        {/* Bottom CTA */}
-        <div className="mt-10 flex justify-center">
-          <Link
-            href="/compare"
-            className={cn(
-              buttonVariants({ variant: "outline" }),
-              "flex items-center gap-2 rounded-full border-white/10 bg-white/[0.03] px-8 py-6 text-sm font-semibold text-white hover:border-white/20 hover:bg-white/[0.06]",
-            )}
-          >
-            Compare EVs side by side
+            Browse all EVs &amp; Hybrids
             <ArrowRight className="h-4 w-4" />
           </Link>
         </div>

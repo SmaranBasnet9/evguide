@@ -12,19 +12,9 @@ interface Props {
   onComplete?: (consultationId: string | null, state: ConsultationFormState) => void;
 }
 
-/**
- * Slide-in drawer that hosts ConsultationWizard.
- * Can be triggered from any page with a boolean `open` prop.
- *
- * Usage:
- *   const [open, setOpen] = useState(false);
- *   <button onClick={() => setOpen(true)}>Start EV Consultation</button>
- *   <ConsultationModal open={open} onClose={() => setOpen(false)} />
- */
 export default function ConsultationModal({ open, onClose, onComplete }: Props) {
   const panelRef = useRef<HTMLDivElement>(null);
 
-  // ESC to close
   useEffect(() => {
     if (!open) return;
     function onKey(e: KeyboardEvent) {
@@ -34,7 +24,6 @@ export default function ConsultationModal({ open, onClose, onComplete }: Props) 
     return () => window.removeEventListener("keydown", onKey);
   }, [open, onClose]);
 
-  // Lock body scroll
   useEffect(() => {
     if (open) {
       document.body.style.overflow = "hidden";
@@ -54,7 +43,7 @@ export default function ConsultationModal({ open, onClose, onComplete }: Props) 
       <div
         aria-hidden="true"
         onClick={onClose}
-        className={`fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-sm transition-opacity duration-300 ${
+        className={`fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${
           open ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
       />
@@ -65,15 +54,15 @@ export default function ConsultationModal({ open, onClose, onComplete }: Props) 
         role="dialog"
         aria-modal="true"
         aria-label="EV Consultation"
-        className={`fixed inset-y-0 right-0 z-50 flex w-full flex-col bg-white shadow-2xl transition-transform duration-300 ease-in-out sm:w-[600px] lg:w-[680px] ${
+        className={`fixed inset-y-0 right-0 z-50 flex w-full flex-col border-l border-white/10 bg-surface-base shadow-[0_0_80px_rgba(0,0,0,0.8)] backdrop-blur-xl transition-transform duration-300 ease-in-out sm:w-[600px] lg:w-[680px] ${
           open ? "translate-x-0" : "translate-x-full"
         }`}
       >
         {/* Header */}
-        <div className="flex shrink-0 items-center justify-between border-b border-[#E5E7EB] px-6 py-4">
+        <div className="flex shrink-0 items-center justify-between border-b border-white/10 px-6 py-4">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-semibold text-[#1A1A1A]">EV Consultation</span>
-            <span className="rounded-full bg-[#E8F8F5] px-2 py-0.5 text-[11px] font-semibold text-[#1FBF9F]">
+            <span className="text-sm font-semibold text-white">EV Consultation</span>
+            <span className="rounded-full bg-brand/20 px-2 py-0.5 text-[11px] font-semibold text-brand">
               Free
             </span>
           </div>
@@ -81,7 +70,7 @@ export default function ConsultationModal({ open, onClose, onComplete }: Props) 
             type="button"
             onClick={onClose}
             aria-label="Close consultation"
-            className="flex h-8 w-8 items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-[#6B7280] transition hover:border-[#1FBF9F]/40 hover:text-[#1A1A1A]"
+            className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/[0.06] text-white/50 transition hover:border-white/20 hover:text-white"
           >
             <X className="h-4 w-4" />
           </button>

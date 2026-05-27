@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect, useMemo } from "react";
 import { Loader2, RefreshCw, Sparkles } from "lucide-react";
@@ -131,7 +131,7 @@ export default function RecommendationResultsPanel({
     return (
       <div className="flex flex-col items-center gap-4 py-16">
         <div className="flex h-14 w-14 items-center justify-center rounded-full border border-[#D1F2EB] bg-[#E8F8F5]">
-          <Loader2 className="h-6 w-6 animate-spin text-[#1FBF9F]" />
+          <Loader2 className="h-6 w-6 animate-spin text-brand" />
         </div>
         <div className="text-center">
           <p className="text-base font-semibold text-[#1A1A1A]">Matching your perfect EVs…</p>
@@ -148,7 +148,7 @@ export default function RecommendationResultsPanel({
         <button
           type="button"
           onClick={() => window.location.reload()}
-          className="inline-flex items-center gap-2 rounded-full border border-[#E5E7EB] bg-white px-5 py-2.5 text-sm font-medium text-[#374151] transition hover:border-[#1FBF9F]/40"
+          className="inline-flex items-center gap-2 rounded-full border border-[#E5E7EB] bg-white px-5 py-2.5 text-sm font-medium text-[#374151] transition hover:border-brand/40"
         >
           <RefreshCw className="h-4 w-4" />
           Try again
@@ -163,7 +163,7 @@ export default function RecommendationResultsPanel({
     <div className="space-y-6">
       {/* Header */}
       <div className="text-center">
-        <div className="inline-flex items-center gap-2 rounded-full border border-[#D1F2EB] bg-[#E8F8F5] px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-[#1FBF9F]">
+        <div className="inline-flex items-center gap-2 rounded-full border border-[#D1F2EB] bg-[#E8F8F5] px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-brand">
           <Sparkles className="h-3.5 w-3.5" />
           Your EV Matches
         </div>
@@ -204,7 +204,7 @@ export default function RecommendationResultsPanel({
                       expandedVehicleId === r.vehicle.id ? null : r.vehicle.id,
                     )
                   }
-                  className="text-xs font-medium text-[#6B7280] underline-offset-2 transition hover:text-[#1FBF9F] hover:underline"
+                  className="text-xs font-medium text-[#6B7280] underline-offset-2 transition hover:text-brand hover:underline"
                 >
                   {expandedVehicleId === r.vehicle.id
                     ? "Hide finance & charging detail"
@@ -237,7 +237,7 @@ export default function RecommendationResultsPanel({
           <button
             type="button"
             onClick={onRetake}
-            className="text-sm font-medium text-[#6B7280] underline-offset-2 transition hover:text-[#1FBF9F] hover:underline"
+            className="text-sm font-medium text-[#6B7280] underline-offset-2 transition hover:text-brand hover:underline"
           >
             Retake consultation with different answers
           </button>

@@ -29,11 +29,11 @@ export const DEPARTMENTS: { value: Department; label: string; color: string }[] 
   { value: "technical",   label: "Technical",   color: "bg-orange-100 text-orange-700" },
   { value: "marketing",   label: "Marketing",   color: "bg-pink-100 text-pink-700" },
   { value: "support",     label: "Support",     color: "bg-amber-100 text-amber-700" },
-  { value: "operations",  label: "Operations",  color: "bg-slate-100 text-slate-700" },
+  { value: "operations",  label: "Operations",  color: "bg-white/[0.05] text-white/80" },
 ];
 
 function deptMeta(d: Department | null) {
-  return DEPARTMENTS.find((x) => x.value === d) ?? { label: "Unassigned", color: "bg-slate-100 text-slate-400" };
+  return DEPARTMENTS.find((x) => x.value === d) ?? { label: "Unassigned", color: "bg-white/[0.05] text-white/40" };
 }
 
 function initials(name: string | null, email: string) {
@@ -103,14 +103,14 @@ function EditStaffModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 backdrop-blur-sm">
-      <div className="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl">
+      <div className="w-full max-w-md overflow-hidden rounded-2xl bg-white/[0.03] shadow-2xl">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-100 px-6 py-5">
+        <div className="flex items-center justify-between border-b border-white/[0.06] px-6 py-5">
           <div>
             <p className="text-xs font-semibold uppercase tracking-widest text-blue-600">Staff Profile</p>
-            <h2 className="mt-0.5 text-lg font-bold text-slate-900">Edit Member</h2>
+            <h2 className="mt-0.5 text-lg font-bold text-white">Edit Member</h2>
           </div>
-          <button type="button" onClick={onClose} className="rounded-full p-1.5 text-slate-400 hover:bg-slate-100">
+          <button type="button" onClick={onClose} className="rounded-full p-1.5 text-white/40 hover:bg-white/[0.05]">
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -118,22 +118,22 @@ function EditStaffModal({
         {/* Form */}
         <div className="space-y-4 px-6 py-6">
           <div>
-            <label className="mb-1.5 block text-xs font-semibold text-slate-600">Full Name</label>
+            <label className="mb-1.5 block text-xs font-semibold text-white/60">Full Name</label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Jane Smith"
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              className="w-full rounded-xl border border-white/10 px-3.5 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
             />
           </div>
 
           <div>
-            <label className="mb-1.5 block text-xs font-semibold text-slate-600">Department</label>
+            <label className="mb-1.5 block text-xs font-semibold text-white/60">Department</label>
             <select
               value={dept}
               onChange={(e) => setDept(e.target.value as Department | "")}
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              className="w-full rounded-xl border border-white/10 px-3.5 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
             >
               <option value="">— Unassigned —</option>
               {DEPARTMENTS.map((d) => (
@@ -143,13 +143,13 @@ function EditStaffModal({
           </div>
 
           <div>
-            <label className="mb-1.5 block text-xs font-semibold text-slate-600">Job Title</label>
+            <label className="mb-1.5 block text-xs font-semibold text-white/60">Job Title</label>
             <input
               type="text"
               value={jobTitle}
               onChange={(e) => setJobTitle(e.target.value)}
               placeholder="e.g. Sales Manager"
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              className="w-full rounded-xl border border-white/10 px-3.5 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
             />
           </div>
 
@@ -223,24 +223,24 @@ function PromoteModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 backdrop-blur-sm">
-      <div className="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl">
-        <div className="flex items-center justify-between border-b border-slate-100 px-6 py-5">
+      <div className="w-full max-w-md overflow-hidden rounded-2xl bg-white/[0.03] shadow-2xl">
+        <div className="flex items-center justify-between border-b border-white/[0.06] px-6 py-5">
           <div>
             <p className="text-xs font-semibold uppercase tracking-widest text-emerald-600">New Staff</p>
-            <h2 className="mt-0.5 text-lg font-bold text-slate-900">Add Staff Member</h2>
+            <h2 className="mt-0.5 text-lg font-bold text-white">Add Staff Member</h2>
           </div>
-          <button type="button" onClick={onClose} className="rounded-full p-1.5 text-slate-400 hover:bg-slate-100">
+          <button type="button" onClick={onClose} className="rounded-full p-1.5 text-white/40 hover:bg-white/[0.05]">
             <X className="h-4 w-4" />
           </button>
         </div>
 
         <div className="space-y-4 px-6 py-6">
           <div>
-            <label className="mb-1.5 block text-xs font-semibold text-slate-600">Select User</label>
+            <label className="mb-1.5 block text-xs font-semibold text-white/60">Select User</label>
             <select
               value={selected}
               onChange={(e) => setSelected(e.target.value)}
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              className="w-full rounded-xl border border-white/10 px-3.5 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
             >
               <option value="">— Choose a user —</option>
               {users.map((u) => (
@@ -249,15 +249,15 @@ function PromoteModal({
                 </option>
               ))}
             </select>
-            <p className="mt-1 text-xs text-slate-400">Only registered users without admin access are shown.</p>
+            <p className="mt-1 text-xs text-white/40">Only registered users without admin access are shown.</p>
           </div>
 
           <div>
-            <label className="mb-1.5 block text-xs font-semibold text-slate-600">Department</label>
+            <label className="mb-1.5 block text-xs font-semibold text-white/60">Department</label>
             <select
               value={dept}
               onChange={(e) => setDept(e.target.value as Department | "")}
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              className="w-full rounded-xl border border-white/10 px-3.5 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
             >
               <option value="">— Unassigned —</option>
               {DEPARTMENTS.map((d) => (
@@ -267,13 +267,13 @@ function PromoteModal({
           </div>
 
           <div>
-            <label className="mb-1.5 block text-xs font-semibold text-slate-600">Job Title</label>
+            <label className="mb-1.5 block text-xs font-semibold text-white/60">Job Title</label>
             <input
               type="text"
               value={jobTitle}
               onChange={(e) => setJobTitle(e.target.value)}
               placeholder="e.g. Sales Executive"
-              className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              className="w-full rounded-xl border border-white/10 px-3.5 py-2.5 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
             />
           </div>
 
@@ -319,18 +319,18 @@ function StaffCard({
   }
 
   return (
-    <div className="flex flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md">
+    <div className="flex flex-col rounded-2xl border border-white/10 bg-white/[0.03] p-5 shadow-sm transition hover:shadow-md">
       {/* Top row: avatar + identity */}
       <div className="flex items-start gap-3">
         <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white ${color}`}>
           {initials(member.name, member.email)}
         </div>
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-semibold text-slate-900">
-            {member.name ?? <span className="italic text-slate-400">No name</span>}
-            {isSelf && <span className="ml-1.5 text-[10px] font-normal text-slate-400">(You)</span>}
+          <p className="truncate text-sm font-semibold text-white">
+            {member.name ?? <span className="italic text-white/40">No name</span>}
+            {isSelf && <span className="ml-1.5 text-[10px] font-normal text-white/40">(You)</span>}
           </p>
-          <p className="truncate text-xs text-slate-500">{member.email}</p>
+          <p className="truncate text-xs text-white/50">{member.email}</p>
         </div>
       </div>
 
@@ -352,21 +352,21 @@ function StaffCard({
 
       {/* Job title */}
       {member.job_title && (
-        <p className="mt-2 text-xs text-slate-500">{member.job_title}</p>
+        <p className="mt-2 text-xs text-white/50">{member.job_title}</p>
       )}
 
       {/* Joined */}
-      <p className="mt-1 text-[10px] text-slate-400">
+      <p className="mt-1 text-[10px] text-white/40">
         Joined {new Date(member.joined).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
       </p>
 
       {/* Actions */}
       {canManage && !isSelf && member.role !== "super_admin" && (
-        <div className="mt-4 flex gap-2 border-t border-slate-100 pt-4">
+        <div className="mt-4 flex gap-2 border-t border-white/[0.06] pt-4">
           <button
             type="button"
             onClick={onEdit}
-            className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-slate-200 py-2 text-xs font-semibold text-slate-600 transition hover:border-blue-300 hover:text-blue-600"
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-white/10 py-2 text-xs font-semibold text-white/60 transition hover:border-blue-300 hover:text-blue-600"
           >
             <Pencil className="h-3.5 w-3.5" />
             Edit
@@ -385,7 +385,7 @@ function StaffCard({
               <button
                 type="button"
                 onClick={() => setConfirmDemote(false)}
-                className="text-xs font-semibold text-slate-500 hover:underline"
+                className="text-xs font-semibold text-white/50 hover:underline"
               >
                 Cancel
               </button>
@@ -465,10 +465,10 @@ export default function StaffPanel({ staff, regularUsers, currentId, isSuperAdmi
           { label: "Unassigned",       value: unassignedCount,        sub: "No department set" },
           { label: "Regular Users",    value: regularUsers.length,    sub: "Can be promoted to staff" },
         ].map((s) => (
-          <div key={s.label} className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-            <p className="text-sm font-medium text-slate-500">{s.label}</p>
-            <p className="mt-2 text-3xl font-bold text-slate-900">{s.value}</p>
-            <p className="mt-1 text-xs text-slate-400">{s.sub}</p>
+          <div key={s.label} className="rounded-3xl border border-white/10 bg-white/[0.03] p-5 shadow-sm">
+            <p className="text-sm font-medium text-white/50">{s.label}</p>
+            <p className="mt-2 text-3xl font-bold text-white">{s.value}</p>
+            <p className="mt-1 text-xs text-white/40">{s.sub}</p>
           </div>
         ))}
       </div>
@@ -482,8 +482,8 @@ export default function StaffPanel({ staff, regularUsers, currentId, isSuperAdmi
             onClick={() => setActiveDept("all")}
             className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition ${
               activeDept === "all"
-                ? "bg-slate-900 text-white"
-                : "border border-slate-200 bg-white text-slate-600 hover:border-slate-400"
+                ? "bg-surface-panel text-white"
+                : "border border-white/10 bg-white/[0.03] text-white/60 hover:border-slate-400"
             }`}
           >
             All ({staff.length})
@@ -495,8 +495,8 @@ export default function StaffPanel({ staff, regularUsers, currentId, isSuperAdmi
               onClick={() => setActiveDept(d.value)}
               className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition ${
                 activeDept === d.value
-                  ? "bg-slate-900 text-white"
-                  : "border border-slate-200 bg-white text-slate-600 hover:border-slate-400"
+                  ? "bg-surface-panel text-white"
+                  : "border border-white/10 bg-white/[0.03] text-white/60 hover:border-slate-400"
               }`}
             >
               {d.label} ({d.count})
@@ -506,7 +506,7 @@ export default function StaffPanel({ staff, regularUsers, currentId, isSuperAdmi
             <button
               type="button"
               onClick={() => setActiveDept("all")}
-              className="rounded-full border border-dashed border-slate-300 px-3.5 py-1.5 text-xs font-semibold text-slate-400 transition hover:border-slate-400"
+              className="rounded-full border border-dashed border-white/15 px-3.5 py-1.5 text-xs font-semibold text-white/40 transition hover:border-slate-400"
             >
               Unassigned ({unassignedCount})
             </button>
@@ -535,9 +535,9 @@ export default function StaffPanel({ staff, regularUsers, currentId, isSuperAdmi
 
       {/* Cards — grouped by department */}
       {filtered.length === 0 ? (
-        <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-slate-200 py-16 text-center">
-          <Building2 className="h-8 w-8 text-slate-300" />
-          <p className="text-sm text-slate-400">No staff in this department yet.</p>
+        <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-white/10 py-16 text-center">
+          <Building2 className="h-8 w-8 text-white/30" />
+          <p className="text-sm text-white/40">No staff in this department yet.</p>
         </div>
       ) : activeDept !== "all" ? (
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -560,7 +560,7 @@ export default function StaffPanel({ staff, regularUsers, currentId, isSuperAdmi
                 <span className={`rounded-full px-3 py-1 text-xs font-semibold ${dept.color}`}>
                   {dept.label}
                 </span>
-                <span className="text-xs text-slate-400">{members.length} member{members.length !== 1 ? "s" : ""}</span>
+                <span className="text-xs text-white/40">{members.length} member{members.length !== 1 ? "s" : ""}</span>
               </div>
               <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
                 {members.map((m) => (
@@ -580,10 +580,10 @@ export default function StaffPanel({ staff, regularUsers, currentId, isSuperAdmi
           {unassigned.length > 0 && (
             <section>
               <div className="mb-3 flex items-center gap-3">
-                <span className="rounded-full border border-dashed border-slate-300 px-3 py-1 text-xs font-semibold text-slate-400">
+                <span className="rounded-full border border-dashed border-white/15 px-3 py-1 text-xs font-semibold text-white/40">
                   Unassigned
                 </span>
-                <span className="text-xs text-slate-400">{unassigned.length} member{unassigned.length !== 1 ? "s" : ""}</span>
+                <span className="text-xs text-white/40">{unassigned.length} member{unassigned.length !== 1 ? "s" : ""}</span>
               </div>
               <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
                 {unassigned.map((m) => (
@@ -604,30 +604,30 @@ export default function StaffPanel({ staff, regularUsers, currentId, isSuperAdmi
 
       {/* Department overview table */}
       <section>
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-widest text-slate-400">Department Overview</h2>
-        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-widest text-white/40">Department Overview</h2>
+        <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] shadow-sm">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-slate-100 bg-slate-50 text-left">
-                <th className="px-6 py-3 font-semibold text-slate-600">Department</th>
-                <th className="px-6 py-3 font-semibold text-slate-600">Members</th>
-                <th className="px-6 py-3 font-semibold text-slate-600">Staff</th>
+              <tr className="border-b border-white/[0.06] bg-white/[0.03] text-left">
+                <th className="px-6 py-3 font-semibold text-white/60">Department</th>
+                <th className="px-6 py-3 font-semibold text-white/60">Members</th>
+                <th className="px-6 py-3 font-semibold text-white/60">Staff</th>
               </tr>
             </thead>
             <tbody>
               {DEPARTMENTS.map((d) => {
                 const members = staff.filter((s) => s.department === d.value);
                 return (
-                  <tr key={d.value} className="border-b border-slate-100 last:border-b-0">
+                  <tr key={d.value} className="border-b border-white/[0.06] last:border-b-0">
                     <td className="px-6 py-4">
                       <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${d.color}`}>
                         {d.label}
                       </span>
                     </td>
-                    <td className="px-6 py-4 font-semibold text-slate-900">{members.length}</td>
-                    <td className="px-6 py-4 text-slate-500 text-xs">
+                    <td className="px-6 py-4 font-semibold text-white">{members.length}</td>
+                    <td className="px-6 py-4 text-white/50 text-xs">
                       {members.length === 0
-                        ? <span className="italic text-slate-300">None assigned</span>
+                        ? <span className="italic text-white/30">None assigned</span>
                         : members.map((m) => m.name ?? m.email.split("@")[0]).join(", ")}
                     </td>
                   </tr>

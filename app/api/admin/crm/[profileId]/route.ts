@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
+import { requireAdmin } from "@/lib/security/admin";
 import type { CrmLeadPriority, CrmLeadStatus } from "@/types";
+
+const UUID_REGEX =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 const ALLOWED_STATUSES: CrmLeadStatus[] = [
   "new",
@@ -16,30 +19,17 @@ const ALLOWED_STATUSES: CrmLeadStatus[] = [
 
 const ALLOWED_PRIORITIES: CrmLeadPriority[] = ["low", "medium", "high", "urgent"];
 
-async function requireAdmin() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) return null;
-
-  const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
-  if (profile?.role !== "admin") return null;
-
-  return user;
-}
-
 export async function PATCH(
   request: Request,
   context: { params: Promise<{ profileId: string }> },
 ) {
-  const adminUser = await requireAdmin();
-  if (!adminUser) {
-    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
-  }
+  const auth = await requireAdmin();
+  if (!auth.ok) return auth.response;
 
   const { profileId } = await context.params;
+  if (!UUID_REGEX.test(profileId)) {
+    return NextResponse.json({ error: "Invalid profile id." }, { status: 400 });
+  }
 
   let body: Record<string, unknown>;
   try {

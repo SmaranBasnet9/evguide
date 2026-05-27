@@ -65,8 +65,8 @@ export default async function VehicleQueriesAdminPage() {
     <div className="mx-auto max-w-6xl">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Vehicle Queries</h1>
-          <p className="mt-1 text-sm text-slate-500">
+          <h1 className="text-3xl font-bold text-white">Vehicle Queries</h1>
+          <p className="mt-1 text-sm text-white/50">
             Leads generated from the AI Match flow after a user selects a vehicle.
           </p>
         </div>
@@ -81,16 +81,16 @@ export default async function VehicleQueriesAdminPage() {
         <StatCard label="Resolved" count={resolvedCount} colour="border-emerald-200 bg-emerald-50 text-emerald-900" />
       </div>
 
-      <div className="mt-8 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div className="mt-8 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] shadow-sm">
         {rows.length === 0 ? (
-          <div className="px-6 py-16 text-center text-slate-400">
+          <div className="px-6 py-16 text-center text-white/40">
             <p className="font-semibold">No vehicle queries yet</p>
             <p className="mt-1 text-sm">They will appear here after users submit enquiries from AI Match.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-slate-100 text-sm">
-              <thead className="bg-slate-50 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+            <table className="min-w-full divide-y divide-white/[0.06] text-sm">
+              <thead className="bg-white/[0.03] text-left text-xs font-semibold uppercase tracking-wider text-white/50">
                 <tr>
                   <th className="px-5 py-3">Vehicle Interested In</th>
                   <th className="px-5 py-3">Match</th>
@@ -101,59 +101,59 @@ export default async function VehicleQueriesAdminPage() {
                   <th className="px-5 py-3">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-white/[0.06]">
                 {rows.map((row) => {
                   const cfg = statusConfig[row.status];
                   return (
-                    <tr key={row.id} className={`transition-colors hover:bg-slate-50 ${cfg.row}`}>
+                    <tr key={row.id} className={`transition-colors hover:bg-white/[0.03] ${cfg.row}`}>
                       <td className="px-5 py-4">
-                        <p className="font-semibold text-slate-900">
+                        <p className="font-semibold text-white">
                           {row.ev_brand} {row.ev_model_name}
                         </p>
                         {row.rank !== null && (
-                          <p className="mt-0.5 text-xs text-slate-400">Ranked #{row.rank} recommendation</p>
+                          <p className="mt-0.5 text-xs text-white/40">Ranked #{row.rank} recommendation</p>
                         )}
                       </td>
 
                       <td className="px-5 py-4">
                         {row.score !== null ? (
                           <div className="flex items-center gap-2">
-                            <div className="h-1.5 w-16 overflow-hidden rounded-full bg-slate-100">
+                            <div className="h-1.5 w-16 overflow-hidden rounded-full bg-white/[0.05]">
                               <div
                                 className="h-full rounded-full bg-blue-500"
                                 style={{ width: `${row.score}%` }}
                               />
                             </div>
-                            <span className="text-xs font-semibold text-slate-600">
+                            <span className="text-xs font-semibold text-white/60">
                               {row.score}
-                              <span className="font-normal text-slate-400">/100</span>
+                              <span className="font-normal text-white/40">/100</span>
                             </span>
                           </div>
                         ) : (
-                          <span className="text-slate-400">-</span>
+                          <span className="text-white/40">-</span>
                         )}
                       </td>
 
                       <td className="px-5 py-4">
-                        <p className="font-medium text-slate-900">{row.full_name}</p>
+                        <p className="font-medium text-white">{row.full_name}</p>
                         <a href={`mailto:${row.email}`} className="text-xs text-blue-600 hover:underline">
                           {row.email}
                         </a>
                       </td>
 
-                      <td className="px-5 py-4 text-slate-500">
+                      <td className="px-5 py-4 text-white/50">
                         {row.phone ? (
-                          <a href={`tel:${row.phone}`} className="hover:text-slate-800">
+                          <a href={`tel:${row.phone}`} className="hover:text-white">
                             {row.phone}
                           </a>
                         ) : "-"}
                       </td>
 
-                      <td className="max-w-[180px] px-5 py-4 text-slate-500">
+                      <td className="max-w-[180px] px-5 py-4 text-white/50">
                         {row.notes ? <p className="line-clamp-2 text-xs">{row.notes}</p> : "-"}
                       </td>
 
-                      <td className="whitespace-nowrap px-5 py-4 text-xs text-slate-400">
+                      <td className="whitespace-nowrap px-5 py-4 text-xs text-white/40">
                         {new Date(row.created_at).toLocaleDateString("en-GB", {
                           day: "numeric",
                           month: "short",
@@ -169,7 +169,7 @@ export default async function VehicleQueriesAdminPage() {
                       <td className="px-5 py-4">
                         <div className="flex items-center gap-2">
                           <span className={`inline-block h-2 w-2 flex-shrink-0 rounded-full ${cfg.dot}`} />
-                          <span className="text-xs font-semibold capitalize text-slate-700">{cfg.label}</span>
+                          <span className="text-xs font-semibold capitalize text-white/80">{cfg.label}</span>
                         </div>
                         <div className="mt-1.5">
                           <VehicleQueryStatusButton queryId={row.id} currentStatus={row.status} />

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -36,7 +36,7 @@ const STEPS = [
 
 export default function HowItWorks() {
   return (
-    <section className="bg-[#0A0A0A] py-24 lg:py-32">
+    <section className="bg-surface-base py-24 lg:py-32">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
         {/* Header */}
@@ -93,6 +93,23 @@ export default function HowItWorks() {
             );
           })}
         </div>
+
+        {/* Bottom CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="mt-12 flex justify-center"
+        >
+          <Link
+            href="/vehicles"
+            className="inline-flex items-center gap-2 rounded-full bg-brand px-8 py-4 text-base font-semibold text-white shadow-[0_0_30px_rgba(31,191,159,0.3)] transition hover:bg-brand-hover"
+          >
+            Start Discovering
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        </motion.div>
       </div>
     </section>
   );

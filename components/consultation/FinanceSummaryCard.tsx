@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import {
@@ -20,7 +20,7 @@ const BAND_CONFIG: Record<
   AffordabilityBand,
   { label: string; bg: string; text: string; border: string }
 > = {
-  comfortable:  { label: "Comfortable",  bg: "bg-[#E8F8F5]", text: "text-[#1FBF9F]", border: "border-[#D1F2EB]" },
+  comfortable:  { label: "Comfortable",  bg: "bg-[#E8F8F5]", text: "text-brand", border: "border-[#D1F2EB]" },
   manageable:   { label: "Manageable",   bg: "bg-blue-50",   text: "text-blue-600",  border: "border-blue-100" },
   stretch:      { label: "Stretch",      bg: "bg-amber-50",  text: "text-amber-600", border: "border-amber-100" },
   over_budget:  { label: "Over Budget",  bg: "bg-red-50",    text: "text-red-600",   border: "border-red-100" },
@@ -30,7 +30,7 @@ const FIT_CONFIG: Record<
   FinanceFitStatus,
   { label: string; icon: string; color: string }
 > = {
-  finance_ready:     { label: "Finance Ready",      icon: "✓", color: "text-[#1FBF9F]" },
+  finance_ready:     { label: "Finance Ready",      icon: "✓", color: "text-brand" },
   budget_tight:      { label: "Budget is Tight",    icon: "!", color: "text-amber-600" },
   deposit_needed:    { label: "More Deposit Needed", icon: "!", color: "text-amber-600" },
   not_recommended:   { label: "Over Budget",        icon: "✕", color: "text-red-500" },
@@ -74,7 +74,7 @@ export default function FinanceSummaryCard({ finance, vehicleName, vehicleId }: 
       <div className="flex items-center justify-between bg-[#F8FAF9] px-5 py-4 border-b border-[#E5E7EB]">
         <div className="flex items-center gap-2.5">
           <div className="flex h-8 w-8 items-center justify-center rounded-full border border-[#D1F2EB] bg-[#E8F8F5]">
-            <PoundSterling className="h-4 w-4 text-[#1FBF9F]" />
+            <PoundSterling className="h-4 w-4 text-brand" />
           </div>
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#6B7280]">
@@ -105,7 +105,7 @@ export default function FinanceSummaryCard({ finance, vehicleName, vehicleId }: 
             <span className="ml-1 text-sm font-normal text-[#6B7280]">/mo</span>
           </p>
           {finance.monthlyHeadroom !== null && (
-            <p className={`mt-1 text-xs font-medium ${finance.monthlyHeadroom >= 0 ? "text-[#1FBF9F]" : "text-red-500"}`}>
+            <p className={`mt-1 text-xs font-medium ${finance.monthlyHeadroom >= 0 ? "text-brand" : "text-red-500"}`}>
               {finance.monthlyHeadroom >= 0
                 ? `£${finance.monthlyHeadroom} headroom vs your budget`
                 : `£${Math.abs(finance.monthlyHeadroom)} over your budget`}
@@ -130,7 +130,7 @@ export default function FinanceSummaryCard({ finance, vehicleName, vehicleId }: 
           <div className="space-y-2">
             {finance.financeReadySignals.map((s) => (
               <div key={s} className="flex items-start gap-2.5 text-sm leading-5 text-[#374151]">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#1FBF9F]" />
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-brand" />
                 {s}
               </div>
             ))}
@@ -147,7 +147,7 @@ export default function FinanceSummaryCard({ finance, vehicleName, vehicleId }: 
         <button
           type="button"
           onClick={handleToggleBreakdown}
-          className="flex items-center gap-1.5 text-xs font-medium text-[#6B7280] transition hover:text-[#1FBF9F]"
+          className="flex items-center gap-1.5 text-xs font-medium text-[#6B7280] transition hover:text-brand"
         >
           {showBreakdown
             ? <ChevronUp className="h-3.5 w-3.5" />
@@ -207,7 +207,7 @@ export default function FinanceSummaryCard({ finance, vehicleName, vehicleId }: 
         {/* Savings hint */}
         {finance.breakdown.chargingMonthlyGbp > 0 && (
           <div className="flex items-start gap-2.5 rounded-[1.25rem] border border-[#D1F2EB] bg-[#E8F8F5] px-4 py-3">
-            <TrendingDown className="mt-0.5 h-4 w-4 shrink-0 text-[#1FBF9F]" />
+            <TrendingDown className="mt-0.5 h-4 w-4 shrink-0 text-brand" />
             <p className="text-xs leading-5 text-[#374151]">
               <span className="font-medium">Running costs: </span>
               Electricity estimated at £{finance.breakdown.chargingMonthlyGbp}/mo —

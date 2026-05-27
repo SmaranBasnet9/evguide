@@ -1,5 +1,5 @@
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import PremiumNavbar from "@/components/home/PremiumNavbar";
+import PremiumFooter from "@/components/home/PremiumFooter";
 import EVReviewsSection from "@/components/EVReviewsSection";
 import { getReviewsForModel } from "@/data/evReviews";
 import { evModels } from "@/data/evModels";
@@ -9,18 +9,18 @@ export default function ReviewsLabPage() {
   const reviews = getReviewsForModel(model.id);
 
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900">
-      <Navbar />
-      <section className="border-b border-slate-200 bg-white">
+    <main className="min-h-screen bg-surface-base text-white">
+      <PremiumNavbar />
+      <section className="border-b border-white/8 pt-24">
         <div className="mx-auto max-w-7xl px-6 py-14">
-          <p className="text-sm font-semibold text-blue-600">Component Test</p>
-          <h1 className="mt-2 text-4xl font-bold">EV Review Components Lab</h1>
-          <p className="mt-3 text-slate-600">Standalone page to test review cards and summary before integration.</p>
+          <p className="text-sm font-semibold text-brand">Component Test</p>
+          <h1 className="mt-2 text-4xl font-bold text-white">EV Review Components Lab</h1>
+          <p className="mt-3 text-white/60">Standalone page to test review cards and summary before integration.</p>
         </div>
       </section>
 
       <EVReviewsSection modelName={`${model.brand} ${model.model}`} reviews={reviews} />
-      <Footer />
+      <PremiumFooter />
     </main>
   );
 }

@@ -20,10 +20,10 @@ export default function StepUsage({ state, onChange }: Props) {
   return (
     <div className="space-y-6">
       {/* Mileage */}
-      <div className="rounded-[1.5rem] border border-[#E5E7EB] bg-white p-5 space-y-4">
+      <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 space-y-4">
         <div>
-          <p className="text-sm font-semibold text-[#1A1A1A]">Daily mileage</p>
-          <p className="mt-1 text-xs leading-5 text-[#6B7280]">
+          <p className="text-sm font-semibold text-white">Daily mileage</p>
+          <p className="mt-1 text-xs leading-5 text-white/40">
             Enter your typical daily driving distance — weekly and yearly will auto-fill.
           </p>
         </div>
@@ -58,10 +58,10 @@ export default function StepUsage({ state, onChange }: Props) {
       </div>
 
       {/* Family size */}
-      <div className="rounded-[1.5rem] border border-[#E5E7EB] bg-white p-5 space-y-4">
+      <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 space-y-4">
         <div>
-          <p className="text-sm font-semibold text-[#1A1A1A]">Family / household size</p>
-          <p className="mt-1 text-xs leading-5 text-[#6B7280]">
+          <p className="text-sm font-semibold text-white">Family / household size</p>
+          <p className="mt-1 text-xs leading-5 text-white/40">
             Helps us match seat count and boot space requirements.
           </p>
         </div>
@@ -71,10 +71,10 @@ export default function StepUsage({ state, onChange }: Props) {
               key={n}
               type="button"
               onClick={() => onChange({ family_size: n })}
-              className={`flex h-11 w-11 items-center justify-center rounded-[1rem] border text-sm font-semibold transition-all ${
+              className={`flex h-11 w-11 items-center justify-center rounded-2xl border text-sm font-semibold transition-all ${
                 state.family_size === n
-                  ? "border-[#1FBF9F] bg-[#E8F8F5] text-[#1FBF9F]"
-                  : "border-[#E5E7EB] bg-white text-[#374151] hover:border-[#1FBF9F]/40"
+                  ? "border-brand bg-brand/15 text-brand"
+                  : "border-white/10 bg-white/[0.04] text-white/70 hover:border-brand/40 hover:text-white"
               }`}
             >
               {n === 6 ? "6+" : n}

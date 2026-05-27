@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function RecommendPage() {
   return (
-    <div className="flex min-h-screen flex-col bg-[#07090B]">
+    <div className="flex min-h-screen flex-col bg-white">
       <PremiumNavbar />
       {/* PremiumNavbar is fixed h-20 (80px) */}
       <div className="pt-20 flex-1">

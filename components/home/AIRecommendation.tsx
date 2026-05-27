@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -7,9 +7,9 @@ import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const BENEFITS = [
-  "Personalised EV matches based on your real priorities",
-  "Monthly cost insights before you speak to a dealer",
-  "Faster, more confident decisions with less research",
+  "No dealer calls until you're ready to talk",
+  "Real monthly costs compared — not just sticker price",
+  "Personalised to your home charging setup and daily commute",
 ];
 
 export default function AIRecommendation() {
@@ -32,13 +32,12 @@ export default function AIRecommendation() {
               </span>
 
               <h2 className="mt-6 text-4xl font-semibold text-white sm:text-5xl">
-                Find your perfect EV{" "}
-                <span className="text-gradient-brand">in under 60 seconds.</span>
+                Let the AI shortlist{" "}
+                <span className="text-gradient-brand">your perfect EV.</span>
               </h2>
               <p className="mt-5 max-w-xl text-lg leading-8 text-white/50">
-                We analyse your budget, mileage, charging access, and priorities to
-                recommend the EVs that fit you best — not just the ones with the
-                biggest ad spend.
+                Answer 5 questions. Get 3 matched EVs. Takes under 60 seconds — and no dealer
+                pressure until you decide.
               </p>
 
               <div className="mt-8 space-y-3">
@@ -67,7 +66,7 @@ export default function AIRecommendation() {
 
             {/* Right — mock UI */}
             <div className="border-t border-white/5 bg-white/[0.015] p-6 lg:border-l lg:border-t-0 lg:p-8">
-              <div className="rounded-[1.5rem] border border-white/8 bg-[#111] p-5">
+              <div className="rounded-[1.5rem] border border-white/8 bg-surface-card p-5">
                 <div className="flex items-center gap-3 border-b border-white/5 pb-4">
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-brand/20 bg-brand/10">
                     <BrainCircuit className="h-4.5 w-4.5 text-brand" />

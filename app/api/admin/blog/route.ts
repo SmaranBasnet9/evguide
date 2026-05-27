@@ -1,23 +1,6 @@
 ﻿import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-
-async function ensureAdmin() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-  if (error || !user) {
-    return { ok: false as const, response: NextResponse.json({ error: "Unauthorized" }, { status: 401 }) };
-  }
-  const { data: profile } = await supabase
-    .from("profiles").select("role").eq("id", user.id).single();
-  if (profile?.role !== "admin") {
-    return { ok: false as const, response: NextResponse.json({ error: "Forbidden" }, { status: 403 }) };
-  }
-  return { ok: true as const, userId: user.id };
-}
+import { requireAdmin } from "@/lib/security/admin";
 
 function slugify(text: string) {
   return text
@@ -50,7 +33,7 @@ function isMissingBlogSeoColumnError(message: string | undefined) {
 }
 
 export async function GET() {
-  const auth = await ensureAdmin();
+  const auth = await requireAdmin();
   if (!auth.ok) return auth.response;
 
   const supabase = createAdminClient();
@@ -83,7 +66,7 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const auth = await ensureAdmin();
+  const auth = await requireAdmin();
   if (!auth.ok) return auth.response;
 
   const body = await request.json();

@@ -64,7 +64,6 @@ export default function BookConsultationWidget() {
     };
   }, [supabase]);
 
-  // Close on Escape key
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
@@ -74,7 +73,6 @@ export default function BookConsultationWidget() {
     return () => document.removeEventListener("keydown", onKey);
   }, [open]);
 
-  // Prevent body scroll when open
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
@@ -136,68 +134,52 @@ export default function BookConsultationWidget() {
   }
 
   const inputCls =
-    "w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 transition";
+    "w-full rounded-xl border border-white/10 bg-white/[0.06] px-3.5 py-2.5 text-sm text-white placeholder:text-white/40 focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20 transition backdrop-blur-sm";
 
-  // Keep appointment widget user-facing only.
   if (pathname.startsWith("/admin")) {
     return null;
   }
 
   return (
     <>
-      {/* Floating trigger button */}
       <button
         type="button"
         aria-label="Book a consultation"
         onClick={() => setOpen(true)}
-        className="fixed bottom-6 right-6 z-40 flex items-center gap-2.5 rounded-2xl bg-blue-600 px-5 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-600/30 transition-all duration-200 hover:-translate-y-0.5 hover:bg-blue-700 hover:shadow-xl hover:shadow-blue-600/40 active:translate-y-0"
+        className="fixed bottom-6 right-6 z-40 flex items-center gap-2.5 rounded-2xl bg-brand px-5 py-3.5 text-sm font-semibold text-white shadow-lg shadow-brand/30 transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-hover hover:shadow-xl hover:shadow-brand/40 active:translate-y-0"
       >
-        {/* Chat bubble icon */}
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="currentColor"
-          className="h-5 w-5"
-          aria-hidden="true"
-        >
-          <path
-            fillRule="evenodd"
-            d="M4.804 21.644A6.707 6.707 0 0 0 6 21.75a6.721 6.721 0 0 0 3.583-1.029c.774.182 1.584.279 2.417.279 5.322 0 9.75-3.97 9.75-9 0-5.03-4.428-9-9.75-9s-9.75 3.97-9.75 9c0 2.409 1.025 4.587 2.674 6.192.232.226.277.428.254.543a3.73 3.73 0 0 1-.814 1.686.75.75 0 0 0 .44 1.223Z"
-            clipRule="evenodd"
-          />
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5" aria-hidden="true">
+          <path fillRule="evenodd" d="M4.804 21.644A6.707 6.707 0 0 0 6 21.75a6.721 6.721 0 0 0 3.583-1.029c.774.182 1.584.279 2.417.279 5.322 0 9.75-3.97 9.75-9 0-5.03-4.428-9-9.75-9s-9.75 3.97-9.75 9c0 2.409 1.025 4.587 2.674 6.192.232.226.277.428.254.543a3.73 3.73 0 0 1-.814 1.686.75.75 0 0 0 .44 1.223Z" clipRule="evenodd" />
         </svg>
         Book Appointment
       </button>
 
-      {/* Backdrop */}
       {open && (
         <div
-          className="fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm"
+          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
           aria-hidden="true"
           onClick={() => setOpen(false)}
         />
       )}
 
-      {/* Slide-up panel */}
       <div
         ref={panelRef}
         role="dialog"
         aria-modal="true"
         aria-label="Book a consultation appointment"
-        className={`fixed bottom-0 right-0 z-50 flex h-[90dvh] w-full flex-col overflow-hidden rounded-t-3xl bg-white shadow-2xl transition-transform duration-300 ease-out sm:bottom-6 sm:right-6 sm:h-auto sm:max-h-[85vh] sm:w-[440px] sm:rounded-3xl ${
-          open ? "translate-y-0" : "translate-y-full sm:translate-y-[120%]"
+        className={`fixed bottom-0 right-0 z-50 flex h-[90dvh] w-full flex-col overflow-hidden rounded-t-3xl border border-white/10 bg-surface-base shadow-[0_-32px_80px_rgba(0,0,0,0.6)] backdrop-blur-xl transition-transform duration-300 ease-out sm:bottom-6 sm:right-6 sm:h-auto sm:max-h-[85vh] sm:w-[440px] sm:rounded-3xl ${
+          open ? "pointer-events-auto translate-y-0" : "pointer-events-none translate-y-full sm:translate-y-[120%]"
         }`}
       >
-        {/* Header */}
-        <div className="flex shrink-0 items-start justify-between border-b border-slate-100 px-6 py-5">
+        <div className="flex shrink-0 items-start justify-between border-b border-white/10 px-6 py-5">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">
+            <p className="text-xs font-semibold uppercase tracking-wider text-brand">
               Free Consultation
             </p>
-            <h2 className="mt-1 text-lg font-bold text-slate-900">
+            <h2 className="mt-1 text-lg font-bold text-white">
               Book Your EV Appointment
             </h2>
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-white/50">
               Our experts will guide you to the right EV.
             </p>
           </div>
@@ -205,53 +187,38 @@ export default function BookConsultationWidget() {
             type="button"
             aria-label="Close"
             onClick={() => setOpen(false)}
-            className="ml-4 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200"
+            className="ml-4 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/10 text-white/50 transition-colors hover:bg-white/20 hover:text-white"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              className="h-4 w-4"
-            >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
               <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" />
             </svg>
           </button>
         </div>
 
-        {/* Scrollable body */}
         <div className="flex-1 overflow-y-auto px-6 py-5">
           {submitted ? (
             <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  className="h-8 w-8 text-emerald-600"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z"
-                    clipRule="evenodd"
-                  />
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brand/20 ring-1 ring-brand/30">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-8 w-8 text-brand">
+                  <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clipRule="evenodd" />
                 </svg>
               </div>
               <div>
-                <h3 className="text-xl font-bold text-slate-900">Booked!</h3>
-                <p className="mt-1 text-sm text-slate-600">
+                <h3 className="text-xl font-bold text-white">Booked!</h3>
+                <p className="mt-1 text-sm text-white/50">
                   We&apos;ll contact you shortly to confirm your appointment.
                 </p>
               </div>
             </div>
           ) : !authLoading && !isLoggedIn ? (
-            <div className="flex flex-col items-center gap-4 rounded-2xl border border-amber-200 bg-amber-50 px-6 py-8 text-center">
-              <p className="text-sm font-semibold text-amber-900">
+            <div className="flex flex-col items-center gap-4 rounded-2xl border border-amber-500/20 bg-amber-500/10 px-6 py-8 text-center">
+              <p className="text-sm font-semibold text-amber-300">
                 Sign in to book a consultation appointment.
               </p>
               <button
                 type="button"
                 onClick={() => setShowLoginModal(true)}
-                className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"
+                className="rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-hover"
               >
                 Sign In to Continue
               </button>
@@ -259,75 +226,38 @@ export default function BookConsultationWidget() {
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="mb-1.5 block text-xs font-semibold text-slate-600">
-                  Full Name <span className="text-red-500">*</span>
+                <label className="mb-1.5 block text-xs font-semibold text-white/60">
+                  Full Name <span className="text-red-400">*</span>
                 </label>
-                <input
-                  type="text"
-                  name="fullName"
-                  value={formData.fullName}
-                  onChange={handleChange}
-                  required
-                  placeholder="John Doe"
-                  className={inputCls}
-                />
+                <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} required placeholder="John Doe" className={inputCls} />
               </div>
 
               <div>
-                <label className="mb-1.5 block text-xs font-semibold text-slate-600">
-                  Email <span className="text-red-500">*</span>
+                <label className="mb-1.5 block text-xs font-semibold text-white/60">
+                  Email <span className="text-red-400">*</span>
                 </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  placeholder="john@example.com"
-                  className={inputCls}
-                />
+                <input type="email" name="email" value={formData.email} onChange={handleChange} required placeholder="john@example.com" className={inputCls} />
               </div>
 
               <div>
-                <label className="mb-1.5 block text-xs font-semibold text-slate-600">
-                  Phone <span className="text-red-500">*</span>
+                <label className="mb-1.5 block text-xs font-semibold text-white/60">
+                  Phone <span className="text-red-400">*</span>
                 </label>
-                <input
-                  type="tel"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  required
-                  placeholder="+44 (0) 123 456 7890"
-                  className={inputCls}
-                />
+                <input type="tel" name="phone" value={formData.phone} onChange={handleChange} required placeholder="+44 (0) 123 456 7890" className={inputCls} />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="mb-1.5 block text-xs font-semibold text-slate-600">
-                    Date <span className="text-red-500">*</span>
+                  <label className="mb-1.5 block text-xs font-semibold text-white/60">
+                    Date <span className="text-red-400">*</span>
                   </label>
-                  <input
-                    type="date"
-                    name="preferredDate"
-                    value={formData.preferredDate}
-                    onChange={handleChange}
-                    required
-                    className={inputCls}
-                  />
+                  <input type="date" name="preferredDate" value={formData.preferredDate} onChange={handleChange} required className={inputCls} />
                 </div>
                 <div>
-                  <label className="mb-1.5 block text-xs font-semibold text-slate-600">
-                    Time <span className="text-red-500">*</span>
+                  <label className="mb-1.5 block text-xs font-semibold text-white/60">
+                    Time <span className="text-red-400">*</span>
                   </label>
-                  <select
-                    name="preferredTime"
-                    value={formData.preferredTime}
-                    onChange={handleChange}
-                    required
-                    className={inputCls}
-                  >
+                  <select name="preferredTime" value={formData.preferredTime} onChange={handleChange} required className={inputCls}>
                     <option value="">Select</option>
                     <option value="09:00">09:00 AM</option>
                     <option value="10:00">10:00 AM</option>
@@ -342,40 +272,26 @@ export default function BookConsultationWidget() {
               </div>
 
               <div>
-                <label className="mb-1.5 block text-xs font-semibold text-slate-600">
+                <label className="mb-1.5 block text-xs font-semibold text-white/60">
                   Interested EV (optional)
                 </label>
-                <select
-                  name="carId"
-                  value={formData.carId}
-                  onChange={handleChange}
-                  className={inputCls}
-                >
+                <select name="carId" value={formData.carId} onChange={handleChange} className={inputCls}>
                   <option value="">Not sure yet</option>
                   {evModels.map((m) => (
-                    <option key={m.id} value={m.id}>
-                      {m.brand} {m.model}
-                    </option>
+                    <option key={m.id} value={m.id}>{m.brand} {m.model}</option>
                   ))}
                 </select>
               </div>
 
               <div>
-                <label className="mb-1.5 block text-xs font-semibold text-slate-600">
+                <label className="mb-1.5 block text-xs font-semibold text-white/60">
                   Additional Notes
                 </label>
-                <textarea
-                  name="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  rows={3}
-                  placeholder="Tell us about your EV needs…"
-                  className={inputCls}
-                />
+                <textarea name="message" value={formData.message} onChange={handleChange} rows={3} placeholder="Tell us about your EV needs…" className={inputCls} />
               </div>
 
               {error && (
-                <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                <p className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">
                   {error}
                 </p>
               )}
@@ -383,7 +299,7 @@ export default function BookConsultationWidget() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full rounded-xl bg-blue-600 py-3 text-sm font-bold text-white transition-all hover:bg-blue-700 disabled:opacity-60"
+                className="w-full rounded-xl bg-brand py-3 text-sm font-bold text-white transition-all hover:bg-brand-hover disabled:opacity-60"
               >
                 {submitting ? "Booking…" : "Confirm Appointment"}
               </button>

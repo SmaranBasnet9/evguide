@@ -1,4 +1,4 @@
-import PremiumNavbar from "@/components/home/PremiumNavbar";
+﻿import PremiumNavbar from "@/components/home/PremiumNavbar";
 import PremiumFooter from "@/components/home/PremiumFooter";
 import ExchangeButton from "@/components/exchange/ExchangeButton";
 import { ArrowRight, CheckCircle, Zap, Clock, Shield, TrendingUp } from "lucide-react";
@@ -94,18 +94,18 @@ export default function ExchangePage() {
         </div>
 
         <div className="mx-auto max-w-4xl px-6 text-center">
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-amber-400/30 bg-amber-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-amber-600">
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-amber-400/30 bg-amber-500/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-amber-400">
             <Zap className="h-3.5 w-3.5" />
             AI-Powered Part Exchange
           </div>
 
-          <h1 className="text-4xl font-extrabold tracking-tight text-[#1A1A1A] sm:text-5xl lg:text-6xl">
+          <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
             Exchange your car.
             <br />
             <span className="text-amber-500">Drive electric sooner.</span>
           </h1>
 
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-[#6B7280]">
+          <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-500">
             Get an instant AI valuation for your current vehicle and use it as a deposit
             towards your next EV — fully transparent, zero obligation.
           </p>
@@ -117,16 +117,16 @@ export default function ExchangePage() {
             />
             <a
               href="#how-it-works"
-              className="flex items-center gap-2 text-sm font-medium text-[#6B7280] transition-colors hover:text-[#1A1A1A]"
+              className="flex items-center gap-2 text-sm font-medium text-gray-500 transition-colors hover:text-gray-900"
             >
               See how it works <ArrowRight className="h-4 w-4" />
             </a>
           </div>
 
-          <div className="mt-12 flex flex-wrap justify-center gap-x-8 gap-y-3 text-sm text-[#6B7280]">
+          <div className="mt-12 flex flex-wrap justify-center gap-x-8 gap-y-3 text-sm text-gray-500">
             {["Free valuation", "No obligation", "Instant result", "UK market data"].map((t) => (
               <span key={t} className="flex items-center gap-1.5">
-                <CheckCircle className="h-3.5 w-3.5 text-[#1FBF9F]" />
+                <CheckCircle className="h-3.5 w-3.5 text-brand" />
                 {t}
               </span>
             ))}
@@ -135,19 +135,20 @@ export default function ExchangePage() {
       </section>
 
       {/* ── How It Works ─────────────────────────────────────────────────────── */}
-      <section id="how-it-works" className="bg-[#F8FAF9] py-24">
+      <section id="how-it-works" className="bg-white py-24">
         <div className="mx-auto max-w-6xl px-6">
-          <h2 className="text-center text-3xl font-bold text-[#1A1A1A]">How it works</h2>
-          <p className="mx-auto mt-3 max-w-xl text-center text-[#6B7280]">
+          <h2 className="text-center text-3xl font-bold text-gray-900">How it works</h2>
+          <p className="mx-auto mt-3 max-w-xl text-center text-gray-500">
+
             From valuation to handover in four simple steps.
           </p>
 
           <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {steps.map((step) => (
-              <div key={step.number} className="relative rounded-2xl border border-[#E5E7EB] bg-white p-6 shadow-sm hover:border-amber-300/60 hover:shadow-md transition-all">
+              <div key={step.number} className="relative rounded-2xl border border-gray-200 bg-gray-50 p-6 hover:border-amber-400 hover:shadow-md transition-all">
                 <span className="text-4xl font-black text-amber-300 select-none">{step.number}</span>
-                <h3 className="mt-3 text-base font-semibold text-[#1A1A1A]">{step.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-[#6B7280]">{step.description}</p>
+                <h3 className="mt-3 text-base font-semibold text-gray-900">{step.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-gray-500">{step.description}</p>
               </div>
             ))}
           </div>
@@ -157,16 +158,16 @@ export default function ExchangePage() {
       {/* ── Why EVGuide Exchange ──────────────────────────────────────────────── */}
       <section className="bg-white py-24">
         <div className="mx-auto max-w-6xl px-6">
-          <h2 className="text-center text-3xl font-bold text-[#1A1A1A]">Why exchange with us?</h2>
+          <h2 className="text-center text-3xl font-bold text-gray-900">Why exchange with us?</h2>
 
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {whyPoints.map((pt) => (
-              <div key={pt.title} className="rounded-2xl border border-[#E5E7EB] bg-[#F8FAF9] p-6 shadow-sm">
-                <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 ring-1 ring-amber-300/40">
+              <div key={pt.title} className="rounded-2xl border border-gray-200 bg-gray-50 p-6">
+                <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/10 ring-1 ring-amber-300/40">
                   {pt.icon}
                 </div>
-                <h3 className="text-sm font-semibold text-[#1A1A1A]">{pt.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-[#6B7280]">{pt.body}</p>
+                <h3 className="text-sm font-semibold text-gray-900">{pt.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-gray-500">{pt.body}</p>
               </div>
             ))}
           </div>
@@ -176,7 +177,7 @@ export default function ExchangePage() {
       {/* ── CTA band ─────────────────────────────────────────────────────────── */}
       <section className="bg-amber-500 py-16">
         <div className="mx-auto max-w-3xl px-6 text-center">
-          <h2 className="text-3xl font-extrabold tracking-tight text-white">
+          <h2 className="text-3xl font-extrabold tracking-tight text-gray-900">
             Ready to find out what your car is worth?
           </h2>
           <p className="mt-3 text-amber-100">
@@ -185,22 +186,22 @@ export default function ExchangePage() {
           <div className="mt-8 flex justify-center">
             <ExchangeButton
               variant="default"
-              className="bg-white text-amber-600 hover:bg-amber-50 px-8 py-4 text-base font-bold rounded-full shadow-md"
+              className="bg-white/90 text-amber-600 hover:bg-white px-8 py-4 text-base font-bold rounded-full shadow-md"
             />
           </div>
         </div>
       </section>
 
       {/* ── FAQs ─────────────────────────────────────────────────────────────── */}
-      <section className="bg-[#F8FAF9] py-24">
+      <section className="bg-white py-24">
         <div className="mx-auto max-w-3xl px-6">
-          <h2 className="text-center text-3xl font-bold text-[#1A1A1A]">Frequently asked questions</h2>
+          <h2 className="text-center text-3xl font-bold text-gray-900">Frequently asked questions</h2>
 
           <div className="mt-10 space-y-4">
             {faqs.map((faq) => (
-              <div key={faq.q} className="rounded-2xl border border-[#E5E7EB] bg-white p-6 shadow-sm">
-                <h3 className="text-sm font-semibold text-[#1A1A1A]">{faq.q}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-[#6B7280]">{faq.a}</p>
+              <div key={faq.q} className="rounded-2xl border border-gray-200 bg-gray-50 p-6">
+                <h3 className="text-sm font-semibold text-gray-900">{faq.q}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-gray-500">{faq.a}</p>
               </div>
             ))}
           </div>

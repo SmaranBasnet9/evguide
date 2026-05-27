@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { Menu, X } from "lucide-react";
-import { AnimatePresence, motion } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
 
 export default function PremiumNavbar() {
@@ -16,11 +15,13 @@ export default function PremiumNavbar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
+    let rafId: number;
     function onScroll() {
-      setScrolled(window.scrollY > 16);
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => setScrolled(window.scrollY > 16));
     }
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => { window.removeEventListener("scroll", onScroll); cancelAnimationFrame(rafId); };
   }, []);
 
   useEffect(() => {
@@ -67,145 +68,146 @@ export default function PremiumNavbar() {
     router.refresh();
   }
 
+  const NAV_LINKS = [
+    { href: "/vehicles",  label: "Vehicles" },
+    { href: "/used-evs",  label: "Used EVs" },
+    { href: "/finance",   label: "Finance" },
+    { href: "/charging",  label: "Charging" },
+    { href: "/compare",   label: "Compare" },
+  ];
+
   return (
     <nav
       className={`fixed top-0 z-50 w-full backdrop-blur-2xl transition-all duration-300 ${
         scrolled
-          ? "border-b border-white/8 bg-white/[0.06] shadow-[0_1px_0_0_rgba(255,255,255,0.04),0_8px_32px_rgba(0,0,0,0.4)]"
-          : "border-b border-transparent bg-white/[0.02]"
+          ? "border-b border-gray-200 bg-white/95 shadow-[0_4px_20px_rgba(0,0,0,0.08)]"
+          : "border-b border-transparent bg-white/80"
       }`}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-18 items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 group">
-            {/* Custom EV bolt logo mark */}
+        <div className="flex h-16 items-center justify-between gap-4">
+
+          {/* Logo */}
+          <Link href="/" className="group flex shrink-0 items-center gap-2">
             <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-              <rect width="28" height="28" rx="8" fill="#1FBF9F" />
+              <rect width="28" height="28" rx="8" fill="var(--brand)" />
               <path d="M16 4L8 15.5H14L12 24L20 12.5H14L16 4Z" fill="white" />
             </svg>
-            <span className="text-lg font-bold tracking-tight text-white transition-colors group-hover:text-brand">
+            <span className="text-lg font-bold tracking-tight text-gray-900 transition-colors group-hover:text-brand">
               EVGuide
             </span>
           </Link>
 
-          <div className="hidden items-center gap-7 md:flex">
-            {[
-              { href: "/vehicles", label: "Vehicles" },
-              { href: "/compare", label: "Compare" },
-              { href: "/finance", label: "Finance" },
-              { href: "/charging", label: "Charging" },
-              { href: "/blog", label: "Blog" },
-            ].map(({ href, label }) => (
+          {/* Desktop nav */}
+          <div className="hidden flex-1 items-center justify-center gap-6 md:flex">
+            {NAV_LINKS.map(({ href, label }) => (
               <Link
                 key={href}
                 href={href}
-                className="text-sm font-medium text-white/60 transition-colors hover:text-white"
+                className="text-sm font-medium text-gray-500 transition-colors hover:text-gray-900"
               >
                 {label}
               </Link>
             ))}
-            <Link
-              href="/exchange"
-              className="text-sm font-semibold text-amber-400 transition-colors hover:text-amber-300"
-            >
+            <Link href="/exchange" className="text-sm font-semibold text-amber-500 transition-colors hover:text-amber-600">
               Exchange
             </Link>
           </div>
 
-          <div className="flex items-center gap-3">
-            {!authLoading &&
-              (isLoggedIn ? (
-                <button
-                  type="button"
-                  onClick={handleSignOut}
-                  className="hidden text-sm font-medium text-white/50 transition-colors hover:text-red-400 sm:block"
-                >
+          {/* Desktop right actions */}
+          <div className="hidden items-center gap-3 md:flex">
+            {!authLoading && (
+              isLoggedIn ? (
+                <button type="button" onClick={handleSignOut} className="text-sm font-medium text-gray-400 transition-colors hover:text-red-500">
                   Log out
                 </button>
               ) : (
-                <Link
-                  href="/login"
-                  className="hidden text-sm font-medium text-white/50 transition-colors hover:text-white sm:block"
-                >
+                <Link href="/login" className="text-sm font-medium text-gray-500 transition-colors hover:text-gray-900">
                   Log in
                 </Link>
-              ))}
-
+              )
+            )}
             <Link
               href="/ai-match"
-              className="rounded-full bg-brand px-4 py-2 text-sm font-semibold text-white shadow-[0_0_20px_rgba(31,191,159,0.3)] transition-all hover:bg-brand-hover hover:shadow-[0_0_28px_rgba(31,191,159,0.4)] sm:px-5"
+              className="rounded-full bg-brand px-5 py-2 text-sm font-semibold text-white shadow-[0_0_20px_rgba(31,191,159,0.25)] transition-all hover:bg-brand-hover"
             >
               Start Match
             </Link>
-
-            {/* Hamburger — mobile only */}
-            <button
-              type="button"
-              aria-label="Toggle menu"
-              onClick={() => setMenuOpen((o) => !o)}
-              className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/[0.05] text-white/60 transition hover:border-white/20 hover:text-white md:hidden"
-            >
-              {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-            </button>
           </div>
+
+          {/* Mobile: hamburger only */}
+          <button
+            type="button"
+            aria-label="Toggle menu"
+            onClick={() => setMenuOpen((o) => !o)}
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-gray-200 bg-gray-50 text-gray-500 transition hover:border-gray-300 hover:text-gray-900 md:hidden"
+          >
+            {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+          </button>
         </div>
       </div>
 
-      {/* Mobile dropdown menu */}
-      <AnimatePresence>
-        {menuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.18 }}
-            className="border-t border-white/8 bg-white/[0.06] backdrop-blur-2xl md:hidden"
-          >
-            <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6">
-              <nav className="flex flex-col gap-1">
-                {[
-                  { href: "/vehicles", label: "Vehicles" },
-                  { href: "/compare", label: "Compare" },
-                  { href: "/finance", label: "Finance" },
-                  { href: "/charging", label: "Charging" },
-                  { href: "/blog", label: "Blog" },
-                  { href: "/exchange", label: "Exchange", accent: true },
-                ].map(({ href, label, accent }) => (
+      {/* Mobile full-screen menu */}
+      <div
+        className={`border-t border-gray-200 bg-white md:hidden transition-all duration-150 ease-out ${
+          menuOpen ? "opacity-100 translate-y-0" : "pointer-events-none opacity-0 -translate-y-1 absolute w-full -z-10"
+        }`}
+      >
+            <div className="px-4 pb-6 pt-4">
+              {/* Primary CTA */}
+              <Link
+                href="/ai-match"
+                onClick={() => setMenuOpen(false)}
+                className="mb-4 flex w-full items-center justify-center rounded-2xl bg-brand py-3.5 text-sm font-bold text-white shadow-[0_0_24px_rgba(31,191,159,0.25)]"
+              >
+                Start AI Match
+              </Link>
+
+              {/* Nav links */}
+              <nav className="flex flex-col">
+                {NAV_LINKS.map(({ href, label }) => (
                   <Link
                     key={href}
                     href={href}
                     onClick={() => setMenuOpen(false)}
-                    className={`rounded-xl px-4 py-3 text-sm font-medium transition-colors ${accent ? "text-amber-400 hover:bg-amber-400/10" : "text-white/70 hover:bg-white/[0.06] hover:text-white"}`}
+                    className="flex items-center border-b border-gray-100 py-3.5 text-sm font-medium text-gray-600 transition-colors hover:text-gray-900"
                   >
                     {label}
                   </Link>
                 ))}
-                <div className="mt-2 border-t border-white/8 pt-2">
-                  {!authLoading && (
-                    isLoggedIn ? (
-                      <button
-                        type="button"
-                        onClick={() => { handleSignOut(); setMenuOpen(false); }}
-                        className="w-full rounded-xl px-4 py-3 text-left text-sm font-medium text-red-400/80 transition hover:bg-red-400/10 hover:text-red-400"
-                      >
-                        Log out
-                      </button>
-                    ) : (
-                      <Link
-                        href="/login"
-                        onClick={() => setMenuOpen(false)}
-                        className="block rounded-xl px-4 py-3 text-sm font-medium text-white/50 transition hover:bg-white/[0.06] hover:text-white"
-                      >
-                        Log in
-                      </Link>
-                    )
-                  )}
-                </div>
+                <Link
+                  href="/exchange"
+                  onClick={() => setMenuOpen(false)}
+                  className="flex items-center border-b border-gray-100 py-3.5 text-sm font-semibold text-amber-500"
+                >
+                  Exchange
+                </Link>
               </nav>
+
+              {/* Auth */}
+              <div className="mt-4">
+                {!authLoading && (
+                  isLoggedIn ? (
+                    <button
+                      type="button"
+                      onClick={() => { handleSignOut(); setMenuOpen(false); }}
+                      className="w-full rounded-xl border border-red-200 py-3 text-sm font-medium text-red-500 transition hover:bg-red-50"
+                    >
+                      Log out
+                    </button>
+                  ) : (
+                    <Link
+                      href="/login"
+                      onClick={() => setMenuOpen(false)}
+                      className="block w-full rounded-xl border border-gray-200 py-3 text-center text-sm font-medium text-gray-500 transition hover:border-gray-300 hover:text-gray-900"
+                    >
+                      Log in
+                    </Link>
+                  )
+                )}
+              </div>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      </div>
     </nav>
   );
 }

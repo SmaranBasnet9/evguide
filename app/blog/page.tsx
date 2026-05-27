@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import BlogHubClient from "@/components/blog/hub/BlogHubClient";
 import type { BlogHubArticle } from "@/components/blog/hub/types";
 import PremiumFooter from "@/components/home/PremiumFooter";
@@ -40,8 +40,8 @@ export const revalidate = 1800;
 const MOCK_ARTICLES: BlogHubArticle[] = [
   {
     id: "mock-buying-guide-1",
-    href: "/blog",
-    title: "Best EV under GBP 20k in the UK",
+    href: "/vehicles?maxPrice=20000",
+    title: "Best EV under £20k in the UK",
     excerpt:
       "A shortlist of affordable EVs that still deliver usable range, sensible charging speed, and low ownership stress.",
     description:
@@ -55,7 +55,7 @@ const MOCK_ARTICLES: BlogHubArticle[] = [
   },
   {
     id: "mock-comparison-1",
-    href: "/blog",
+    href: "/compare?carA=tesla-model-3&carB=hyundai-ioniq-6",
     title: "Tesla Model 3 vs Hyundai Ioniq 6: which makes more sense in 2026?",
     excerpt:
       "One leans harder into software and charging network confidence, while the other wins on comfort and efficiency feel.",
@@ -68,7 +68,7 @@ const MOCK_ARTICLES: BlogHubArticle[] = [
   },
   {
     id: "mock-charging-1",
-    href: "/blog",
+    href: "/charging",
     title: "Home charging vs public charging: what actually matters for UK buyers",
     excerpt:
       "The real decision is not charger speed alone. It is whether your routine supports low-friction charging week after week.",
@@ -81,8 +81,8 @@ const MOCK_ARTICLES: BlogHubArticle[] = [
   },
   {
     id: "mock-finance-1",
-    href: "/blog",
-    title: "How much EV can you really afford on a GBP 450 monthly budget?",
+    href: "/finance",
+    title: "How much EV can you really afford on a £450 monthly budget?",
     excerpt:
       "A practical affordability lens that helps you compare deposit, monthly cost, and running costs before falling for the wrong car.",
     category: "Finance",
@@ -94,7 +94,7 @@ const MOCK_ARTICLES: BlogHubArticle[] = [
   },
   {
     id: "mock-news-1",
-    href: "/blog",
+    href: "/vehicles?sort=best_value",
     title: "What falling battery prices could mean for UK EV buyers",
     excerpt:
       "Cheaper battery packs may reshape entry pricing, lease deals, and how quickly mainstream EV value improves.",
@@ -107,7 +107,7 @@ const MOCK_ARTICLES: BlogHubArticle[] = [
   },
   {
     id: "mock-buying-guide-2",
-    href: "/blog",
+    href: "/consultation",
     title: "7 mistakes first-time EV buyers still make",
     excerpt:
       "From overbuying range to ignoring home charging fit, these are the avoidable mistakes that create regret after purchase.",
@@ -120,7 +120,7 @@ const MOCK_ARTICLES: BlogHubArticle[] = [
   },
   {
     id: "mock-comparison-2",
-    href: "/blog",
+    href: "/compare?carA=byd-dolphin&carB=mg-4",
     title: "BYD Dolphin vs MG4: the smarter value EV for UK roads",
     excerpt:
       "A clear look at range, practicality, cabin quality, and the trade-off between price leadership and all-round polish.",
@@ -133,7 +133,7 @@ const MOCK_ARTICLES: BlogHubArticle[] = [
   },
   {
     id: "mock-charging-2",
-    href: "/blog",
+    href: "/charging",
     title: "Public rapid charging etiquette and cost traps to avoid",
     excerpt:
       "A faster guide to finding reliable chargers, reducing wait time, and avoiding expensive charging habits on longer trips.",
@@ -146,7 +146,7 @@ const MOCK_ARTICLES: BlogHubArticle[] = [
   },
   {
     id: "mock-finance-2",
-    href: "/blog",
+    href: "/finance",
     title: "Lease, PCP, or bank loan: which EV finance path gives you the most control?",
     excerpt:
       "Choose the right structure for flexibility, monthly comfort, and long-term value before signing the wrong agreement.",
@@ -159,7 +159,7 @@ const MOCK_ARTICLES: BlogHubArticle[] = [
   },
   {
     id: "mock-news-2",
-    href: "/blog",
+    href: "/vehicles?sort=newest",
     title: "Why more EV buyers are prioritising software quality over badge prestige",
     excerpt:
       "Connected features, update cadence, and route planning quality are becoming part of the purchase decision, not a nice extra.",
@@ -201,11 +201,24 @@ function normalizeCategory(category: string | null | undefined): BlogHubArticle[
   return "Buying Guides";
 }
 
+function dummyPostHref(category: string | null | undefined): string {
+  const cat = (category ?? "").trim().toLowerCase();
+  if (cat.includes("charging")) return "/charging";
+  if (cat.includes("finance")) return "/finance";
+  if (cat.includes("comparison")) return "/compare";
+  if (cat.includes("used") || cat === "evs") return "/used-evs";
+  return "/consultation";
+}
+
 async function getBlogHubArticles() {
   const sourcePosts = await getFeaturedBlogPosts(12);
   const liveArticles: BlogHubArticle[] = sourcePosts.map((post, index) => ({
     id: post.id || `post-${index}`,
-    href: post.slug ? `/blog/${post.slug}` : "/blog",
+    href: post.slug
+      ? `/blog/${post.slug}`
+      : post.isDummy
+        ? dummyPostHref(post.category)
+        : "/blog",
     slug: post.slug || undefined,
     title: post.title,
     excerpt:
@@ -266,7 +279,7 @@ export default async function BlogPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#0A0A0A] text-white">
+    <main className="min-h-screen bg-surface-base text-white">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionStructuredData) }}

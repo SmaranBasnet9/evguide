@@ -1,44 +1,23 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
-import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { requireAdmin } from "@/lib/security/admin";
 
 const UUID_REGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const EMAIL_REGEX = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
-async function ensureAdmin() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-
-  if (error || !user) {
-    return {
-      ok: false as const,
-      response: NextResponse.json({ error: "Unauthorized" }, { status: 401 }),
-    };
-  }
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .single();
-
-  if (profile?.role !== "admin") {
-    return {
-      ok: false as const,
-      response: NextResponse.json({ error: "Forbidden" }, { status: 403 }),
-    };
-  }
-
-  return { ok: true as const, adminUserId: user.id };
+function escapeHtml(value: unknown): string {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#x27;");
 }
 
 export async function POST(request: Request) {
-  const auth = await ensureAdmin();
+  const auth = await requireAdmin();
   if (!auth.ok) return auth.response;
 
   let body: Record<string, unknown>;
@@ -110,27 +89,27 @@ export async function POST(request: Request) {
     from: fromAddress,
     to: toEmail,
     replyTo: consultation.email,
-    subject: `EV Guide Inquiry - ${consultation.bank_name} Loan Consultation - ${consultation.full_name}`,
+    subject: `EV Guide Inquiry - ${escapeHtml(consultation.bank_name)} Loan Consultation - ${escapeHtml(consultation.full_name)}`,
     html: `
       <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #1e293b;">
         <h2 style="margin-bottom: 12px;">Loan Consultation Inquiry</h2>
         <p>
           On behalf of <strong>EV Guide</strong>, we are forwarding a customer inquiry for
-          <strong> ${consultation.bank_name}</strong> loan consultation.
+          <strong>${escapeHtml(consultation.bank_name)}</strong> loan consultation.
         </p>
         <p>
           The user is trying to make an inquiry about the bank loan of the selected vehicle.
         </p>
         <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 16px 0;" />
-        <p><strong>Bank:</strong> ${consultation.bank_name}</p>
-        <p><strong>Selected Vehicle:</strong> ${selectedVehicle}</p>
-        <p><strong>Applicant Name:</strong> ${consultation.full_name}</p>
-        <p><strong>Applicant Email:</strong> ${consultation.email}</p>
-        <p><strong>Applicant Phone:</strong> ${consultation.phone ?? "Not provided"}</p>
-        <p><strong>Preferred Meeting Time:</strong> ${preferredTimeText}</p>
-        <p><strong>Notes:</strong> ${consultation.notes ?? "No additional notes"}</p>
-        <p><strong>Submitted At:</strong> ${submittedAtText}</p>
-        <p><strong>Reference ID:</strong> ${consultation.id}</p>
+        <p><strong>Bank:</strong> ${escapeHtml(consultation.bank_name)}</p>
+        <p><strong>Selected Vehicle:</strong> ${escapeHtml(selectedVehicle)}</p>
+        <p><strong>Applicant Name:</strong> ${escapeHtml(consultation.full_name)}</p>
+        <p><strong>Applicant Email:</strong> ${escapeHtml(consultation.email)}</p>
+        <p><strong>Applicant Phone:</strong> ${escapeHtml(consultation.phone ?? "Not provided")}</p>
+        <p><strong>Preferred Meeting Time:</strong> ${escapeHtml(preferredTimeText)}</p>
+        <p><strong>Notes:</strong> ${escapeHtml(consultation.notes ?? "No additional notes")}</p>
+        <p><strong>Submitted At:</strong> ${escapeHtml(submittedAtText)}</p>
+        <p><strong>Reference ID:</strong> ${escapeHtml(consultation.id)}</p>
         <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 16px 0;" />
         <p style="font-size: 12px; color: #64748b;">Forwarded by EV Guide Admin Panel.</p>
       </div>

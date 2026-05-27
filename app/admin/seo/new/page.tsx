@@ -6,8 +6,8 @@ export default function AdminSeoNewPage() {
   return (
     <div className="mx-auto max-w-2xl">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900">New SEO Page</h1>
-        <p className="mt-1 text-slate-500">Add metadata for a new route</p>
+        <h1 className="text-3xl font-bold text-white">New SEO Page</h1>
+        <p className="mt-1 text-white/50">Add metadata for a new route</p>
       </div>
 
       <form action={createSeoPage} className="space-y-6">
@@ -21,7 +21,7 @@ export default function AdminSeoNewPage() {
           </button>
           <Link
             href="/admin/seo"
-            className="text-sm font-medium text-slate-500 hover:text-slate-700"
+            className="text-sm font-medium text-white/50 hover:text-white/80"
           >
             Cancel
           </Link>

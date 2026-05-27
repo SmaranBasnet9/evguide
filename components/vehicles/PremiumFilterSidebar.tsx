@@ -1,4 +1,6 @@
-import { SlidersHorizontal, Battery, Car } from "lucide-react";
+"use client";
+
+import { Battery, Car, RotateCcw, SlidersHorizontal } from "lucide-react";
 import type { AllVehiclesFilters, PersonalizedVehicleCard } from "@/types";
 
 interface PremiumFilterSidebarProps {
@@ -7,112 +9,161 @@ interface PremiumFilterSidebarProps {
   vehicles: PersonalizedVehicleCard[];
 }
 
+const RANGE_OPTIONS = [
+  { label: "Any", value: 0 },
+  { label: "300+ km", value: 300 },
+  { label: "450+ km", value: 450 },
+];
+
+const BODY_TYPES = ["SUV", "Sedan", "Hatchback"];
+
 export default function PremiumFilterSidebar({ filters, onChange, vehicles }: PremiumFilterSidebarProps) {
+  const budgetVal = filters.budgetMax === Number.POSITIVE_INFINITY ? 100000 : (filters.budgetMax ?? 100000);
+  const hasActiveFilters =
+    filters.budgetMax !== Number.POSITIVE_INFINITY || (filters.rangeMin ?? 0) > 0 || !!filters.bodyType;
+
   return (
-    <div className="bg-white border border-[#E5E7EB] rounded-[2rem] p-6 shadow-sm flex flex-col gap-8 hidden lg:flex">
-      <div className="flex items-center gap-3 pb-6 border-b border-[#E5E7EB]">
-        <div className="w-10 h-10 rounded-xl bg-[#E8F8F5] border border-[#D1F2EB] flex items-center justify-center">
-          <SlidersHorizontal className="w-5 h-5 text-[#1FBF9F]" />
+    <div className="flex flex-col gap-7 rounded-[1.75rem] border border-gray-200 bg-white p-6 shadow-sm">
+
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-brand/25 bg-brand/10">
+            <SlidersHorizontal className="h-4 w-4 text-brand" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-gray-900">Filters</p>
+            <p className="text-[11px] text-gray-500">{vehicles.length} EVs</p>
+          </div>
         </div>
-        <div>
-          <h2 className="text-[#1A1A1A] font-bold text-lg">Filters</h2>
-          <p className="text-[#4B5563] text-xs">Refine your match across {vehicles.length} EVs</p>
-        </div>
+        {hasActiveFilters && (
+          <button
+            onClick={() => onChange({ ...filters, rangeMin: 0, budgetMax: Number.POSITIVE_INFINITY, bodyType: null })}
+            className="flex items-center gap-1.5 rounded-lg border border-gray-200 px-2.5 py-1.5 text-[11px] font-medium text-gray-400 transition hover:border-gray-300 hover:text-gray-900"
+          >
+            <RotateCcw className="h-3 w-3" />
+            Reset
+          </button>
+        )}
       </div>
 
-      {/* Budget Filter */}
+      <div className="h-px bg-gray-200" />
+
+      {/* Budget */}
       <div>
-        <label className="text-[#1A1A1A] font-semibold text-sm mb-4 block flex justify-between">
-          Max Budget
-          <span className="text-[#1FBF9F]">£{filters.budgetMax === Number.POSITIVE_INFINITY ? "100k+" : filters.budgetMax?.toLocaleString() ?? "Any"}</span>
-        </label>
+        <div className="mb-4 flex items-center justify-between">
+          <p className="text-sm font-semibold text-gray-900">Max Budget</p>
+          <span className="text-sm font-semibold text-brand">
+            {budgetVal >= 100000 ? "£100k+" : `£${(budgetVal / 1000).toFixed(0)}k`}
+          </span>
+        </div>
         <input
           type="range"
           min="20000"
           max="100000"
           step="5000"
-          value={filters.budgetMax === Number.POSITIVE_INFINITY ? 100000 : filters.budgetMax ?? 100000}
+          value={budgetVal}
           onChange={(e) => {
             const val = parseInt(e.target.value);
-            onChange({...filters, budgetMax: val >= 100000 ? Number.POSITIVE_INFINITY : val});
+            onChange({ ...filters, budgetMax: val >= 100000 ? Number.POSITIVE_INFINITY : val });
           }}
-          className="w-full accent-[#1FBF9F] bg-[#E5E7EB] rounded-lg appearance-none h-2 cursor-pointer"
+          className="w-full cursor-pointer accent-brand"
+          style={{
+            background: `linear-gradient(to right, #1FBF9F ${((budgetVal - 20000) / 80000) * 100}%, #e5e7eb ${((budgetVal - 20000) / 80000) * 100}%)`,
+            height: "4px",
+            borderRadius: "999px",
+            appearance: "none",
+          }}
         />
-        <div className="flex justify-between text-[#374151] text-xs mt-2 font-medium">
+        <div className="mt-2 flex justify-between text-[11px] text-gray-400">
           <span>£20k</span>
           <span>£100k+</span>
         </div>
       </div>
 
-      {/* Range Filter */}
+      <div className="h-px bg-gray-200" />
+
+      {/* Range */}
       <div>
-        <label className="text-[#1A1A1A] font-semibold text-sm mb-4 flex items-center gap-2">
-          <Battery className="w-4 h-4 text-[#6B7280]" />
-          Min Range (km)
-        </label>
+        <div className="mb-4 flex items-center gap-2">
+          <Battery className="h-4 w-4 text-gray-400" />
+          <p className="text-sm font-semibold text-gray-900">Min Range</p>
+        </div>
         <div className="grid grid-cols-3 gap-2">
-          {[0, 300, 450].map((val) => (
+          {RANGE_OPTIONS.map(({ label, value }) => (
             <button
-              key={val}
-              onClick={() => onChange({ ...filters, rangeMin: val })}
-              className={`py-2 text-xs font-semibold rounded-lg border transition-all ${
-                filters.rangeMin === val
-                  ? "bg-[#1FBF9F] text-white border-[#1FBF9F]"
-                  : "bg-[#E8F8F5] text-[#1FBF9F] border-[#D1F2EB] hover:bg-[#D1F2EB]"
+              key={value}
+              onClick={() => onChange({ ...filters, rangeMin: value })}
+              className={`rounded-xl py-2 text-xs font-semibold transition-all ${
+                filters.rangeMin === value
+                  ? "border border-brand/30 bg-brand/15 text-brand"
+                  : "border border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300 hover:text-gray-900"
               }`}
             >
-              {val === 0 ? "Any" : `${val}+`}
+              {label}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Body Type Filter */}
+      <div className="h-px bg-gray-200" />
+
+      {/* Body type */}
       <div>
-        <label className="text-[#1A1A1A] font-semibold text-sm mb-4 flex items-center gap-2">
-          <Car className="w-4 h-4 text-[#6B7280]" />
-          Body Type
-        </label>
-        <div className="space-y-2">
-          {["suv", "sedan", "hatchback"].map((type) => (
-            <label key={type} className="flex items-center gap-3 p-3 rounded-xl hover:bg-[#F8FAF9] cursor-pointer transition-colors border border-transparent hover:border-[#E5E7EB]">
-              <input
-                type="radio"
-                name="bodyType"
-                checked={filters.bodyType === type}
-                onChange={() => onChange({ ...filters, bodyType: type === filters.bodyType ? null : type })}
-                className="accent-[#1FBF9F] w-4 h-4"
-              />
-              <span className="text-sm text-[#1A1A1A] capitalize">{type}</span>
-            </label>
-          ))}
+        <div className="mb-4 flex items-center gap-2">
+          <Car className="h-4 w-4 text-gray-400" />
+          <p className="text-sm font-semibold text-gray-900">Body Type</p>
+        </div>
+        <div className="space-y-1.5">
+          {BODY_TYPES.map((type) => {
+            const val = type.toLowerCase();
+            const active = filters.bodyType === val;
+            return (
+              <button
+                key={type}
+                onClick={() => onChange({ ...filters, bodyType: active ? null : val })}
+                className={`flex w-full items-center justify-between rounded-xl border px-4 py-2.5 text-sm transition-all ${
+                  active
+                    ? "border-brand/30 bg-brand/10 text-brand"
+                    : "border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300 hover:bg-gray-100 hover:text-gray-900"
+                }`}
+              >
+                {type}
+                {active && (
+                  <span className="flex h-4 w-4 items-center justify-center rounded-full bg-brand text-[9px] font-bold text-white">
+                    ✓
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </div>
       </div>
 
-      {/* Quick Toggles */}
-      <div className="pt-6 border-t border-[#E5E7EB] space-y-4">
-        <label className="flex items-center justify-between cursor-pointer group">
-          <span className="text-sm text-[#1A1A1A] font-medium group-hover:text-[#1FBF9F] transition-colors">Fast Charging Included</span>
-          <div className="relative">
-            <input type="checkbox" className="sr-only peer" />
-            <div className="w-10 h-5 bg-[#E5E7EB] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#1FBF9F]"></div>
-          </div>
-        </label>
-        <label className="flex items-center justify-between cursor-pointer group">
-          <span className="text-sm text-[#1A1A1A] font-medium group-hover:text-[#1FBF9F] transition-colors">Eligible for Tax Credit</span>
-          <div className="relative">
-            <input type="checkbox" className="sr-only peer" />
-            <div className="w-10 h-5 bg-[#E5E7EB] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#1FBF9F]"></div>
-          </div>
-        </label>
-      </div>
+      <div className="h-px bg-gray-200" />
 
-      <button
-        onClick={() => onChange({...filters, rangeMin: 0, budgetMax: Number.POSITIVE_INFINITY, bodyType: null})}
-        className="w-full py-3 mt-4 text-sm font-bold text-[#6B7280] bg-[#F8FAF9] hover:bg-[#E8F8F5] hover:text-[#1FBF9F] rounded-xl transition-colors border border-[#E5E7EB]"
-      >
-        Reset Filters
-      </button>
+      {/* Quick toggles */}
+      <div className="space-y-4">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-400">Quick filters</p>
+        {[
+          { label: "Fast Charging", sub: "50+ kW DC" },
+          { label: "V2G Capable", sub: "Vehicle-to-grid" },
+        ].map(({ label, sub }) => (
+          <div key={label} className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-700">{label}</p>
+              <p className="text-[11px] text-gray-400">{sub}</p>
+            </div>
+            <button
+              type="button"
+              className="relative h-6 w-11 rounded-full border border-gray-200 bg-gray-100 transition-colors"
+              aria-label={label}
+            >
+              <span className="absolute left-1 top-1 h-4 w-4 rounded-full bg-gray-400 transition-transform" />
+            </button>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

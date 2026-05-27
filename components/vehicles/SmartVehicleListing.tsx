@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -74,7 +74,7 @@ function VehicleCard({ vehicle }: { vehicle: PersonalizedVehicleCard }) {
   }
 
   return (
-    <article className="group overflow-hidden rounded-[28px] border border-[#E5E7EB] bg-white shadow-sm transition duration-300 hover:-translate-y-1.5 hover:border-[#1FBF9F]/40 hover:shadow-lg">
+    <article className="group overflow-hidden rounded-[28px] border border-[#E5E7EB] bg-white shadow-sm transition duration-300 hover:-translate-y-1.5 hover:border-brand/40 hover:shadow-lg">
       <Link href={`/cars/${vehicle.id}`} onClick={handleVehicleView} className="block">
         <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200">
           <Image
@@ -98,7 +98,7 @@ function VehicleCard({ vehicle }: { vehicle: PersonalizedVehicleCard }) {
 
       <div className="space-y-4 p-5">
         <div className="space-y-1">
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#1FBF9F]">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand">
             {vehicle.brand}
           </p>
           <div className="flex items-start justify-between gap-3">
@@ -107,7 +107,7 @@ function VehicleCard({ vehicle }: { vehicle: PersonalizedVehicleCard }) {
               GBP {vehicle.price.toLocaleString()}
             </p>
           </div>
-          <p className="inline-flex rounded-full bg-[#E8F8F5] px-3 py-1 text-xs font-semibold text-[#1FBF9F]">
+          <p className="inline-flex rounded-full bg-[#E8F8F5] px-3 py-1 text-xs font-semibold text-brand">
             {vehicle.whyRecommended}
           </p>
         </div>
@@ -147,7 +147,7 @@ function VehicleCard({ vehicle }: { vehicle: PersonalizedVehicleCard }) {
         <Link
           href={`/finance?car=${vehicle.id}`}
           onClick={handleEmiClick}
-          className="block rounded-2xl bg-[#1FBF9F] px-4 py-3 text-center text-sm font-semibold text-white shadow-md transition hover:bg-[#17A589]"
+          className="block rounded-2xl bg-brand px-4 py-3 text-center text-sm font-semibold text-white shadow-md transition hover:bg-brand-hover"
         >
           Check EMI
         </Link>
@@ -262,7 +262,7 @@ export default function SmartVehicleListing({
       <div className="overflow-hidden rounded-[32px] border border-[#E5E7EB] bg-white shadow-sm">
         <div className="grid gap-4 border-b border-[#E5E7EB] bg-gradient-to-r from-white via-[#F8FAF9] to-[#E8F8F5] px-6 py-6 lg:grid-cols-[1.2fr_repeat(4,minmax(0,1fr))]">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#1FBF9F]">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand">
               Smart Listing Mode
             </p>
             <h2 className="mt-2 text-2xl font-bold text-[#1A1A1A]">

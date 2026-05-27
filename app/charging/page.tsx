@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import PremiumNavbar from "@/components/home/PremiumNavbar";
 import PremiumFooter from "@/components/home/PremiumFooter";
 import ChargingClient from "@/components/charging/ChargingClient";
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function ChargingPage() {
   return (
-    <main className="min-h-screen bg-[#F8FAF9] font-sans text-[#1A1A1A]">
+    <main className="min-h-screen bg-white font-sans text-gray-900">
       <PremiumNavbar />
       <ChargingClient />
       <PremiumFooter />

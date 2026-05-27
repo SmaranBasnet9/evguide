@@ -37,8 +37,8 @@ export default function StepPreferences({ state, onChange }: Props) {
   return (
     <div className="space-y-6">
       {/* Body type */}
-      <div className="rounded-[1.5rem] border border-[#E5E7EB] bg-white p-5 space-y-3">
-        <p className="text-sm font-semibold text-[#1A1A1A]">Preferred body style</p>
+      <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 space-y-3">
+        <p className="text-sm font-semibold text-white">Preferred body style</p>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
           {BODY_TYPES.map((bt) => (
             <button
@@ -47,11 +47,11 @@ export default function StepPreferences({ state, onChange }: Props) {
               onClick={() =>
                 onChange({ body_type_preference: bt.value === "any" ? null : bt.value })
               }
-              className={`rounded-[1rem] border px-3 py-2.5 text-sm font-medium transition-all ${
+              className={`rounded-2xl border px-3 py-2.5 text-sm font-medium transition-all ${
                 (bt.value === "any" && !state.body_type_preference) ||
                 state.body_type_preference === bt.value
-                  ? "border-[#1FBF9F] bg-[#E8F8F5] text-[#1FBF9F]"
-                  : "border-[#E5E7EB] bg-white text-[#374151] hover:border-[#1FBF9F]/40"
+                  ? "border-brand bg-brand/15 text-brand"
+                  : "border-white/10 bg-white/[0.04] text-white/70 hover:border-brand/40 hover:text-white"
               }`}
             >
               {bt.label}
@@ -61,10 +61,10 @@ export default function StepPreferences({ state, onChange }: Props) {
       </div>
 
       {/* Brand preference */}
-      <div className="rounded-[1.5rem] border border-[#E5E7EB] bg-white p-5 space-y-3">
+      <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 space-y-3">
         <div>
-          <p className="text-sm font-semibold text-[#1A1A1A]">Brand preference</p>
-          <p className="mt-1 text-xs leading-5 text-[#6B7280]">
+          <p className="text-sm font-semibold text-white">Brand preference</p>
+          <p className="mt-1 text-xs leading-5 text-white/40">
             Select any brands you&apos;d particularly like or exclude. Leave empty for no preference.
           </p>
         </div>
@@ -78,8 +78,8 @@ export default function StepPreferences({ state, onChange }: Props) {
                 onClick={() => toggleBrand(brand)}
                 className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
                   selected
-                    ? "border-[#1FBF9F] bg-[#E8F8F5] text-[#1FBF9F]"
-                    : "border-[#E5E7EB] bg-white text-[#374151] hover:border-[#1FBF9F]/40"
+                    ? "border-brand bg-brand/15 text-brand"
+                    : "border-white/10 bg-white/[0.04] text-white/60 hover:border-brand/40 hover:text-white"
                 }`}
               >
                 {brand}
@@ -90,8 +90,8 @@ export default function StepPreferences({ state, onChange }: Props) {
       </div>
 
       {/* Range priority */}
-      <div className="rounded-[1.5rem] border border-[#E5E7EB] bg-white p-5 space-y-3">
-        <p className="text-sm font-semibold text-[#1A1A1A]">
+      <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 space-y-3">
+        <p className="text-sm font-semibold text-white">
           How important is long range to you?
         </p>
         <div className="grid grid-cols-3 gap-2">
@@ -100,10 +100,10 @@ export default function StepPreferences({ state, onChange }: Props) {
               key={level.value}
               type="button"
               onClick={() => onChange({ range_priority: level.value })}
-              className={`rounded-[1rem] border px-3 py-2.5 text-sm font-medium transition-all ${
+              className={`rounded-2xl border px-3 py-2.5 text-sm font-medium transition-all ${
                 state.range_priority === level.value
-                  ? "border-[#1FBF9F] bg-[#E8F8F5] text-[#1FBF9F]"
-                  : "border-[#E5E7EB] bg-white text-[#374151] hover:border-[#1FBF9F]/40"
+                  ? "border-brand bg-brand/15 text-brand"
+                  : "border-white/10 bg-white/[0.04] text-white/70 hover:border-brand/40 hover:text-white"
               }`}
             >
               {level.label}
@@ -113,8 +113,8 @@ export default function StepPreferences({ state, onChange }: Props) {
       </div>
 
       {/* Performance priority */}
-      <div className="rounded-[1.5rem] border border-[#E5E7EB] bg-white p-5 space-y-3">
-        <p className="text-sm font-semibold text-[#1A1A1A]">
+      <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 space-y-3">
+        <p className="text-sm font-semibold text-white">
           How important is performance?
         </p>
         <div className="grid grid-cols-3 gap-2">
@@ -123,10 +123,10 @@ export default function StepPreferences({ state, onChange }: Props) {
               key={level.value}
               type="button"
               onClick={() => onChange({ performance_priority: level.value as PerformancePriority })}
-              className={`rounded-[1rem] border px-3 py-2.5 text-sm font-medium transition-all ${
+              className={`rounded-2xl border px-3 py-2.5 text-sm font-medium transition-all ${
                 state.performance_priority === level.value
-                  ? "border-[#1FBF9F] bg-[#E8F8F5] text-[#1FBF9F]"
-                  : "border-[#E5E7EB] bg-white text-[#374151] hover:border-[#1FBF9F]/40"
+                  ? "border-brand bg-brand/15 text-brand"
+                  : "border-white/10 bg-white/[0.04] text-white/70 hover:border-brand/40 hover:text-white"
               }`}
             >
               {level.label}
@@ -136,10 +136,10 @@ export default function StepPreferences({ state, onChange }: Props) {
       </div>
 
       {/* Notes */}
-      <div className="rounded-[1.5rem] border border-[#E5E7EB] bg-white p-5 space-y-3">
+      <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 space-y-3">
         <div>
-          <p className="text-sm font-semibold text-[#1A1A1A]">Anything else?</p>
-          <p className="mt-1 text-xs leading-5 text-[#6B7280]">
+          <p className="text-sm font-semibold text-white">Anything else?</p>
+          <p className="mt-1 text-xs leading-5 text-white/40">
             Any specific needs, concerns, or things you&apos;d like us to keep in mind.
           </p>
         </div>
@@ -148,7 +148,7 @@ export default function StepPreferences({ state, onChange }: Props) {
           onChange={(e) => onChange({ notes: e.target.value })}
           placeholder="e.g. I need a tow bar, or I&apos;m interested in salary sacrifice..."
           rows={3}
-          className="w-full resize-none rounded-[1rem] border border-[#E5E7EB] bg-[#F8FAF9] px-4 py-3 text-sm text-[#1A1A1A] outline-none transition-all placeholder:text-[#9CA3AF] focus:border-[#1FBF9F] focus:ring-2 focus:ring-[#1FBF9F]/20"
+          className="w-full resize-none rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 text-sm text-white outline-none transition-all placeholder:text-white/30 focus:border-brand focus:ring-2 focus:ring-brand/20"
         />
       </div>
     </div>

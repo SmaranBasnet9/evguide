@@ -9,35 +9,20 @@ export const metadata = {
   description: "Platform lead scores, pipeline stages, and scoring intelligence.",
 };
 
-// Revalidate every 60 seconds so scores stay reasonably fresh
 export const revalidate = 60;
-
-function StatCard({
-  label,
-  value,
-  sub,
-  accent = "border-slate-200",
-}: {
-  label: string;
-  value: number;
-  sub?: string;
-  accent?: string;
-}) {
-  return (
-    <div className={`rounded-2xl border bg-white p-5 shadow-sm ${accent}`}>
-      <p className="text-sm font-medium text-slate-500">{label}</p>
-      <p className="mt-1 text-3xl font-extrabold text-slate-900">{value}</p>
-      {sub && <p className="mt-1 text-xs text-slate-400">{sub}</p>}
-    </div>
-  );
-}
 
 export default async function PlatformLeadsPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/admin-login");
-  const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
-  if (profile?.role !== "admin") redirect("/");
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+  const role = profile?.role as string | undefined;
+  if (role !== "admin" && role !== "super_admin") redirect("/");
 
   const leads = await getPipelineLeads();
 
@@ -47,12 +32,21 @@ export default async function PlatformLeadsPage() {
   const withConsult  = leads.filter((l) => l.consultation_id).length;
   const withFinance  = leads.filter((l) => l.finance_request_id).length;
 
+  const stats = [
+    { label: "Total Leads",      value: leads.length, sub: "Scored sessions",      color: "border-white/10  bg-white/[0.04]    text-white" },
+    { label: "Finance Ready",    value: financeReady,  sub: "Score >= 75 · Act now", color: "border-emerald-500/20 bg-emerald-500/10 text-emerald-400" },
+    { label: "Hot",              value: hot,           sub: "Score 50–74",          color: "border-orange-500/20  bg-orange-500/10  text-orange-400" },
+    { label: "Warm",             value: warm,          sub: "Score 25–49",          color: "border-amber-500/20   bg-amber-500/10   text-amber-400" },
+    { label: "With Consult.",    value: withConsult,   sub: "Completed wizard",     color: "border-blue-500/20    bg-blue-500/10    text-blue-400" },
+    { label: "Finance Requests", value: withFinance,   sub: "Submitted forms",      color: "border-violet-500/20  bg-violet-500/10  text-violet-400" },
+  ];
+
   return (
-    <div className="space-y-8">
+    <div className="mx-auto max-w-7xl space-y-8">
       <div>
-        <p className="text-sm font-semibold text-blue-600">Lead Intelligence</p>
-        <h1 className="mt-1 text-3xl font-extrabold text-slate-900">Lead Pipeline</h1>
-        <p className="mt-2 text-slate-500">
+        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-brand">Lead Intelligence</p>
+        <h1 className="mt-1 text-3xl font-bold text-white">Lead Pipeline</h1>
+        <p className="mt-2 text-sm text-white/50">
           Platform-scored leads ranked by buying intent. Scores are computed from
           consultation, finance, comparison, and browsing behaviour.
         </p>
@@ -60,18 +54,19 @@ export default async function PlatformLeadsPage() {
 
       {/* Stats */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-        <StatCard label="Total Leads"     value={leads.length}  sub="Scored sessions"       accent="border-slate-200" />
-        <StatCard label="Finance Ready"   value={financeReady}  sub="Score ≥ 75 · Act now"  accent="border-emerald-200" />
-        <StatCard label="Hot"             value={hot}           sub="Score 50–74"            accent="border-orange-200" />
-        <StatCard label="Warm"            value={warm}          sub="Score 25–49"            accent="border-amber-200" />
-        <StatCard label="With Consult."   value={withConsult}   sub="Completed wizard"       accent="border-blue-200" />
-        <StatCard label="Finance Requests" value={withFinance}  sub="Submitted forms"        accent="border-purple-200" />
+        {stats.map(({ label, value, sub, color }) => (
+          <div key={label} className={`rounded-2xl border p-5 backdrop-blur-sm ${color}`}>
+            <p className="text-xs font-medium text-white/50">{label}</p>
+            <p className="mt-1 text-3xl font-extrabold">{value}</p>
+            {sub && <p className="mt-1 text-xs text-white/30">{sub}</p>}
+          </div>
+        ))}
       </div>
 
-      {/* Top 3 finance-ready leads quick summary */}
+      {/* Finance-ready highlight strip */}
       {financeReady > 0 && (
         <div>
-          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-slate-400">
+          <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-white/40">
             Finance-ready leads — act now
           </h2>
           <div className="grid gap-3 sm:grid-cols-3">
@@ -81,26 +76,26 @@ export default async function PlatformLeadsPage() {
               .map((lead) => (
                 <div
                   key={lead.id}
-                  className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4"
+                  className="rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.07] p-4 backdrop-blur-sm"
                 >
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <p className="font-semibold text-slate-900">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="truncate font-semibold text-white">
                         {lead.full_name ?? lead.display_id}
                       </p>
                       {lead.email && (
-                        <p className="text-xs text-slate-500">{lead.email}</p>
+                        <p className="truncate text-xs text-white/40">{lead.email}</p>
                       )}
                     </div>
                     <LeadScoreBadge score={lead.score} category={lead.category} size="sm" />
                   </div>
                   {lead.top_recommended_vehicle && (
-                    <p className="mt-2 text-sm text-slate-600">
-                      Top match: <span className="font-medium">{lead.top_recommended_vehicle}</span>
+                    <p className="mt-2 text-sm text-white/70">
+                      Top match: <span className="font-medium text-white">{lead.top_recommended_vehicle}</span>
                     </p>
                   )}
                   {lead.consultation_budget_max && (
-                    <p className="text-xs text-slate-500 mt-1">
+                    <p className="mt-1 text-xs text-white/40">
                       Budget: £{lead.consultation_budget_max.toLocaleString()}
                     </p>
                   )}
@@ -110,8 +105,9 @@ export default async function PlatformLeadsPage() {
         </div>
       )}
 
+      {/* Lead table */}
       {leads.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-slate-200 py-20 text-center text-slate-400">
+        <div className="rounded-2xl border border-dashed border-white/10 py-20 text-center text-white/30">
           <p className="text-sm">No scored leads yet.</p>
           <p className="mt-1 text-xs">
             Scores are written when users complete the consultation or trigger major events.

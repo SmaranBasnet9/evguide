@@ -34,8 +34,8 @@ export default async function PipelineBoardPage() {
     <div className="space-y-6">
       <div>
         <p className="text-sm font-semibold text-blue-600">CRM</p>
-        <h1 className="mt-1 text-3xl font-extrabold text-slate-900">Pipeline Board</h1>
-        <p className="mt-2 text-slate-500">
+        <h1 className="mt-1 text-3xl font-extrabold text-white">Pipeline Board</h1>
+        <p className="mt-2 text-white/50">
           {leads.length} leads across {PIPELINE_STAGES.length} stages. Stages are auto-suggested
           from score — promote manually as you progress each lead.
         </p>
@@ -50,35 +50,35 @@ export default async function PipelineBoardPage() {
           return (
             <div
               key={stage}
-              className="min-w-[260px] flex-shrink-0 rounded-2xl border border-slate-200 bg-slate-50"
+              className="min-w-[260px] flex-shrink-0 rounded-2xl border border-white/10 bg-white/[0.03]"
             >
               {/* Column header */}
-              <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
+              <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
                 <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${stageScore}`}>
                   {STAGE_LABELS[stage]}
                 </span>
-                <span className="text-xs font-bold text-slate-500">{stageLeads.length}</span>
+                <span className="text-xs font-bold text-white/50">{stageLeads.length}</span>
               </div>
 
               {/* Cards */}
               <div className="flex flex-col gap-3 p-3">
                 {stageLeads.length === 0 && (
-                  <p className="py-8 text-center text-xs text-slate-300">No leads</p>
+                  <p className="py-8 text-center text-xs text-white/30">No leads</p>
                 )}
 
                 {stageLeads.map((lead) => (
                   <div
                     key={lead.id}
-                    className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm"
+                    className="rounded-xl border border-white/10 bg-white/[0.03] p-3 shadow-sm"
                   >
                     {/* Identity */}
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
-                        <p className="truncate text-sm font-semibold text-slate-900">
+                        <p className="truncate text-sm font-semibold text-white">
                           {lead.full_name ?? lead.display_id}
                         </p>
                         {lead.email && (
-                          <p className="truncate text-xs text-slate-400">{lead.email}</p>
+                          <p className="truncate text-xs text-white/40">{lead.email}</p>
                         )}
                       </div>
                       <LeadScoreBadge
@@ -90,7 +90,7 @@ export default async function PipelineBoardPage() {
 
                     {/* Top vehicle */}
                     {lead.top_recommended_vehicle && (
-                      <p className="mt-2 text-xs text-slate-600">
+                      <p className="mt-2 text-xs text-white/60">
                         <span className="font-medium">Match: </span>
                         {lead.top_recommended_vehicle}
                         {lead.recommendation_score
@@ -101,7 +101,7 @@ export default async function PipelineBoardPage() {
 
                     {/* Budget */}
                     {lead.consultation_budget_max && (
-                      <p className="mt-1 text-xs text-slate-500">
+                      <p className="mt-1 text-xs text-white/50">
                         Budget: £{lead.consultation_budget_max.toLocaleString()}
                       </p>
                     )}
@@ -122,7 +122,7 @@ export default async function PipelineBoardPage() {
                       >
                         {lead.priority}
                       </span>
-                      <span className="text-[10px] text-slate-400">
+                      <span className="text-[10px] text-white/40">
                         {new Date(lead.created_at).toLocaleDateString("en-GB", {
                           day: "numeric",
                           month: "short",
@@ -132,7 +132,7 @@ export default async function PipelineBoardPage() {
 
                     {/* Assigned to */}
                     {lead.assigned_to && (
-                      <p className="mt-1 text-[10px] text-slate-400">
+                      <p className="mt-1 text-[10px] text-white/40">
                         Assigned: {lead.assigned_to}
                       </p>
                     )}
@@ -144,7 +144,7 @@ export default async function PipelineBoardPage() {
         })}
       </div>
 
-      <p className="text-xs text-slate-400">
+      <p className="text-xs text-white/40">
         Pipeline stages are suggested automatically from lead score. Update them from the{" "}
         <a href="/admin/leads" className="text-blue-600 hover:underline">
           Lead Pipeline table

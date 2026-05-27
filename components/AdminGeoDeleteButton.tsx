@@ -13,7 +13,7 @@ export default function AdminGeoDeleteButton({ id }: Props) {
   if (confirming) {
     return (
       <div className="flex items-center gap-2">
-        <span className="text-xs text-slate-500">Delete?</span>
+        <span className="text-xs text-white/50">Delete?</span>
         <form action={deleteGeoRegionAction.bind(null, id)}>
           <button
             type="submit"
@@ -25,7 +25,7 @@ export default function AdminGeoDeleteButton({ id }: Props) {
         <button
           type="button"
           onClick={() => setConfirming(false)}
-          className="text-xs font-semibold text-slate-500 hover:text-slate-700"
+          className="text-xs font-semibold text-white/50 hover:text-white/80"
         >
           No
         </button>

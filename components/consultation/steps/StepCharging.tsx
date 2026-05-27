@@ -33,13 +33,13 @@ export default function StepCharging({ state, onChange }: Props) {
   return (
     <div className="space-y-6">
       {/* Home charging */}
-      <div className="rounded-[1.5rem] border border-[#E5E7EB] bg-white p-5 space-y-3">
+      <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 space-y-3">
         <div>
           <div className="flex items-center gap-2">
-            <Home className="h-4 w-4 text-[#1FBF9F]" />
-            <p className="text-sm font-semibold text-[#1A1A1A]">Do you have home charging?</p>
+            <Home className="h-4 w-4 text-brand" />
+            <p className="text-sm font-semibold text-white">Do you have home charging?</p>
           </div>
-          <p className="mt-1 text-xs leading-5 text-[#6B7280]">
+          <p className="mt-1 text-xs leading-5 text-white/40">
             A home charger or driveway socket makes EV ownership significantly simpler.
           </p>
         </div>
@@ -58,15 +58,15 @@ export default function StepCharging({ state, onChange }: Props) {
       </div>
 
       {/* Public charging */}
-      <div className="rounded-[1.5rem] border border-[#E5E7EB] bg-white p-5 space-y-3">
+      <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 space-y-3">
         <div>
           <div className="flex items-center gap-2">
-            <MapPin className="h-4 w-4 text-[#1FBF9F]" />
-            <p className="text-sm font-semibold text-[#1A1A1A]">
+            <MapPin className="h-4 w-4 text-brand" />
+            <p className="text-sm font-semibold text-white">
               Are you comfortable using public chargers?
             </p>
           </div>
-          <p className="mt-1 text-xs leading-5 text-[#6B7280]">
+          <p className="mt-1 text-xs leading-5 text-white/40">
             Good to know if you&apos;ll be relying on rapid chargers away from home.
           </p>
         </div>
@@ -85,11 +85,11 @@ export default function StepCharging({ state, onChange }: Props) {
       </div>
 
       {/* Charging speed importance */}
-      <div className="rounded-[1.5rem] border border-[#E5E7EB] bg-white p-5 space-y-3">
+      <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 space-y-3">
         <div>
           <div className="flex items-center gap-2">
-            <Zap className="h-4 w-4 text-[#1FBF9F]" />
-            <p className="text-sm font-semibold text-[#1A1A1A]">
+            <Zap className="h-4 w-4 text-brand" />
+            <p className="text-sm font-semibold text-white">
               How important is fast charging speed?
             </p>
           </div>

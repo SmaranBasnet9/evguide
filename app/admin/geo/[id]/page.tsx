@@ -19,8 +19,8 @@ export default async function AdminGeoEditPage({ params }: Props) {
   return (
     <div className="mx-auto max-w-2xl">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900">Edit GEO Region</h1>
-        <p className="mt-1 font-mono text-sm text-slate-500">{region.name}</p>
+        <h1 className="text-3xl font-bold text-white">Edit GEO Region</h1>
+        <p className="mt-1 font-mono text-sm text-white/50">{region.name}</p>
       </div>
 
       <form action={action} className="space-y-6">
@@ -34,7 +34,7 @@ export default async function AdminGeoEditPage({ params }: Props) {
           </button>
           <Link
             href="/admin/geo"
-            className="text-sm font-medium text-slate-500 hover:text-slate-700"
+            className="text-sm font-medium text-white/50 hover:text-white/80"
           >
             Cancel
           </Link>

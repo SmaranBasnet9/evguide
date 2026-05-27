@@ -1,44 +1,23 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
+import { requireAdmin } from "@/lib/security/admin";
 
 const UUID_REGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const EMAIL_REGEX = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
-async function ensureAdmin() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-
-  if (error || !user) {
-    return {
-      ok: false as const,
-      response: NextResponse.json({ error: "Unauthorized" }, { status: 401 }),
-    };
-  }
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .single();
-
-  if (profile?.role !== "admin") {
-    return {
-      ok: false as const,
-      response: NextResponse.json({ error: "Forbidden" }, { status: 403 }),
-    };
-  }
-
-  return { ok: true as const, adminUserId: user.id };
+function escapeHtml(value: unknown): string {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#x27;");
 }
 
 export async function POST(request: Request) {
-  const auth = await ensureAdmin();
+  const auth = await requireAdmin();
   if (!auth.ok) return auth.response;
 
   let body: Record<string, unknown>;
@@ -96,20 +75,20 @@ export async function POST(request: Request) {
     from: fromAddress,
     to: toEmail,
     replyTo: booking.email,
-    subject: `EV Guide Lead - MG Test Drive Request - ${booking.full_name}`,
+    subject: `EV Guide Lead - MG Test Drive Request - ${escapeHtml(booking.full_name)}`,
     html: `
       <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #1e293b;">
         <h2 style="margin-bottom: 12px;">MG Test Drive Lead</h2>
         <p>EV Guide is forwarding a customer who requested a test drive for an MG vehicle.</p>
         <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 16px 0;" />
-        <p><strong>Vehicle:</strong> ${vehicleLabel}</p>
-        <p><strong>Customer Name:</strong> ${booking.full_name}</p>
-        <p><strong>Customer Email:</strong> ${booking.email}</p>
-        <p><strong>Preferred Date:</strong> ${booking.preferred_date}</p>
-        <p><strong>Preferred Time:</strong> ${booking.preferred_time_slot}</p>
-        <p><strong>Preferred Location:</strong> ${booking.preferred_location}</p>
-        <p><strong>Submitted At:</strong> ${submittedAtText}</p>
-        <p><strong>Reference ID:</strong> ${booking.id}</p>
+        <p><strong>Vehicle:</strong> ${escapeHtml(vehicleLabel)}</p>
+        <p><strong>Customer Name:</strong> ${escapeHtml(booking.full_name)}</p>
+        <p><strong>Customer Email:</strong> ${escapeHtml(booking.email)}</p>
+        <p><strong>Preferred Date:</strong> ${escapeHtml(booking.preferred_date)}</p>
+        <p><strong>Preferred Time:</strong> ${escapeHtml(booking.preferred_time_slot)}</p>
+        <p><strong>Preferred Location:</strong> ${escapeHtml(booking.preferred_location)}</p>
+        <p><strong>Submitted At:</strong> ${escapeHtml(submittedAtText)}</p>
+        <p><strong>Reference ID:</strong> ${escapeHtml(booking.id)}</p>
         <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 16px 0;" />
         <p style="font-size: 12px; color: #64748b;">Forwarded by EV Guide Admin CRM.</p>
       </div>

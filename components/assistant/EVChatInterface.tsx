@@ -1,6 +1,7 @@
-"use client";
+﻿"use client";
 
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -31,6 +32,7 @@ import type { EVModel } from "@/types";
 type MessageRole = "user" | "bot";
 
 interface ChatMessage {
+  id: string;                  // unique id for typewriter tracking
   role: MessageRole;
   text: string;
   chips?: string[];            // clickable option chips
@@ -68,6 +70,9 @@ const BRAND_COLORS: Record<string, string> = {
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
+let _msgCounter = 0;
+function msgId(): string { return `msg_${++_msgCounter}_${Date.now()}`; }
+
 function monthlyEmi(price: number) {
   const loan = price * 0.9;
   const r = 0.085 / 12;
@@ -88,6 +93,7 @@ function buildQuestionMessage(stepIndex: number): ChatMessage {
   const q = matchQuestions[stepIndex]!;
   if (q.type === "text") {
     return {
+      id: msgId(),
       role: "bot",
       text: `${q.title}\n${q.description}`,
       chips: ["Skip"],
@@ -95,6 +101,7 @@ function buildQuestionMessage(stepIndex: number): ChatMessage {
     };
   }
   return {
+    id: msgId(),
     role: "bot",
     text: `${q.title}\n${q.description}`,
     chips:      q.options!.map((o) => o.title),
@@ -104,11 +111,50 @@ function buildQuestionMessage(stepIndex: number): ChatMessage {
 
 /** Opening greeting */
 const GREETING: ChatMessage = {
+  id: "greeting",
   role: "bot",
   text: "Hi! I'm EV Guide AI.\n\nI'll ask you a few quick questions to find your perfect electric vehicle — just pick an option or type your answer.",
 };
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
+
+function TypewriterText({ text, active }: { text: string; active: boolean }) {
+  const [displayed, setDisplayed] = React.useState(active ? "" : text);
+  React.useEffect(() => {
+    if (!active) { setDisplayed(text); return; }
+    setDisplayed("");
+    let i = 0;
+    const interval = setInterval(() => {
+      i++;
+      setDisplayed(text.slice(0, i));
+      if (i >= text.length) clearInterval(interval);
+    }, 18);
+    return () => clearInterval(interval);
+  }, [text, active]);
+  return <span>{displayed}</span>;
+}
+
+function TypingIndicator() {
+  return (
+    <div className="flex items-end gap-2">
+      <div className="h-7 w-7 rounded-full bg-brand/20 flex items-center justify-center shrink-0">
+        <span className="text-[10px] font-bold text-brand">AI</span>
+      </div>
+      <div className="rounded-2xl rounded-bl-sm bg-white border border-[#E5E7EB] shadow-sm px-4 py-3">
+        <div className="flex gap-1 items-center h-4">
+          {[0, 1, 2].map((i) => (
+            <motion.div
+              key={i}
+              className="h-1.5 w-1.5 rounded-full bg-[#9CA3AF]"
+              animate={{ y: [0, -4, 0] }}
+              transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.15 }}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function CarCard({ result }: { result: MatchResult }) {
   const { model, matchScore, monthlyCost } = result;
@@ -172,13 +218,13 @@ function CarCard({ result }: { result: MatchResult }) {
         <div className="mt-auto flex gap-2">
           <Link
             href={`/cars/${model.id}`}
-            className="flex-1 rounded-xl border border-[#E5E7EB] py-2 text-center text-xs font-semibold text-[#374151] transition hover:border-[#1FBF9F] hover:text-[#1FBF9F]"
+            className="flex-1 rounded-xl border border-[#E5E7EB] py-2 text-center text-xs font-semibold text-[#374151] transition hover:border-brand hover:text-brand"
           >
             View Details
           </Link>
           <Link
             href={`/compare?carA=${model.id}`}
-            className="flex-1 rounded-xl bg-[#1FBF9F] py-2 text-center text-xs font-semibold text-white transition hover:bg-[#17A589]"
+            className="flex-1 rounded-xl bg-brand py-2 text-center text-xs font-semibold text-white transition hover:bg-brand-hover"
           >
             Compare
           </Link>
@@ -187,7 +233,7 @@ function CarCard({ result }: { result: MatchResult }) {
         <button
           type="button"
           onClick={() => window.dispatchEvent(new CustomEvent("open-test-drive", { detail: { carId: model.id } }))}
-          className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-[#D1D5DB] py-1.5 text-xs font-medium text-[#6B7280] transition hover:border-[#1FBF9F] hover:text-[#1FBF9F]"
+          className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-[#D1D5DB] py-1.5 text-xs font-medium text-[#6B7280] transition hover:border-brand hover:text-brand"
         >
           <Calendar className="h-3.5 w-3.5" />
           Book Test Drive
@@ -239,8 +285,8 @@ function LeadModal({ onClose }: { onClose: () => void }) {
             <div className="flex items-start justify-between border-b border-[#F3F4F6] px-6 py-5">
               <div>
                 <div className="flex items-center gap-2">
-                  <Sparkles className="h-4 w-4 text-[#1FBF9F]" />
-                  <p className="text-xs font-bold uppercase tracking-widest text-[#1FBF9F]">Exclusive Offer</p>
+                  <Sparkles className="h-4 w-4 text-brand" />
+                  <p className="text-xs font-bold uppercase tracking-widest text-brand">Exclusive Offer</p>
                 </div>
                 <h2 className="mt-1 text-xl font-bold">Get a personalised deal</h2>
                 <p className="mt-1 text-sm text-[#6B7280]">Based on your answers, we&apos;ll match you with the best available price.</p>
@@ -259,7 +305,7 @@ function LeadModal({ onClose }: { onClose: () => void }) {
                     value={form[f]}
                     onChange={(e) => setForm((p) => ({ ...p, [f]: e.target.value }))}
                     placeholder={f === "name" ? "Jane Smith" : f === "email" ? "jane@email.com" : "+44 7700 000000"}
-                    className="w-full rounded-xl border border-[#E5E7EB] px-4 py-3 text-sm outline-none focus:border-[#1FBF9F] focus:ring-2 focus:ring-[#D1F2EB]"
+                    className="w-full rounded-xl border border-[#E5E7EB] px-4 py-3 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-[#D1F2EB]"
                   />
                 </div>
               ))}
@@ -267,7 +313,7 @@ function LeadModal({ onClose }: { onClose: () => void }) {
               <button
                 type="submit"
                 disabled={submitting}
-                className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#1FBF9F] py-3.5 text-sm font-bold text-white transition hover:bg-[#17A589] disabled:opacity-60"
+                className="flex w-full items-center justify-center gap-2 rounded-2xl bg-brand py-3.5 text-sm font-bold text-white transition hover:bg-brand-hover disabled:opacity-60"
               >
                 {submitting ? "Sending…" : "Get My Offer"}
                 <ArrowRight className="h-4 w-4" />
@@ -287,15 +333,32 @@ interface EVChatInterfaceProps {
 }
 
 export default function EVChatInterface({ navOffset = 73 }: EVChatInterfaceProps) {
-  const [phase, setPhase]         = useState<"landing" | "chat">("landing");
-  const [messages, setMessages]   = useState<ChatMessage[]>([]);
-  const [answers, setAnswers]     = useState<Partial<MatchAnswers>>({});
-  const [step, setStep]           = useState(0);          // current question index
-  const [done, setDone]           = useState(false);      // all questions answered
-  const [input, setInput]         = useState("");
-  const [showLead, setShowLead]   = useState(false);
-  const bottomRef                 = useRef<HTMLDivElement>(null);
-  const textareaRef               = useRef<HTMLTextAreaElement>(null);
+  const [phase, setPhase]           = useState<"landing" | "chat">("landing");
+  const [messages, setMessages]     = useState<ChatMessage[]>([]);
+  const [answers, setAnswers]       = useState<Partial<MatchAnswers>>({});
+  const [step, setStep]             = useState(0);          // current question index
+  const [done, setDone]             = useState(false);      // all questions answered
+  const [input, setInput]           = useState("");
+  const [showLead, setShowLead]     = useState(false);
+  const [isTyping, setIsTyping]     = useState(false);
+  const [typingMessageId, setTypingMessageId] = useState<string | null>(null);
+  const bottomRef                   = useRef<HTMLDivElement>(null);
+  const textareaRef                 = useRef<HTMLTextAreaElement>(null);
+
+  /**
+   * Show typing indicator for 800ms, then add the bot message and trigger
+   * the typewriter effect for up to 3s.
+   */
+  function addBotMessage(msg: ChatMessage, appendFn: (prev: ChatMessage[]) => ChatMessage[]) {
+    setIsTyping(true);
+    setTimeout(() => {
+      setIsTyping(false);
+      setMessages(appendFn);
+      setTypingMessageId(msg.id);
+      // Clear typewriter state after 3s (safety cap)
+      setTimeout(() => setTypingMessageId((cur) => (cur === msg.id ? null : cur)), 3000);
+    }, 800);
+  }
 
   // Restore from localStorage
   useEffect(() => {
@@ -304,7 +367,11 @@ export default function EVChatInterface({ navOffset = 73 }: EVChatInterfaceProps
       if (saved) {
         const { messages: m, answers: a, step: s, done: d } =
           JSON.parse(saved) as { messages: ChatMessage[]; answers: Partial<MatchAnswers>; step: number; done: boolean };
-        if (m?.length) { setMessages(m); setAnswers(a ?? {}); setStep(s ?? 0); setDone(d ?? false); setPhase("chat"); }
+        if (m?.length) {
+          // Back-fill ids for messages saved before this version
+          const hydrated = m.map((msg, i) => ({ ...msg, id: msg.id ?? `restored_${i}` }));
+          setMessages(hydrated); setAnswers(a ?? {}); setStep(s ?? 0); setDone(d ?? false); setPhase("chat");
+        }
       }
     } catch { /* */ }
   }, []);
@@ -318,7 +385,7 @@ export default function EVChatInterface({ navOffset = 73 }: EVChatInterfaceProps
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [messages, isTyping]);
 
   useEffect(() => {
     const ta = textareaRef.current;
@@ -388,12 +455,13 @@ export default function EVChatInterface({ navOffset = 73 }: EVChatInterfaceProps
     const allDone  = nextStep >= matchQuestions.length;
 
     // User bubble
-    const userMsg: ChatMessage = { role: "user", text: label };
+    const userMsg: ChatMessage = { id: msgId(), role: "user", text: label };
 
     if (allDone) {
       const merged = { ...defaultAnswers, ...newAnswers } as MatchAnswers;
       const results = getTopMatches(merged);
       const resultMsg: ChatMessage = {
+        id: msgId(),
         role: "bot",
         text: `Here are your top ${results.length} EV matches based on your answers:`,
         results,
@@ -401,21 +469,23 @@ export default function EVChatInterface({ navOffset = 73 }: EVChatInterfaceProps
         chips: ["Start over", "Get a personalised deal", "Compare top two"],
         chipValues: ["__reset__", "__lead__", "__compare__"],
       };
-      setMessages((prev) => [...prev, userMsg, resultMsg]);
+      setMessages((prev) => [...prev, userMsg]);
       setAnswers(newAnswers);
       setStep(nextStep);
       setDone(true);
+      addBotMessage(resultMsg, (prev) => [...prev, resultMsg]);
 
       // Record in CRM pipeline (non-blocking)
       void recordChatCompletion(newAnswers, results);
 
-      // Lead modal after results
-      try { if (!localStorage.getItem(LEAD_SHOWN_KEY)) setTimeout(() => setShowLead(true), 2000); } catch { /* */ }
+      // Lead modal after results (add 800ms typing delay)
+      try { if (!localStorage.getItem(LEAD_SHOWN_KEY)) setTimeout(() => setShowLead(true), 2800); } catch { /* */ }
     } else {
       const nextMsg = buildQuestionMessage(nextStep);
-      setMessages((prev) => [...prev, userMsg, nextMsg]);
+      setMessages((prev) => [...prev, userMsg]);
       setAnswers(newAnswers);
       setStep(nextStep);
+      addBotMessage(nextMsg, (prev) => [...prev, nextMsg]);
     }
   }
 
@@ -423,6 +493,7 @@ export default function EVChatInterface({ navOffset = 73 }: EVChatInterfaceProps
   function showResults(merged: MatchAnswers) {
     const results = getTopMatches(merged);
     const resultMsg: ChatMessage = {
+      id: msgId(),
       role: "bot",
       text: `Here are your top ${results.length} EV matches:`,
       results,
@@ -430,7 +501,7 @@ export default function EVChatInterface({ navOffset = 73 }: EVChatInterfaceProps
       chips: ["Start over", "Get a personalised deal", "Compare top two"],
       chipValues: ["__reset__", "__lead__", "__compare__"],
     };
-    setMessages((prev) => [...prev, resultMsg]);
+    addBotMessage(resultMsg, (prev) => [...prev, resultMsg]);
   }
 
   function handleChip(chip: string, value: string) {
@@ -450,16 +521,50 @@ export default function EVChatInterface({ navOffset = 73 }: EVChatInterfaceProps
     const trimmed = input.trim();
     if (!trimmed) return;
     setInput("");
+
+    // ── Greeting detection ──────────────────────────────────────────────────
+    const greetings = ["hi", "hello", "hey", "hiya", "sup", "yo", "howdy", "greetings", "what's up", "whats up"];
+    const isGreeting = greetings.some(
+      (g) => trimmed.toLowerCase() === g || trimmed.toLowerCase().startsWith(g + " ")
+    );
+
+    if (isGreeting) {
+      const userMsg: ChatMessage = { id: msgId(), role: "user", text: trimmed };
+
+      if (phase === "chat" && messages.length === 0) {
+        // Greeted before any flow started — welcome them
+        const botMsg: ChatMessage = {
+          id: msgId(),
+          role: "bot",
+          text: "Hey there! I'm EV Guide AI.\n\nI can help you find the perfect electric vehicle. Click \"Let's find your EV\" to start, or just tell me what you're looking for!",
+        };
+        setMessages((prev) => [...prev, userMsg]);
+        addBotMessage(botMsg, (prev) => [...prev, botMsg]);
+      } else {
+        // Greeted mid-flow — acknowledge and nudge back
+        const botMsg: ChatMessage = {
+          id: msgId(),
+          role: "bot",
+          text: "Hey! 👋 Great to chat. When you're ready, just pick an option or type your answer to continue finding your perfect EV.",
+        };
+        setMessages((prev) => [...prev, userMsg]);
+        addBotMessage(botMsg, (prev) => [...prev, botMsg]);
+      }
+      return;
+    }
+
     if (done) {
       // Free-form after results — just echo back a helpful nudge
-      const userMsg: ChatMessage = { role: "user", text: trimmed };
+      const userMsg: ChatMessage = { id: msgId(), role: "user", text: trimmed };
       const botMsg: ChatMessage  = {
+        id: msgId(),
         role: "bot",
         text: "To refine your results, try starting a new chat or use the chips above. You can also compare vehicles or book a test drive directly from a card.",
         chips: ["Start over", "Get a personalised deal"],
         chipValues: ["__reset__", "__lead__"],
       };
-      setMessages((prev) => [...prev, userMsg, botMsg]);
+      setMessages((prev) => [...prev, userMsg]);
+      addBotMessage(botMsg, (prev) => [...prev, botMsg]);
     } else {
       // Try to match typed input to an option value
       const q = matchQuestions[step]!;
@@ -494,12 +599,12 @@ export default function EVChatInterface({ navOffset = 73 }: EVChatInterfaceProps
         className="relative flex flex-col items-center justify-center overflow-hidden bg-[#07090B] px-4 py-16"
         style={{ minHeight: `calc(100vh - ${navOffset}px)` }}
       >
-        <div className="pointer-events-none absolute top-1/3 left-1/2 h-[300px] w-[min(700px,100vw)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#1FBF9F]/10 blur-[100px] sm:h-[500px]" />
+        <div className="pointer-events-none absolute top-1/3 left-1/2 hidden h-[300px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand/10 blur-[60px] sm:block" />
 
         <div className="relative z-10 flex w-full max-w-2xl flex-col items-center gap-8">
-          <div className="inline-flex items-center gap-2 rounded-full border border-[#1FBF9F]/30 bg-[#1FBF9F]/10 px-4 py-1.5">
-            <Zap className="h-3.5 w-3.5 text-[#1FBF9F]" />
-            <span className="text-xs font-bold uppercase tracking-widest text-[#1FBF9F]">AI Car Match Advisor</span>
+          <div className="inline-flex items-center gap-2 rounded-full border border-brand/30 bg-brand/10 px-4 py-1.5">
+            <Zap className="h-3.5 w-3.5 text-brand" />
+            <span className="text-xs font-bold uppercase tracking-widest text-brand">AI Car Match Advisor</span>
           </div>
 
           <div className="text-center">
@@ -516,7 +621,7 @@ export default function EVChatInterface({ navOffset = 73 }: EVChatInterfaceProps
                   key={s.label}
                   type="button"
                   onClick={() => startChat(s.answer)}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-zinc-300 transition hover:border-[#1FBF9F]/40 hover:bg-[#1FBF9F]/10 hover:text-[#1FBF9F]"
+                  className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-zinc-300 transition hover:border-brand/40 hover:bg-brand/10 hover:text-brand"
                 >
                   <ChevronRight className="h-3.5 w-3.5" />
                   {s.label}
@@ -528,7 +633,7 @@ export default function EVChatInterface({ navOffset = 73 }: EVChatInterfaceProps
           <button
             type="button"
             onClick={() => startChat()}
-            className="flex items-center gap-2 rounded-2xl bg-[#1FBF9F] px-8 py-4 text-sm font-bold text-white shadow-lg transition hover:bg-[#17A589]"
+            className="flex items-center gap-2 rounded-2xl bg-brand px-8 py-4 text-sm font-bold text-white shadow-lg transition hover:bg-brand-hover"
           >
             Start matching
             <ArrowRight className="h-4 w-4" />
@@ -546,7 +651,7 @@ export default function EVChatInterface({ navOffset = 73 }: EVChatInterfaceProps
       <div className="flex items-center justify-between border-b border-[#E5E7EB] bg-white px-3 py-3 shadow-sm sm:px-5">
         <div className="flex items-center gap-2.5">
           <div className="flex h-8 w-8 items-center justify-center rounded-full border border-[#D1F2EB] bg-[#E8F8F5]">
-            <Bot className="h-4 w-4 text-[#1FBF9F]" />
+            <Bot className="h-4 w-4 text-brand" />
           </div>
           <div>
             <p className="text-sm font-bold text-[#1A1A1A]">EV Guide AI</p>
@@ -560,7 +665,7 @@ export default function EVChatInterface({ navOffset = 73 }: EVChatInterfaceProps
         <div className="hidden sm:flex flex-1 mx-6 items-center gap-2">
           <div className="flex-1 h-1.5 rounded-full bg-[#E5E7EB] overflow-hidden">
             <div
-              className="h-full rounded-full bg-[#1FBF9F] transition-all duration-500"
+              className="h-full rounded-full bg-brand transition-all duration-500"
               style={{ width: `${(Math.min(step, matchQuestions.length) / matchQuestions.length) * 100}%` }}
             />
           </div>
@@ -570,7 +675,7 @@ export default function EVChatInterface({ navOffset = 73 }: EVChatInterfaceProps
         <button
           type="button"
           onClick={newChat}
-          className="inline-flex items-center gap-1.5 rounded-full border border-[#E5E7EB] bg-white px-3.5 py-2 text-xs font-semibold text-[#6B7280] transition hover:border-[#1FBF9F] hover:text-[#1FBF9F]"
+          className="inline-flex items-center gap-1.5 rounded-full border border-[#E5E7EB] bg-white px-3.5 py-2 text-xs font-semibold text-[#6B7280] transition hover:border-brand hover:text-brand"
         >
           <RotateCcw className="h-3 w-3" />
           Restart
@@ -579,15 +684,15 @@ export default function EVChatInterface({ navOffset = 73 }: EVChatInterfaceProps
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 py-6 space-y-5">
-        {messages.map((msg, i) => (
-          <div key={i} className={`flex gap-3 ${msg.role === "user" ? "flex-row-reverse" : "flex-row"}`}>
+        {messages.map((msg) => (
+          <div key={msg.id} className={`flex gap-3 ${msg.role === "user" ? "flex-row-reverse" : "flex-row"}`}>
 
             {/* Avatar */}
             <div className={`shrink-0 flex h-8 w-8 items-center justify-center rounded-full border ${
-              msg.role === "user" ? "border-[#1FBF9F]/30 bg-[#E8F8F5]" : "border-[#E5E7EB] bg-white shadow-sm"
+              msg.role === "user" ? "border-brand/30 bg-[#E8F8F5]" : "border-[#E5E7EB] bg-white shadow-sm"
             }`}>
               {msg.role === "user"
-                ? <User className="h-4 w-4 text-[#1FBF9F]" />
+                ? <User className="h-4 w-4 text-brand" />
                 : <Bot  className="h-4 w-4 text-[#6B7280]" />}
             </div>
 
@@ -596,12 +701,16 @@ export default function EVChatInterface({ navOffset = 73 }: EVChatInterfaceProps
               {/* Bubble */}
               <div className={`rounded-2xl px-4 py-3 text-sm leading-7 ${
                 msg.role === "user"
-                  ? "rounded-tr-sm bg-[#1FBF9F] text-white"
+                  ? "rounded-tr-sm bg-brand text-white"
                   : "rounded-tl-sm border border-[#E5E7EB] bg-white text-[#1A1A1A] shadow-sm"
               }`}>
-                {msg.text.split("\n").map((line, j) => (
-                  <span key={j} className={j > 0 ? "block mt-1" : "block"}>{line}</span>
-                ))}
+                {msg.role === "bot" && typingMessageId === msg.id ? (
+                  <TypewriterText text={msg.text} active />
+                ) : (
+                  msg.text.split("\n").map((line, j) => (
+                    <span key={j} className={j > 0 ? "block mt-1" : "block"}>{line}</span>
+                  ))
+                )}
               </div>
 
               {/* Car result cards — full width, responsive grid */}
@@ -623,7 +732,7 @@ export default function EVChatInterface({ navOffset = 73 }: EVChatInterfaceProps
                       key={chip}
                       type="button"
                       onClick={() => handleChip(chip, msg.chipValues?.[ci] ?? chip)}
-                      className="rounded-full border border-[#E5E7EB] bg-white px-3.5 py-2 text-xs font-semibold text-[#374151] shadow-sm transition hover:border-[#1FBF9F] hover:bg-[#E8F8F5] hover:text-[#1FBF9F]"
+                      className="rounded-full border border-[#E5E7EB] bg-white px-3.5 py-2 text-xs font-semibold text-[#374151] shadow-sm transition hover:border-brand hover:bg-[#E8F8F5] hover:text-brand"
                     >
                       {chip}
                     </button>
@@ -633,13 +742,17 @@ export default function EVChatInterface({ navOffset = 73 }: EVChatInterfaceProps
             </div>
           </div>
         ))}
+
+        {/* Typing indicator — shown while bot is "thinking" */}
+        {isTyping && <TypingIndicator />}
+
         <div ref={bottomRef} />
       </div>
 
       {/* Input bar */}
       <div className="border-t border-[#E5E7EB] bg-white px-3 pb-4 pt-3 sm:px-4 sm:pb-4">
         <div className="mx-auto max-w-3xl">
-          <div className="flex items-end gap-3 rounded-2xl border border-[#E5E7EB] bg-[#F8FAF9] px-4 py-3 transition focus-within:border-[#1FBF9F] focus-within:ring-2 focus-within:ring-[#D1F2EB]">
+          <div className="flex items-end gap-3 rounded-2xl border border-[#E5E7EB] bg-[#F8FAF9] px-4 py-3 transition focus-within:border-brand focus-within:ring-2 focus-within:ring-[#D1F2EB]">
             <textarea
               ref={textareaRef}
               rows={1}
@@ -653,7 +766,7 @@ export default function EVChatInterface({ navOffset = 73 }: EVChatInterfaceProps
               type="button"
               onClick={handleTextSend}
               disabled={!input.trim()}
-              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#1FBF9F] text-white transition hover:bg-[#17A589] disabled:opacity-30"
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand text-white transition hover:bg-brand-hover disabled:opacity-30"
             >
               <ArrowUp className="h-4 w-4" />
             </button>

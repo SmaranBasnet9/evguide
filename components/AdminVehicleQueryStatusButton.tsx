@@ -30,9 +30,9 @@ const NEXT_LABEL: Record<QueryStatus, string> = {
 };
 
 const NEXT_STYLE: Record<QueryStatus, string> = {
-  new:       "border-amber-200 bg-white text-amber-700 hover:bg-amber-50",
-  contacted: "border-emerald-200 bg-white text-emerald-700 hover:bg-emerald-50",
-  resolved:  "border-slate-200 bg-white text-slate-500 hover:bg-slate-50",
+  new:       "border-amber-200 bg-white/[0.03] text-amber-700 hover:bg-amber-50",
+  contacted: "border-emerald-200 bg-white/[0.03] text-emerald-700 hover:bg-emerald-50",
+  resolved:  "border-white/10 bg-white/[0.03] text-white/50 hover:bg-white/[0.03]",
 };
 
 interface Props {

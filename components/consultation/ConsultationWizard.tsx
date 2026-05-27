@@ -136,9 +136,7 @@ function buildAnswers(
 // ── Wizard ────────────────────────────────────────────────────────────────────
 
 interface Props {
-  /** Called when the wizard completes. Receives the consultation ID and final state. */
   onComplete?: (consultationId: string | null, state: ConsultationFormState) => void;
-  /** Called when the user closes/cancels the wizard (e.g. from a modal). */
   onClose?: () => void;
 }
 
@@ -156,24 +154,17 @@ export default function ConsultationWizard({ onComplete, onClose }: Props) {
     setState((prev) => ({ ...prev, ...partial }));
   }, []);
 
-  // ── Start ───────────────────────────────────────────────────────────────────
-
   async function handleStart() {
     track("opened_consultation_popup");
-
     setSaving(true);
     const id = await createConsultation();
     setSaving(false);
-
     setConsultationId(id);
     setStep(1);
-
     track("started_consultation", {
       metadata: { consultation_id: id ?? "unknown" },
     });
   }
-
-  // ── Continue / Submit ───────────────────────────────────────────────────────
 
   async function handleContinue() {
     const validationError = validateStep(step, state);
@@ -181,11 +172,8 @@ export default function ConsultationWizard({ onComplete, onClose }: Props) {
       setError(validationError);
       return;
     }
-
     setError(null);
     setSaving(true);
-
-    // Save the step's fields + answers to the DB (best-effort)
     if (consultationId) {
       const stepFields = getStepFields(step, state);
       await updateConsultation(consultationId, {
@@ -193,7 +181,6 @@ export default function ConsultationWizard({ onComplete, onClose }: Props) {
         answers: buildAnswers(step, state),
       });
     }
-
     track("answered_consultation_question", {
       metadata: {
         step,
@@ -201,15 +188,11 @@ export default function ConsultationWizard({ onComplete, onClose }: Props) {
         consultation_id: consultationId ?? undefined,
       },
     });
-
     setSaving(false);
-
     if (step < CONSULTATION_STEPS.length) {
       setStep((prev) => prev + 1);
     }
   }
-
-  // ── Submit (final step) ─────────────────────────────────────────────────────
 
   async function handleSubmit() {
     const validationError = validateStep(step, state);
@@ -217,10 +200,8 @@ export default function ConsultationWizard({ onComplete, onClose }: Props) {
       setError(validationError);
       return;
     }
-
     setError(null);
     setSaving(true);
-
     if (consultationId) {
       const stepFields = getStepFields(step, state);
       await updateConsultation(consultationId, {
@@ -228,26 +209,19 @@ export default function ConsultationWizard({ onComplete, onClose }: Props) {
         answers: buildAnswers(step, state),
       });
     }
-
     track("completed_consultation", {
       metadata: { consultation_id: consultationId ?? "unknown" },
     });
-
     setSaving(false);
     setDone(true);
-
     onComplete?.(consultationId, state);
   }
-
-  // ── Back ────────────────────────────────────────────────────────────────────
 
   function handleBack() {
     setError(null);
     if (step > 1) setStep((prev) => prev - 1);
     else setStep(0);
   }
-
-  // ── Render ──────────────────────────────────────────────────────────────────
 
   const isLastStep = step === CONSULTATION_STEPS.length;
   const currentStepConfig = CONSULTATION_STEPS[step - 1];
@@ -256,14 +230,14 @@ export default function ConsultationWizard({ onComplete, onClose }: Props) {
   if (done) {
     return (
       <div className="flex flex-col items-center gap-6 py-8 text-center">
-        <div className="flex h-16 w-16 items-center justify-center rounded-full border border-[#D1F2EB] bg-[#E8F8F5]">
-          <CheckCircle2 className="h-8 w-8 text-[#1FBF9F]" />
+        <div className="flex h-16 w-16 items-center justify-center rounded-full border border-brand/30 bg-brand/20">
+          <CheckCircle2 className="h-8 w-8 text-brand" />
         </div>
         <div>
-          <h2 className="text-2xl font-semibold text-[#1A1A1A]">
+          <h2 className="text-2xl font-semibold text-white">
             We have everything we need
           </h2>
-          <p className="mt-3 max-w-sm text-base leading-7 text-[#6B7280]">
+          <p className="mt-3 max-w-sm text-base leading-7 text-white/50">
             Your consultation has been saved. Our AI will use your answers to match
             you to the best EVs for your life.
           </p>
@@ -275,7 +249,7 @@ export default function ConsultationWizard({ onComplete, onClose }: Props) {
                 ? `/consultation/results?consultation_id=${consultationId}`
                 : "/consultation"
             }
-            className="inline-flex items-center justify-center gap-2 rounded-full bg-[#1FBF9F] px-7 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-[#17A589]"
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-brand px-7 py-3 text-sm font-semibold text-white shadow-md shadow-brand/20 transition hover:bg-brand-hover"
           >
             <Sparkles className="h-4 w-4" />
             See My EV Matches
@@ -284,7 +258,7 @@ export default function ConsultationWizard({ onComplete, onClose }: Props) {
             <button
               type="button"
               onClick={onClose}
-              className="inline-flex items-center justify-center rounded-full border border-[#E5E7EB] bg-white px-7 py-3 text-sm font-medium text-[#374151] transition hover:border-[#1FBF9F]/40"
+              className="inline-flex items-center justify-center rounded-full border border-white/10 bg-white/[0.06] px-7 py-3 text-sm font-medium text-white/70 transition hover:border-brand/40 hover:text-white"
             >
               Close
             </button>
@@ -299,29 +273,29 @@ export default function ConsultationWizard({ onComplete, onClose }: Props) {
     return (
       <div className="flex flex-col gap-6">
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-[1rem] border border-[#D1F2EB] bg-[#E8F8F5]">
-            <Sparkles className="h-5 w-5 text-[#1FBF9F]" />
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-brand/30 bg-brand/20">
+            <Sparkles className="h-5 w-5 text-brand" />
           </div>
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#1FBF9F]">
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-brand">
               EV Consultation
             </p>
-            <p className="mt-0.5 text-lg font-semibold text-[#1A1A1A]">
+            <p className="mt-0.5 text-lg font-semibold text-white">
               Let&apos;s find your perfect match
             </p>
           </div>
         </div>
 
-        <div className="rounded-[1.5rem] border border-[#E5E7EB] bg-[#F8FAF9] p-5">
-          <p className="text-sm leading-7 text-[#4B5563]">
-            Answer <strong className="text-[#1A1A1A]">5 quick questions</strong> about your
+        <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-5">
+          <p className="text-sm leading-7 text-white/60">
+            Answer <strong className="text-white">5 quick questions</strong> about your
             budget, daily use, and preferences. We&apos;ll use your answers to match you to the
             right EVs and calculate real monthly costs.
           </p>
-          <div className="mt-4 grid grid-cols-2 gap-3 text-xs font-medium text-[#6B7280]">
+          <div className="mt-4 grid grid-cols-2 gap-3 text-xs font-medium text-white/50">
             {CONSULTATION_STEPS.map((s) => (
               <div key={s.id} className="flex items-center gap-2">
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#E8F8F5] text-[10px] font-bold text-[#1FBF9F]">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-brand/20 text-[10px] font-bold text-brand">
                   {s.id}
                 </span>
                 {s.title}
@@ -334,7 +308,7 @@ export default function ConsultationWizard({ onComplete, onClose }: Props) {
           type="button"
           onClick={handleStart}
           disabled={saving}
-          className="inline-flex items-center justify-center gap-2 rounded-full bg-[#1FBF9F] px-8 py-4 text-base font-semibold text-white shadow-md transition hover:bg-[#17A589] disabled:opacity-60"
+          className="inline-flex items-center justify-center gap-2 rounded-full bg-brand px-8 py-4 text-base font-semibold text-white shadow-md shadow-brand/20 transition hover:bg-brand-hover disabled:opacity-60"
         >
           {saving ? (
             <Loader2 className="h-4 w-4 animate-spin" />
@@ -363,11 +337,11 @@ export default function ConsultationWizard({ onComplete, onClose }: Props) {
       </ConsultationStep>
 
       {/* Navigation */}
-      <div className="flex items-center justify-between border-t border-[#E5E7EB] pt-5">
+      <div className="flex items-center justify-between border-t border-white/10 pt-5">
         <button
           type="button"
           onClick={handleBack}
-          className="inline-flex items-center gap-2 rounded-full border border-[#E5E7EB] bg-white px-5 py-2.5 text-sm font-medium text-[#374151] transition hover:border-[#1FBF9F]/40 hover:text-[#1A1A1A]"
+          className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.06] px-5 py-2.5 text-sm font-medium text-white/70 transition hover:border-brand/40 hover:text-white"
         >
           <ArrowLeft className="h-4 w-4" />
           Back
@@ -377,7 +351,7 @@ export default function ConsultationWizard({ onComplete, onClose }: Props) {
           type="button"
           onClick={isLastStep ? handleSubmit : handleContinue}
           disabled={saving}
-          className="inline-flex items-center gap-2 rounded-full bg-[#1FBF9F] px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#17A589] disabled:opacity-60"
+          className="inline-flex items-center gap-2 rounded-full bg-brand px-6 py-2.5 text-sm font-semibold text-white shadow-sm shadow-brand/20 transition hover:bg-brand-hover disabled:opacity-60"
         >
           {saving ? (
             <Loader2 className="h-4 w-4 animate-spin" />

@@ -207,8 +207,13 @@ async function getFeaturedBlogRowsUncached(limit: number) {
 const getFeaturedBlogRows = unstable_cache(
   async (limit: number) => getFeaturedBlogRowsUncached(limit),
   ["featured-blog-posts"],
-  { revalidate: 300, tags: ["blog-posts"] },
+  { revalidate: 1800, tags: ["blog-posts"] },
 );
+
+export async function getAllBlogPosts(): Promise<FeaturedBlogPost[]> {
+  const { data } = await getFeaturedBlogRowsUncached(10_000);
+  return data.map(mapBlogRow);
+}
 
 export async function getFeaturedBlogPosts(limit = 4): Promise<FeaturedBlogPost[]> {
   const { data, usedLegacySelect } = await getFeaturedBlogRows(limit);

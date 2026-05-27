@@ -3,7 +3,6 @@ import { parseLeadPayload } from "@/lib/leads";
 import { notifySecurityEvent } from "@/lib/security/alerts";
 import { applyRateLimit } from "@/lib/security/rate-limit";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
 
 function buildPersistenceError(message: string, detail: string | null | undefined) {
   const devDetail = process.env.NODE_ENV !== "production" && detail ? ` (${detail})` : "";
@@ -46,10 +45,6 @@ export async function POST(request: Request) {
   }
 
   const admin = createAdminClient();
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
 
   try {
     // Quote requests go to consultation_requests (visible in admin Consultations)
@@ -61,7 +56,7 @@ export async function POST(request: Request) {
       const { data, error } = await admin
         .from("consultation_requests")
         .insert({
-          user_id: user?.id ?? null,
+          user_id: null,
           full_name: parsed.data.name,
           email: parsed.data.email,
           phone: parsed.data.phone,
@@ -101,7 +96,7 @@ export async function POST(request: Request) {
       const { data, error } = await admin
         .from("consultation_requests")
         .insert({
-          user_id: user?.id ?? null,
+          user_id: null,
           full_name: parsed.data.name,
           email: parsed.data.email,
           phone: parsed.data.phone,
@@ -138,17 +133,27 @@ export async function POST(request: Request) {
     // The legacy leads table is not present in the live schema. Store these
     // lead intents in consultation_requests so admins can still action them.
     const sector = parsed.data.interest_type === "finance" ? "bank" : "vehicle";
+    const INTEREST_LABEL: Record<string, string> = {
+      general: "General Enquiry",
+      exchange: "Part Exchange",
+      test_drive: "Test Drive Request",
+      sell: "Sell My EV",
+    };
+    // DB has consultation_sector_vehicle_check: sector='vehicle' requires ev_model_label
+    const evLabel =
+      parsed.data.vehicle_label ??
+      (sector === "vehicle" ? (INTEREST_LABEL[parsed.data.interest_type] ?? "General Enquiry") : null);
     const { data, error } = await admin
       .from("consultation_requests")
       .insert({
-        user_id: user?.id ?? null,
+        user_id: null,
         full_name: parsed.data.name,
         email: parsed.data.email,
         phone: parsed.data.phone,
         sector,
         bank_name: sector === "bank" ? "Finance quote request" : null,
         ev_model_id: parsed.data.vehicle_id ?? null,
-        ev_model_label: parsed.data.vehicle_label,
+        ev_model_label: evLabel,
         notes: parsed.data.message,
         status: "pending",
       })

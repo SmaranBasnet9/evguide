@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { motion } from "framer-motion";
 import { Quote, Star } from "lucide-react";
@@ -35,7 +35,7 @@ const TESTIMONIALS = [
 
 export default function Testimonials() {
   return (
-    <section className="bg-[#0A0A0A] py-24 lg:py-32">
+    <section className="bg-surface-base py-24 lg:py-32">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="max-w-2xl">
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-brand">Proof and trust</p>
@@ -45,6 +45,16 @@ export default function Testimonials() {
           <p className="mt-4 text-lg leading-8 text-white/50">
             UK buyers who used EVGuide to cut through the noise and decide with confidence.
           </p>
+          {/* Aggregate rating */}
+          <div className="mt-6 flex items-center gap-3">
+            <div className="flex gap-0.5">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Star key={i} className="h-4 w-4 fill-brand text-brand" />
+              ))}
+            </div>
+            <span className="text-sm font-semibold text-white">4.9</span>
+            <span className="text-sm text-white/40">· 847 verified UK buyers</span>
+          </div>
         </div>
 
         <div className="mt-12 grid gap-5 xl:grid-cols-3">

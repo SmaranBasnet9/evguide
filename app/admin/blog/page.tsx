@@ -30,8 +30,8 @@ export default async function AdminBlogPage() {
     <div className="mx-auto max-w-6xl">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Blog Posts</h1>
-          <p className="mt-1 text-slate-500">
+          <h1 className="text-3xl font-bold text-white">Blog Posts</h1>
+          <p className="mt-1 text-white/50">
             {posts.length} post{posts.length !== 1 ? "s" : ""} total
           </p>
         </div>
@@ -56,8 +56,8 @@ export default async function AdminBlogPage() {
 
       <div className="mt-8">
         {posts.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-slate-300 bg-white py-20 text-center">
-            <p className="text-slate-500">No blog posts yet.</p>
+          <div className="rounded-2xl border border-dashed border-white/15 bg-white/[0.03] py-20 text-center">
+            <p className="text-white/50">No blog posts yet.</p>
             <Link
               href="/admin/blog/new"
               className="mt-4 inline-block rounded-xl bg-blue-600 px-5 py-2 text-sm font-semibold text-white hover:bg-blue-700"
@@ -66,41 +66,41 @@ export default async function AdminBlogPage() {
             </Link>
           </div>
         ) : (
-          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] shadow-sm">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-slate-100 bg-slate-50 text-left">
-                  <th className="px-6 py-3 font-semibold text-slate-600">Title</th>
-                  <th className="px-6 py-3 font-semibold text-slate-600">Category</th>
-                  <th className="px-6 py-3 font-semibold text-slate-600">Status</th>
-                  <th className="px-6 py-3 font-semibold text-slate-600">Created</th>
-                  <th className="px-6 py-3 font-semibold text-slate-600"></th>
+                <tr className="border-b border-white/[0.06] bg-white/[0.03] text-left">
+                  <th className="px-6 py-3 font-semibold text-white/60">Title</th>
+                  <th className="px-6 py-3 font-semibold text-white/60">Category</th>
+                  <th className="px-6 py-3 font-semibold text-white/60">Status</th>
+                  <th className="px-6 py-3 font-semibold text-white/60">Created</th>
+                  <th className="px-6 py-3 font-semibold text-white/60"></th>
                 </tr>
               </thead>
               <tbody>
                 {posts.map((post) => (
-                  <tr key={post.id} className="border-b border-slate-100 last:border-b-0 hover:bg-slate-50">
-                    <td className="px-6 py-4 font-medium text-slate-900">{post.title}</td>
-                    <td className="px-6 py-4 text-slate-600">{post.category ?? "-"}</td>
+                  <tr key={post.id} className="border-b border-white/[0.06] last:border-b-0 hover:bg-white/[0.03]">
+                    <td className="px-6 py-4 font-medium text-white">{post.title}</td>
+                    <td className="px-6 py-4 text-white/60">{post.category ?? "-"}</td>
                     <td className="px-6 py-4">
                       <span
                         className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${
                           post.published
                             ? "bg-emerald-100 text-emerald-700"
-                            : "bg-slate-100 text-slate-600"
+                            : "bg-white/[0.05] text-white/60"
                         }`}
                       >
                         {post.published ? "Published" : "Draft"}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-slate-500">{formatDate(post.created_at)}</td>
+                    <td className="px-6 py-4 text-white/50">{formatDate(post.created_at)}</td>
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-end gap-4">
                         {post.published && (
                           <Link
                             href={`/blog/${post.slug}`}
                             target="_blank"
-                            className="text-xs font-semibold text-slate-500 hover:underline"
+                            className="text-xs font-semibold text-white/50 hover:underline"
                           >
                             View
                           </Link>

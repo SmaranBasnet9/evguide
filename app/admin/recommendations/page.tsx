@@ -67,7 +67,7 @@ async function getRecommendations(): Promise<RecWithConsult[]> {
       "id, consultation_id, session_id, profile_id, confidence_score, explanation, recommendation_payload, created_at",
     )
     .order("created_at", { ascending: false })
-    .limit(200);
+    .limit(50);
 
   if (error || !data) {
     if (isMissingTableError(error?.message, "ai_recommendations")) {
@@ -75,7 +75,7 @@ async function getRecommendations(): Promise<RecWithConsult[]> {
         .from("recommendations")
         .select("id, preference_id, user_id, ev_brand, ev_model_name, score, rank, estimated_emi, reasons, created_at")
         .order("created_at", { ascending: false })
-        .limit(200);
+        .limit(50);
 
       if (fallback.error || !fallback.data) {
         console.error("[admin/recommendations]", fallback.error?.message);
@@ -137,8 +137,8 @@ export default async function AdminRecommendationsPage() {
     <div className="space-y-8">
       <div>
         <p className="text-sm font-semibold text-blue-600">AI Engine</p>
-        <h1 className="mt-1 text-3xl font-extrabold text-slate-900">Recommendations</h1>
-        <p className="mt-2 text-slate-500">
+        <h1 className="mt-1 text-3xl font-extrabold text-white">Recommendations</h1>
+        <p className="mt-2 text-white/50">
           All recommendation engine runs — each triggered when a user completes the consultation wizard.
         </p>
       </div>
@@ -150,22 +150,22 @@ export default async function AdminRecommendationsPage() {
           { label: "Avg confidence score",  value: avgConfidence,   sub: "% match score" },
           { label: "With consultation",     value: recs.filter((r) => r.consultation_id).length, sub: "Linked records" },
         ].map((s) => (
-          <div key={s.label} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <p className="text-sm font-medium text-slate-500">{s.label}</p>
-            <p className="mt-1 text-3xl font-extrabold text-slate-900">{s.value}</p>
-            <p className="mt-1 text-xs text-slate-400">{s.sub}</p>
+          <div key={s.label} className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 shadow-sm">
+            <p className="text-sm font-medium text-white/50">{s.label}</p>
+            <p className="mt-1 text-3xl font-extrabold text-white">{s.value}</p>
+            <p className="mt-1 text-xs text-white/40">{s.sub}</p>
           </div>
         ))}
       </div>
 
       {recs.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-slate-200 py-16 text-center text-sm text-slate-400">
+        <div className="rounded-2xl border border-dashed border-white/10 py-16 text-center text-sm text-white/40">
           No recommendations yet.
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <table className="min-w-full divide-y divide-slate-100 text-sm">
-            <thead className="bg-slate-50 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+        <div className="overflow-x-auto rounded-2xl border border-white/10 bg-white/[0.03] shadow-sm">
+          <table className="min-w-full divide-y divide-white/[0.06] text-sm">
+            <thead className="bg-white/[0.03] text-left text-xs font-semibold uppercase tracking-wider text-white/50">
               <tr>
                 <th className="px-4 py-3">Session / Profile</th>
                 <th className="px-4 py-3">Consultation</th>
@@ -175,44 +175,44 @@ export default async function AdminRecommendationsPage() {
                 <th className="px-4 py-3">Generated</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-white/[0.06]">
               {recs.map((rec) => {
                 const vehicles = extractTopVehicles(rec.recommendation_payload);
                 return (
-                  <tr key={rec.id} className="hover:bg-slate-50">
-                    <td className="px-4 py-3 font-mono text-xs text-slate-500">
+                  <tr key={rec.id} className="hover:bg-white/[0.03]">
+                    <td className="px-4 py-3 font-mono text-xs text-white/50">
                       <p>{rec.session_id?.slice(0, 14) ?? "—"}…</p>
                       {rec.profile_id && (
-                        <p className="text-slate-400">user:{rec.profile_id.slice(0, 8)}…</p>
+                        <p className="text-white/40">user:{rec.profile_id.slice(0, 8)}…</p>
                       )}
                     </td>
-                    <td className="px-4 py-3 text-slate-600">
+                    <td className="px-4 py-3 text-white/60">
                       {rec.consultation ? (
                         <div>
                           <p className="capitalize">
                             {rec.consultation.main_reason_for_ev?.replace(/_/g, " ") ?? "—"}
                           </p>
                           {rec.consultation.budget_max_gbp && (
-                            <p className="text-xs text-slate-400">
+                            <p className="text-xs text-white/40">
                               Budget £{rec.consultation.budget_max_gbp.toLocaleString()}
                             </p>
                           )}
                           {rec.consultation.daily_miles && (
-                            <p className="text-xs text-slate-400">
+                            <p className="text-xs text-white/40">
                               {rec.consultation.daily_miles} mi/day
                             </p>
                           )}
                         </div>
                       ) : (
-                        <span className="text-slate-300">—</span>
+                        <span className="text-white/30">—</span>
                       )}
                     </td>
                     <td className="px-4 py-3">
                       <ol className="list-decimal list-inside space-y-0.5">
                         {vehicles.map((v) => (
-                          <li key={v.rank} className="text-slate-700">
+                          <li key={v.rank} className="text-white/80">
                             {v.label}{" "}
-                            <span className="text-xs text-slate-400">{v.score}%</span>
+                            <span className="text-xs text-white/40">{v.score}%</span>
                           </li>
                         ))}
                       </ol>
@@ -220,24 +220,24 @@ export default async function AdminRecommendationsPage() {
                     <td className="px-4 py-3">
                       {rec.confidence_score !== null ? (
                         <div className="flex items-center gap-2">
-                          <div className="h-1.5 w-16 overflow-hidden rounded-full bg-slate-200">
+                          <div className="h-1.5 w-16 overflow-hidden rounded-full bg-white/[0.08]">
                             <div
                               className="h-full rounded-full bg-emerald-500"
                               style={{ width: `${rec.confidence_score}%` }}
                             />
                           </div>
-                          <span className="text-xs font-semibold text-slate-700">
+                          <span className="text-xs font-semibold text-white/80">
                             {rec.confidence_score}%
                           </span>
                         </div>
                       ) : (
-                        <span className="text-slate-300 text-xs">—</span>
+                        <span className="text-white/30 text-xs">—</span>
                       )}
                     </td>
-                    <td className="max-w-xs px-4 py-3 text-xs text-slate-500">
+                    <td className="max-w-xs px-4 py-3 text-xs text-white/50">
                       <p className="line-clamp-2">{rec.explanation ?? "—"}</p>
                     </td>
-                    <td className="px-4 py-3 text-xs text-slate-400">
+                    <td className="px-4 py-3 text-xs text-white/40">
                       {new Date(rec.created_at).toLocaleDateString("en-GB", { dateStyle: "medium" })}
                     </td>
                   </tr>

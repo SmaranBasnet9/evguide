@@ -70,10 +70,10 @@ interface SubmitResult {
 // ── Field helpers ─────────────────────────────────────────────────────────────
 
 const inputCls =
-  "w-full rounded-xl border border-[#E5E7EB] bg-white px-4 py-2.5 text-sm text-[#1A1A1A] placeholder-[#6B7280] focus:border-[#1FBF9F] focus:outline-none focus:ring-2 focus:ring-[#D1F2EB]";
+  "w-full rounded-xl border border-white/10 bg-white/[0.06] px-4 py-2.5 text-sm text-white placeholder:text-white/40 focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20";
 
 const selectCls =
-  "w-full rounded-xl border border-[#E5E7EB] bg-white px-4 py-2.5 text-sm text-[#1A1A1A] focus:border-[#1FBF9F] focus:outline-none focus:ring-2 focus:ring-[#D1F2EB]";
+  "w-full rounded-xl border border-white/10 bg-white/[0.06] px-4 py-2.5 text-sm text-white focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20";
 
 function Field({
   label,
@@ -88,7 +88,7 @@ function Field({
 }) {
   return (
     <div className={span2 ? "md:col-span-2" : ""}>
-      <label className="mb-1.5 block text-xs font-semibold text-[#6B7280]">
+      <label className="mb-1.5 block text-xs font-semibold text-white/50">
         {label}
         {required && <span className="ml-0.5 text-red-500">*</span>}
       </label>
@@ -101,9 +101,9 @@ function Field({
 
 function ConfidenceBadge({ confidence }: { confidence: ValuationConfidence }) {
   const map: Record<ValuationConfidence, { label: string; cls: string }> = {
-    high:   { label: "High confidence",   cls: "bg-emerald-100 text-emerald-700 border-emerald-200" },
-    medium: { label: "Medium confidence", cls: "bg-amber-100 text-amber-700 border-amber-200" },
-    low:    { label: "Low confidence",    cls: "bg-[#F8FAF9] text-[#6B7280] border-[#E5E7EB]" },
+    high:   { label: "High confidence",   cls: "bg-emerald-500/10 text-emerald-400 border-emerald-500/30" },
+    medium: { label: "Medium confidence", cls: "bg-amber-500/10 text-amber-400 border-amber-500/30" },
+    low:    { label: "Low confidence",    cls: "bg-white/[0.06] text-white/50 border-white/10" },
   };
   const { label, cls } = map[confidence];
   return (
@@ -131,16 +131,16 @@ function StepBar({ current }: { current: number }) {
         const active  = idx === current;
         return (
           <div key={idx} className="flex items-center flex-1 last:flex-none">
-            <div className={`flex items-center gap-1.5 ${active ? "text-[#1FBF9F]" : done ? "text-[#1FBF9F]" : "text-[#6B7280]"}`}>
+            <div className={`flex items-center gap-1.5 ${active ? "text-brand" : done ? "text-brand" : "text-white/40"}`}>
               <div className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${
-                active ? "bg-[#1FBF9F] text-white" : done ? "bg-[#1FBF9F] text-white" : "bg-[#E8F8F5] text-[#6B7280]"
+                active ? "bg-brand text-white" : done ? "bg-brand text-white" : "bg-white/[0.08] text-white/50"
               }`}>
                 {done ? <CheckCircle className="h-4 w-4" /> : <Icon className="h-3.5 w-3.5" />}
               </div>
               <span className="hidden text-xs font-semibold sm:inline">{step.label}</span>
             </div>
             {idx < STEPS.length - 1 && (
-              <div className={`mx-2 h-px flex-1 ${idx < current ? "bg-[#1FBF9F]/40" : "bg-[#E5E7EB]"}`} />
+              <div className={`mx-2 h-px flex-1 ${idx < current ? "bg-brand/40" : "bg-white/10"}`} />
             )}
           </div>
         );
@@ -335,7 +335,7 @@ export default function ExchangeModal({ targetEV, onClose }: ExchangeModalProps)
     return (
       <ModalShell onClose={onClose}>
         <div className="flex items-center justify-center py-16">
-          <Loader2 className="h-6 w-6 animate-spin text-[#6B7280]" />
+          <Loader2 className="h-6 w-6 animate-spin text-white/40" />
         </div>
       </ModalShell>
     );
@@ -355,77 +355,77 @@ export default function ExchangeModal({ targetEV, onClose }: ExchangeModalProps)
     return (
       <ModalShell onClose={onClose}>
         <div className="space-y-6 text-center">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100">
-            <CheckCircle className="h-8 w-8 text-emerald-600" />
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/10">
+            <CheckCircle className="h-8 w-8 text-emerald-400" />
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-[#1A1A1A]">Exchange request submitted!</h2>
-            <p className="mt-2 text-sm text-[#6B7280]">
+            <h2 className="text-2xl font-bold text-white">Exchange request submitted!</h2>
+            <p className="mt-2 text-sm text-white/60">
               Our consultant will contact you shortly to discuss your exchange offer.
             </p>
           </div>
 
           {/* Valuation card */}
-          <div className="rounded-2xl border-2 border-[#D1F2EB] bg-[#E8F8F5] p-5 text-left">
+          <div className="rounded-2xl border-2 border-brand/30 bg-brand/10 p-5 text-left">
             <div className="mb-1 flex items-center justify-between gap-2">
-              <p className="text-xs font-bold uppercase tracking-wider text-[#1FBF9F]">
+              <p className="text-xs font-bold uppercase tracking-wider text-brand">
                 Instant estimated value
               </p>
               {result.valuation_source === "ai" && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-violet-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-violet-600">
+                <span className="inline-flex items-center gap-1 rounded-full bg-violet-500/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-violet-400">
                   ✦ AI-powered
                 </span>
               )}
             </div>
             <div className="flex items-end justify-between gap-3">
-              <p className="text-4xl font-black text-[#1FBF9F]">
+              <p className="text-4xl font-black text-brand">
                 £{result.estimated_value.toLocaleString()}
               </p>
               <ConfidenceBadge confidence={result.confidence} />
             </div>
-            <p className="mt-2 text-xs text-[#6B7280]">
+            <p className="mt-2 text-xs text-white/50">
               This is a system estimate only. Your consultant will review and provide a final offer after inspection.
             </p>
           </div>
 
           {/* Selected EV */}
           {targetEV && (
-            <div className="rounded-2xl border border-[#E5E7EB] bg-white p-4 text-left">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-[#6B7280]">
+            <div className="rounded-2xl border border-white/10 bg-white/[0.05] p-4 text-left">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-white/50">
                 Your selected EV
               </p>
               <div className="flex items-center gap-3">
                 {targetEV.heroImage && (
-                  <div className="relative h-14 w-20 overflow-hidden rounded-xl bg-[#F8FAF9]">
+                  <div className="relative h-14 w-20 overflow-hidden rounded-xl bg-white/[0.04]">
                     <Image src={targetEV.heroImage} alt={targetEV.model} fill className="object-cover" />
                   </div>
                 )}
                 <div>
-                  <p className="font-bold text-[#1A1A1A]">
+                  <p className="font-bold text-white">
                     {targetEV.brand} {targetEV.model}
                   </p>
-                  <p className="text-sm text-[#6B7280]">Listed at £{targetEV.price.toLocaleString()}</p>
+                  <p className="text-sm text-white/60">Listed at £{targetEV.price.toLocaleString()}</p>
                 </div>
               </div>
             </div>
           )}
 
           {/* Next steps */}
-          <div className="rounded-2xl border border-[#E5E7EB] bg-[#F8FAF9] p-4 text-left">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-[#6B7280]">
+          <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-left">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-white/50">
               Next steps
             </p>
-            <ol className="space-y-1.5 text-sm text-[#6B7280]">
+            <ol className="space-y-1.5 text-sm text-white/60">
               <li className="flex items-start gap-2">
-                <span className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-[#E8F8F5] text-xs font-bold text-[#1FBF9F]">1</span>
+                <span className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-brand/15 text-xs font-bold text-brand">1</span>
                 Our consultant will review your request and call you within 24 hours.
               </li>
               <li className="flex items-start gap-2">
-                <span className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-[#E8F8F5] text-xs font-bold text-[#1FBF9F]">2</span>
+                <span className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-brand/15 text-xs font-bold text-brand">2</span>
                 A physical inspection of your vehicle will be arranged.
               </li>
               <li className="flex items-start gap-2">
-                <span className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-[#E8F8F5] text-xs font-bold text-[#1FBF9F]">3</span>
+                <span className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-brand/15 text-xs font-bold text-brand">3</span>
                 We will present a final exchange offer and process the deal.
               </li>
             </ol>
@@ -434,7 +434,7 @@ export default function ExchangeModal({ targetEV, onClose }: ExchangeModalProps)
           <button
             type="button"
             onClick={onClose}
-            className="w-full rounded-xl bg-[#1FBF9F] py-3 text-sm font-bold text-white shadow-md hover:bg-[#17A589]"
+            className="w-full rounded-xl bg-brand py-3 text-sm font-bold text-white shadow-md hover:bg-brand-hover"
           >
             Close
           </button>
@@ -449,15 +449,15 @@ export default function ExchangeModal({ targetEV, onClose }: ExchangeModalProps)
     <ModalShell onClose={onClose}>
       {/* Header */}
       <div className="mb-5 flex items-start gap-3">
-        <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-amber-100">
-          <ArrowLeftRight className="h-5 w-5 text-amber-600" />
+        <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-amber-500/10">
+          <ArrowLeftRight className="h-5 w-5 text-amber-400" />
         </div>
         <div>
-          <h2 className="text-xl font-bold text-[#1A1A1A]">Exchange Offer</h2>
-          <p className="text-xs text-[#6B7280]">
+          <h2 className="text-xl font-bold text-white">Exchange Offer</h2>
+          <p className="text-xs text-white/50">
             {targetEV
               ? <>Exchange your current vehicle for{" "}
-                  <span className="font-semibold text-[#1A1A1A]">
+                  <span className="font-semibold text-white">
                     {targetEV.brand} {targetEV.model}
                   </span></>
               : "Get an instant valuation for your current vehicle"}
@@ -469,7 +469,7 @@ export default function ExchangeModal({ targetEV, onClose }: ExchangeModalProps)
 
       {/* Error */}
       {error && (
-        <div className="mb-4 flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="mb-4 flex items-center gap-2 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
           <AlertCircle className="h-4 w-4 flex-shrink-0" />
           {error}
         </div>
@@ -683,7 +683,7 @@ export default function ExchangeModal({ targetEV, onClose }: ExchangeModalProps)
           </div>
 
           {/* Boolean flags */}
-          <div className="grid grid-cols-1 gap-3 rounded-2xl border border-[#E5E7EB] bg-[#F8FAF9] p-4 sm:grid-cols-3">
+          <div className="grid grid-cols-1 gap-3 rounded-2xl border border-white/10 bg-white/[0.04] p-4 sm:grid-cols-3">
             <CheckField
               label="Accident history"
               checked={form.accident_history}
@@ -720,7 +720,7 @@ export default function ExchangeModal({ targetEV, onClose }: ExchangeModalProps)
       {step === 2 && (
         <div className="space-y-5">
           <SectionTitle>Vehicle photos (optional but recommended)</SectionTitle>
-          <p className="text-xs text-[#6B7280]">
+          <p className="text-xs text-white/50">
             Upload photos to help us provide a more accurate valuation. PNG, JPG or WEBP, max 5 MB each.
           </p>
 
@@ -746,12 +746,12 @@ export default function ExchangeModal({ targetEV, onClose }: ExchangeModalProps)
                     disabled={isUploading}
                     className={`group relative flex w-full flex-col items-center justify-center gap-2 overflow-hidden rounded-xl border-2 border-dashed py-5 text-xs font-medium transition ${
                       uploaded
-                        ? "border-[#1FBF9F] bg-[#E8F8F5] text-[#1FBF9F]"
-                        : "border-[#E5E7EB] bg-white text-[#6B7280] hover:border-[#1FBF9F]/50 hover:bg-[#E8F8F5]"
+                        ? "border-brand bg-brand/10 text-brand"
+                        : "border-white/10 bg-white/[0.04] text-white/50 hover:border-brand/50 hover:bg-brand/5"
                     }`}
                   >
                     {isUploading ? (
-                      <Loader2 className="h-5 w-5 animate-spin text-[#1FBF9F]" />
+                      <Loader2 className="h-5 w-5 animate-spin text-brand" />
                     ) : uploaded ? (
                       <>
                         <div className="relative h-12 w-full overflow-hidden">
@@ -770,19 +770,19 @@ export default function ExchangeModal({ targetEV, onClose }: ExchangeModalProps)
           </div>
 
           {/* Summary */}
-          <div className="rounded-2xl border border-[#E5E7EB] bg-[#F8FAF9] p-4 text-sm text-[#6B7280] space-y-2">
-            <p className="font-semibold text-[#1A1A1A]">Review your submission</p>
-            <p><span className="text-[#6B7280]">Customer:</span> {form.customer_name} · {form.phone}</p>
-            <p><span className="text-[#6B7280]">Vehicle:</span> {form.current_vehicle_year} {form.current_vehicle_brand} {form.current_vehicle_model} ({form.fuel_type})</p>
-            {form.mileage && <p><span className="text-[#6B7280]">Mileage:</span> {parseInt(form.mileage).toLocaleString()} km</p>}
-            {form.condition && <p><span className="text-[#6B7280]">Condition:</span> {form.condition}</p>}
-            {targetEV && <p><span className="text-[#6B7280]">Target EV:</span> {targetEV.brand} {targetEV.model} · £{targetEV.price.toLocaleString()}</p>}
+          <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-sm text-white/60 space-y-2">
+            <p className="font-semibold text-white">Review your submission</p>
+            <p><span className="text-white/50">Customer:</span> {form.customer_name} · {form.phone}</p>
+            <p><span className="text-white/50">Vehicle:</span> {form.current_vehicle_year} {form.current_vehicle_brand} {form.current_vehicle_model} ({form.fuel_type})</p>
+            {form.mileage && <p><span className="text-white/50">Mileage:</span> {parseInt(form.mileage).toLocaleString()} km</p>}
+            {form.condition && <p><span className="text-white/50">Condition:</span> {form.condition}</p>}
+            {targetEV && <p><span className="text-white/50">Target EV:</span> {targetEV.brand} {targetEV.model} · £{targetEV.price.toLocaleString()}</p>}
             {uploadedImages.length > 0 && (
-              <p><span className="text-[#6B7280]">Photos uploaded:</span> {uploadedImages.length}</p>
+              <p><span className="text-white/50">Photos uploaded:</span> {uploadedImages.length}</p>
             )}
           </div>
 
-          <p className="text-xs text-[#6B7280]">
+          <p className="text-xs text-white/40">
             By submitting you agree that we may contact you regarding this exchange request. This is a non-binding enquiry.
           </p>
 
@@ -790,7 +790,7 @@ export default function ExchangeModal({ targetEV, onClose }: ExchangeModalProps)
             <button
               type="button"
               onClick={() => setStep((s) => s - 1)}
-              className="flex items-center gap-1.5 rounded-xl border border-[#E5E7EB] bg-white px-5 py-2.5 text-sm font-semibold text-[#1A1A1A] hover:bg-[#F8FAF9]"
+              className="flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.06] px-5 py-2.5 text-sm font-semibold text-white hover:bg-white/[0.10]"
             >
               <ArrowLeft className="h-4 w-4" /> Back
             </button>
@@ -798,7 +798,7 @@ export default function ExchangeModal({ targetEV, onClose }: ExchangeModalProps)
               type="button"
               onClick={handleSubmit}
               disabled={submitting}
-              className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#1FBF9F] py-2.5 text-sm font-bold text-white shadow-md hover:bg-[#17A589] disabled:opacity-60"
+              className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-brand py-2.5 text-sm font-bold text-white shadow-md hover:bg-brand-hover disabled:opacity-60"
             >
               {submitting ? (
                 <><Loader2 className="h-4 w-4 animate-spin" /> Submitting…</>
@@ -830,11 +830,11 @@ function ModalShell({
         onClick={onClose}
       />
       {/* Panel */}
-      <div className="relative z-10 w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-[2rem] bg-white p-6 shadow-2xl sm:p-8">
+      <div className="relative z-10 w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-[2rem] bg-surface-card border border-white/10 p-6 shadow-2xl sm:p-8">
         <button
           type="button"
           onClick={onClose}
-          className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-[#6B7280] hover:bg-[#E8F8F5] hover:text-[#1A1A1A]"
+          className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/[0.06] text-white/60 hover:bg-white/[0.12] hover:text-white"
         >
           <X className="h-4 w-4" />
         </button>
@@ -846,7 +846,7 @@ function ModalShell({
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-xs font-bold uppercase tracking-wider text-[#1FBF9F]">{children}</p>
+    <p className="text-xs font-bold uppercase tracking-wider text-brand">{children}</p>
   );
 }
 
@@ -865,7 +865,7 @@ function NavButtons({
         <button
           type="button"
           onClick={onBack}
-          className="flex items-center gap-1.5 rounded-xl border border-[#E5E7EB] bg-white px-5 py-2.5 text-sm font-semibold text-[#1A1A1A] hover:bg-[#F8FAF9]"
+          className="flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.06] px-5 py-2.5 text-sm font-semibold text-white hover:bg-white/[0.10]"
         >
           <ArrowLeft className="h-4 w-4" /> Back
         </button>
@@ -875,7 +875,7 @@ function NavButtons({
       <button
         type="button"
         onClick={onNext}
-        className="flex items-center gap-2 rounded-xl bg-[#1FBF9F] px-6 py-2.5 text-sm font-bold text-white shadow-md hover:bg-[#17A589]"
+        className="flex items-center gap-2 rounded-xl bg-brand px-6 py-2.5 text-sm font-bold text-white shadow-md hover:bg-brand-hover"
       >
         Continue <ArrowRight className="h-4 w-4" />
       </button>
@@ -895,12 +895,12 @@ function CheckField({
   danger?: boolean;
 }) {
   return (
-    <label className="flex cursor-pointer items-center gap-2 text-sm text-[#1A1A1A]">
+    <label className="flex cursor-pointer items-center gap-2 text-sm text-white/80">
       <input
         type="checkbox"
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
-        className={`h-4 w-4 rounded border-[#E5E7EB] ${danger ? "accent-red-500" : "accent-[#1FBF9F]"}`}
+        className={`h-4 w-4 rounded border-white/10 ${danger ? "accent-red-500" : "accent-brand"}`}
       />
       <span className={checked && danger ? "font-semibold text-red-600" : ""}>{label}</span>
     </label>
@@ -909,20 +909,20 @@ function CheckField({
 
 function TargetEVCard({ targetEV }: { targetEV: ExchangeTargetEV }) {
   return (
-    <div className="flex items-center gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4">
+    <div className="flex items-center gap-3 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4">
       {targetEV.heroImage && (
-        <div className="relative h-14 w-20 overflow-hidden rounded-xl bg-[#F8FAF9] flex-shrink-0">
+        <div className="relative h-14 w-20 overflow-hidden rounded-xl bg-white/[0.04] flex-shrink-0">
           <Image src={targetEV.heroImage} alt={targetEV.model} fill className="object-cover" unoptimized />
         </div>
       )}
       <div>
-        <p className="text-[10px] font-bold uppercase tracking-wider text-amber-600">
+        <p className="text-[10px] font-bold uppercase tracking-wider text-amber-400">
           You are exchanging for
         </p>
-        <p className="font-bold text-[#1A1A1A]">
+        <p className="font-bold text-white">
           {targetEV.brand} {targetEV.model}
         </p>
-        <p className="text-sm text-[#6B7280]">Listed at £{targetEV.price.toLocaleString()}</p>
+        <p className="text-sm text-white/60">Listed at £{targetEV.price.toLocaleString()}</p>
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { LogIn, Lock } from "lucide-react";
@@ -20,7 +20,7 @@ export default function LoginPrompt({ action = "continue", returnTo }: LoginProm
   return (
     <div className="flex flex-col items-center justify-center gap-5 rounded-2xl border border-[#E5E7EB] bg-[#F8FAF9] px-8 py-12 text-center">
       <div className="flex h-14 w-14 items-center justify-center rounded-full border border-[#D1F2EB] bg-[#E8F8F5]">
-        <Lock className="h-6 w-6 text-[#1FBF9F]" />
+        <Lock className="h-6 w-6 text-brand" />
       </div>
 
       <div>
@@ -33,14 +33,14 @@ export default function LoginPrompt({ action = "continue", returnTo }: LoginProm
       <div className="flex flex-col gap-3 sm:flex-row">
         <Link
           href={href}
-          className="inline-flex items-center gap-2 rounded-full bg-[#1FBF9F] px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#17A589]"
+          className="inline-flex items-center gap-2 rounded-full bg-brand px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-hover"
         >
           <LogIn className="h-4 w-4" />
           Log in
         </Link>
         <Link
           href={returnTo ? `/signup?next=${encodeURIComponent(returnTo)}` : "/signup"}
-          className="inline-flex items-center gap-2 rounded-full border border-[#E5E7EB] bg-white px-6 py-2.5 text-sm font-semibold text-[#374151] transition hover:border-[#1FBF9F] hover:text-[#1FBF9F]"
+          className="inline-flex items-center gap-2 rounded-full border border-[#E5E7EB] bg-white px-6 py-2.5 text-sm font-semibold text-[#374151] transition hover:border-brand hover:text-brand"
         >
           Create account
         </Link>

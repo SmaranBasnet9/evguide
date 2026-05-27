@@ -12,6 +12,12 @@
   --brand-soft:   #E8F8F5;
   --accent-lime:  #C8FF00;
 
+  /* ── Light surfaces ── */
+  --surface-base:   #ffffff;
+  --surface-panel:  #f9fafb;
+  --surface-footer: #f3f4f6;
+  --surface-card:   #f9fafb;
+
   /* ── Typography ── */
   --app-font-sans:
     "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
@@ -69,9 +75,15 @@
   --font-mono: var(--app-font-mono);
 
   /* ── Brand tokens available as Tailwind classes ── */
-  --color-brand:       var(--brand);
-  --color-brand-hover: var(--brand-hover);
-  --color-accent-lime: var(--accent-lime);
+  --color-brand:         var(--brand);
+  --color-brand-hover:   var(--brand-hover);
+  --color-accent-lime:   var(--accent-lime);
+
+  /* ── Surface tokens available as Tailwind classes ── */
+  --color-surface-base:   var(--surface-base);
+  --color-surface-panel:  var(--surface-panel);
+  --color-surface-footer: var(--surface-footer);
+  --color-surface-card:   var(--surface-card);
 
   /* ── Shadow tokens ── */
   --shadow-card: var(--shadow-card);
@@ -168,13 +180,51 @@ body {
   }
 }
 
+/* ── Performance animations (replaces framer-motion for static sections) ── */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.anim-fade-up {
+  animation: fade-up 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+.anim-fade-in {
+  animation: fade-in 0.4s ease both;
+}
+
+/* Respect user motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .anim-fade-up,
+  .anim-fade-in {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Promote hoverable cards to their own compositor layer */
+.card-hover {
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+/* Isolate sections to reduce layout/paint scope */
+.section-contain {
+  contain: layout style;
+}
+
 @layer utilities {
   /* Glass surface */
   .glass {
-    background: rgba(255,255,255,0.04);
+    background: rgba(255,255,255,0.80);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255,255,255,0.08);
+    border: 1px solid rgba(0,0,0,0.08);
   }
   .glass-light {
     background: rgba(255,255,255,0.88);

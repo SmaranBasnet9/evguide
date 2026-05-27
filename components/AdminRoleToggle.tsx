@@ -50,7 +50,7 @@ export default function AdminRoleToggle({ userId, currentRole, isSelf, canManage
 
   // Self — show label, no controls
   if (isSelf) {
-    return <span className="text-xs italic text-slate-400">You</span>;
+    return <span className="text-xs italic text-white/40">You</span>;
   }
 
   // Not super admin viewing the page — read-only
@@ -71,7 +71,7 @@ export default function AdminRoleToggle({ userId, currentRole, isSelf, canManage
         </button>
         <button
           onClick={() => setConfirming(false)}
-          className="text-xs font-semibold text-slate-500 hover:underline"
+          className="text-xs font-semibold text-white/50 hover:underline"
         >
           Cancel
         </button>

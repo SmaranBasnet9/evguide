@@ -84,7 +84,7 @@ export default function AdminConsultationForwardButton({
 
   return (
     <div className="mt-2 space-y-2">
-      <p className="text-[11px] font-medium text-slate-500">
+      <p className="text-[11px] font-medium text-white/50">
         Testing mode: enter recipient email manually
       </p>
       <input
@@ -92,7 +92,7 @@ export default function AdminConsultationForwardButton({
         value={emailTo}
         onChange={(e) => setEmailTo(e.target.value)}
         placeholder="Enter your email for test forwarding"
-        className="w-56 rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs text-slate-700 focus:border-purple-400 focus:outline-none focus:ring-1 focus:ring-purple-200"
+        className="w-56 rounded-lg border border-white/15 px-2.5 py-1.5 text-xs text-white/80 focus:border-purple-400 focus:outline-none focus:ring-1 focus:ring-purple-200"
       />
       <button
         type="button"

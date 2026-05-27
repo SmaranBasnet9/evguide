@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+﻿import { ReactNode } from "react";
 
 interface SectionBlockProps {
   title: string;
@@ -12,7 +12,7 @@ export default function SectionBlock({ title, description, icon, children, class
   return (
     <section className={`mb-16 ${className}`}>
       <div className="mb-8 flex items-center gap-3">
-        {icon && <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#D1F2EB] bg-[#E8F8F5] shadow-sm text-[#1FBF9F]">
+        {icon && <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#D1F2EB] bg-[#E8F8F5] shadow-sm text-brand">
           {icon}
         </div>}
         <div>

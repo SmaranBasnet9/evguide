@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useCallback } from "react";
 import { trackEvent } from "@/lib/tracking/client";
@@ -16,38 +16,31 @@ export default function VehicleSort({ value, onChange, totalCount, filteredCount
   const handleChange = useCallback(
     (next: AllVehiclesSortOption) => {
       onChange(next);
-      void trackEvent({
-        eventType: "sort_changed",
-        eventValue: { sort: next },
-      });
+      void trackEvent({ eventType: "sort_changed", eventValue: { sort: next } });
     },
     [onChange],
   );
 
   return (
-    <div className="flex items-center justify-between gap-4">
-      <p className="text-sm text-slate-500">
-        <span className="font-semibold text-slate-900">{filteredCount}</span>
+    <div className="flex items-center gap-3">
+      <p className="text-sm text-gray-500">
+        <span className="font-semibold text-gray-900">{filteredCount}</span>
         {filteredCount !== totalCount && (
-          <span className="text-slate-400"> of {totalCount}</span>
+          <span className="text-gray-400"> of {totalCount}</span>
         )}{" "}
         vehicles
       </p>
-
-      <div className="flex items-center gap-2">
-        <p className="hidden text-xs font-medium text-slate-500 sm:block">Sort by</p>
-        <select
-          value={value}
-          onChange={(e) => handleChange(e.target.value as AllVehiclesSortOption)}
-          className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          {SORT_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
-      </div>
+      <select
+        value={value}
+        onChange={(e) => handleChange(e.target.value as AllVehiclesSortOption)}
+        className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm font-medium text-gray-900 outline-none transition focus:border-brand/40 focus:ring-2 focus:ring-brand/20"
+      >
+        {SORT_OPTIONS.map((opt) => (
+          <option key={opt.value} value={opt.value} className="bg-white text-gray-900">
+            {opt.label}
+          </option>
+        ))}
+      </select>
     </div>
   );
 }

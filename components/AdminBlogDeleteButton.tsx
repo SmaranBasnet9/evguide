@@ -32,7 +32,7 @@ export default function AdminBlogDeleteButton({ id }: { id: string }) {
         </button>
         <button
           onClick={() => setConfirming(false)}
-          className="text-xs font-semibold text-slate-500 hover:underline"
+          className="text-xs font-semibold text-white/50 hover:underline"
         >
           Cancel
         </button>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -20,7 +20,7 @@ import type { FinanceOutput } from "@/lib/finance-engine";
 const RANK_LABELS = ["Top Match", "Strong Alternative", "Also Consider"] as const;
 
 const RANGE_VERDICT_STYLES = {
-  comfortable: "bg-[#E8F8F5] text-[#1FBF9F] border-[#D1F2EB]",
+  comfortable: "bg-[#E8F8F5] text-brand border-[#D1F2EB]",
   caution:     "bg-amber-50 text-amber-600 border-amber-100",
   tight:       "bg-red-50 text-red-600 border-red-100",
 } as const;
@@ -58,7 +58,7 @@ export default function VehicleRecommendationCard({ result, chargingOutput, fina
   return (
     <article
       className={`relative flex flex-col overflow-hidden rounded-[2rem] border bg-white transition-shadow hover:shadow-md ${
-        isTopMatch ? "border-[#1FBF9F] shadow-sm" : "border-[#E5E7EB]"
+        isTopMatch ? "border-brand shadow-sm" : "border-[#E5E7EB]"
       }`}
     >
       {/* Top ribbon */}
@@ -69,7 +69,7 @@ export default function VehicleRecommendationCard({ result, chargingOutput, fina
       >
         <span
           className={`text-xs font-semibold uppercase tracking-[0.2em] ${
-            isTopMatch ? "text-[#1FBF9F]" : "text-[#6B7280]"
+            isTopMatch ? "text-brand" : "text-[#6B7280]"
           }`}
         >
           {RANK_LABELS[rank - 1]}
@@ -77,7 +77,7 @@ export default function VehicleRecommendationCard({ result, chargingOutput, fina
         <span
           className={`flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm font-bold ${
             isTopMatch
-              ? "border-[#1FBF9F]/30 bg-white text-[#1FBF9F]"
+              ? "border-brand/30 bg-white text-brand"
               : "border-[#E5E7EB] bg-white text-[#374151]"
           }`}
         >
@@ -137,7 +137,7 @@ export default function VehicleRecommendationCard({ result, chargingOutput, fina
             <ul className="space-y-2">
               {reasons.map((r) => (
                 <li key={r} className="flex items-start gap-2.5 text-sm leading-5 text-[#374151]">
-                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#1FBF9F]" />
+                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-brand" />
                   {r}
                 </li>
               ))}
@@ -182,7 +182,7 @@ export default function VehicleRecommendationCard({ result, chargingOutput, fina
         <button
           type="button"
           onClick={() => setShowBreakdown((v) => !v)}
-          className="flex items-center gap-1.5 text-xs font-medium text-[#6B7280] transition hover:text-[#1FBF9F]"
+          className="flex items-center gap-1.5 text-xs font-medium text-[#6B7280] transition hover:text-brand"
         >
           {showBreakdown ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
           Score breakdown
@@ -222,7 +222,7 @@ export default function VehicleRecommendationCard({ result, chargingOutput, fina
             {financeOutput && (
               <div
                 className={`flex flex-col gap-0.5 rounded-[1rem] border px-3 py-2 ${
-                  financeOutput.affordabilityBand === "comfortable" ? "bg-[#E8F8F5] text-[#1FBF9F] border-[#D1F2EB]"
+                  financeOutput.affordabilityBand === "comfortable" ? "bg-[#E8F8F5] text-brand border-[#D1F2EB]"
                   : financeOutput.affordabilityBand === "manageable" ? "bg-blue-50 text-blue-600 border-blue-100"
                   : financeOutput.affordabilityBand === "stretch"    ? "bg-amber-50 text-amber-600 border-amber-100"
                   : "bg-red-50 text-red-600 border-red-100"
@@ -246,7 +246,7 @@ export default function VehicleRecommendationCard({ result, chargingOutput, fina
         <Link
           href={`/cars/${vehicle.id}`}
           onClick={handleViewClick}
-          className="mt-1 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#1FBF9F] px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#17A589]"
+          className="mt-1 inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-hover"
         >
           View {vehicle.brand} {vehicle.model}
           <ArrowRight className="h-4 w-4" />
@@ -290,7 +290,7 @@ function ScoreBar({ label, score, max }: { label: string; score: number; max: nu
       </div>
       <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#E5E7EB]">
         <div
-          className="h-full rounded-full bg-[#1FBF9F] transition-all duration-500"
+          className="h-full rounded-full bg-brand transition-all duration-500"
           style={{ width: `${pct}%` }}
         />
       </div>

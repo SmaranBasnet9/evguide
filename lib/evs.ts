@@ -1,6 +1,7 @@
 import { unstable_cache } from "next/cache";
 import { createPublicServerClient } from "@/lib/supabase/public-server";
 import { mapDbEV, type DbEV } from "@/lib/ev-models";
+import { evModels } from "@/data/evModels";
 
 async function fetchPublicEVRows(limit?: number) {
   const supabase = createPublicServerClient();
@@ -33,7 +34,7 @@ async function fetchPublicEVRows(limit?: number) {
 const fetchAllEVsCached = unstable_cache(
   () => fetchPublicEVRows(),
   ["ev-models-all"],
-  { revalidate: 120, tags: ["ev-models"] },
+  { revalidate: 3600, tags: ["ev-models"] },
 );
 
 export async function getAllEVs() {
@@ -43,9 +44,30 @@ export async function getAllEVs() {
 const fetchTopSellingEVsCached = unstable_cache(
   () => fetchPublicEVRows(10),
   ["ev-models-top"],
-  { revalidate: 120, tags: ["ev-models"] },
+  { revalidate: 3600, tags: ["ev-models"] },
 );
 
 export async function getTopSellingEVs() {
   return fetchTopSellingEVsCached();
+}
+
+async function fetchEVById(id: string) {
+  const supabase = createPublicServerClient();
+  if (!supabase) return evModels.find((m) => m.id === id) ?? null;
+
+  const { data, error } = await supabase
+    .from("ev_models")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (error || !data) {
+    // Fallback to static data
+    return evModels.find((m) => m.id === id) ?? null;
+  }
+  return mapDbEV(data as DbEV);
+}
+
+export async function getEVById(id: string) {
+  return fetchEVById(id);
 }

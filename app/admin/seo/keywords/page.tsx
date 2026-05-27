@@ -8,18 +8,18 @@ const INTENT_COLORS: Record<string, string> = {
   informational: "bg-blue-50 text-blue-700",
   commercial: "bg-violet-50 text-violet-700",
   transactional: "bg-emerald-50 text-emerald-700",
-  navigational: "bg-slate-100 text-slate-600",
+  navigational: "bg-white/[0.05] text-white/60",
 };
 
 function TrendBar({ score }: { score: number }) {
   const pct = Math.min(100, Math.max(0, score));
-  const color = pct >= 80 ? "bg-emerald-500" : pct >= 60 ? "bg-amber-400" : "bg-slate-300";
+  const color = pct >= 80 ? "bg-emerald-500" : pct >= 60 ? "bg-amber-400" : "bg-white/30";
   return (
     <div className="flex items-center gap-2">
-      <div className="h-1.5 w-24 overflow-hidden rounded-full bg-slate-100">
+      <div className="h-1.5 w-24 overflow-hidden rounded-full bg-white/[0.05]">
         <div className={`h-full rounded-full ${color}`} style={{ width: `${pct}%` }} />
       </div>
-      <span className="text-xs tabular-nums text-slate-500">{pct.toFixed(0)}</span>
+      <span className="text-xs tabular-nums text-white/50">{pct.toFixed(0)}</span>
     </div>
   );
 }
@@ -74,7 +74,7 @@ export default async function AdminSeoKeywordsPage() {
             </a>{" "}
             then reload this page.
           </p>
-          <pre className="mt-4 overflow-x-auto rounded-xl bg-white p-4 text-xs text-slate-700 shadow-sm ring-1 ring-amber-200">
+          <pre className="mt-4 overflow-x-auto rounded-xl bg-white/[0.03] p-4 text-xs text-white/80 shadow-sm ring-1 ring-amber-200">
             {SETUP_SQL}
           </pre>
         </div>
@@ -82,8 +82,8 @@ export default async function AdminSeoKeywordsPage() {
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">SEO Keywords</h1>
-          <p className="mt-1 text-slate-500">
+          <h1 className="text-3xl font-bold text-white">SEO Keywords</h1>
+          <p className="mt-1 text-white/50">
             {keywords.length} keywords · {highTrend} trending · {overridden} manually overridden
           </p>
         </div>
@@ -100,22 +100,22 @@ export default async function AdminSeoKeywordsPage() {
       </div>
 
       {/* Add keyword form */}
-      <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-4 text-base font-semibold text-slate-900">Add Keyword</h2>
+      <div className="mt-8 rounded-2xl border border-white/10 bg-white/[0.03] p-6 shadow-sm">
+        <h2 className="mb-4 text-base font-semibold text-white">Add Keyword</h2>
         <form action={createKeywordAction} className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
           <input
             required
             name="keyword"
             type="text"
             placeholder="Keyword *"
-            className="col-span-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:outline-none lg:col-span-2"
+            className="col-span-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-white placeholder-white/30 focus:border-blue-500 focus:outline-none lg:col-span-2"
           />
           <input
             name="search_volume"
             type="number"
             min={0}
             placeholder="Search volume"
-            className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+            className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-white placeholder-white/30 focus:border-blue-500 focus:outline-none"
           />
           <input
             name="trend_score"
@@ -124,11 +124,11 @@ export default async function AdminSeoKeywordsPage() {
             max={100}
             step={0.1}
             placeholder="Trend score"
-            className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+            className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-white placeholder-white/30 focus:border-blue-500 focus:outline-none"
           />
           <select
             name="intent"
-            className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none"
+            className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-white focus:border-blue-500 focus:outline-none"
           >
             <option value="informational">Informational</option>
             <option value="commercial">Commercial</option>
@@ -139,12 +139,12 @@ export default async function AdminSeoKeywordsPage() {
             name="target_page"
             type="text"
             placeholder="Target page (auto)"
-            className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:outline-none"
+            className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-white placeholder-white/30 focus:border-blue-500 focus:outline-none"
           />
 
           <div className="col-span-full flex items-center justify-between">
-            <label className="flex items-center gap-2 text-sm text-slate-700">
-              <input type="checkbox" name="is_active" defaultChecked className="h-4 w-4 rounded border-slate-300 text-blue-600" />
+            <label className="flex items-center gap-2 text-sm text-white/80">
+              <input type="checkbox" name="is_active" defaultChecked className="h-4 w-4 rounded border-white/15 text-blue-600" />
               Active
             </label>
             <button
@@ -158,28 +158,28 @@ export default async function AdminSeoKeywordsPage() {
       </div>
 
       {/* Keyword table */}
-      <div className="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div className="mt-6 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] shadow-sm">
         {keywords.length === 0 ? (
-          <div className="py-20 text-center text-slate-500">No keywords yet. Add one above.</div>
+          <div className="py-20 text-center text-white/50">No keywords yet. Add one above.</div>
         ) : (
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-slate-100 bg-slate-50 text-left">
-                <th className="px-5 py-3 font-semibold text-slate-600">Keyword</th>
-                <th className="px-5 py-3 font-semibold text-slate-600">Intent</th>
-                <th className="px-5 py-3 font-semibold text-slate-600">Target Page</th>
-                <th className="px-5 py-3 font-semibold text-slate-600">Search Vol.</th>
-                <th className="px-5 py-3 font-semibold text-slate-600">Trend</th>
-                <th className="px-5 py-3 font-semibold text-slate-600">Status</th>
-                <th className="px-5 py-3 font-semibold text-slate-600"></th>
+              <tr className="border-b border-white/[0.06] bg-white/[0.03] text-left">
+                <th className="px-5 py-3 font-semibold text-white/60">Keyword</th>
+                <th className="px-5 py-3 font-semibold text-white/60">Intent</th>
+                <th className="px-5 py-3 font-semibold text-white/60">Target Page</th>
+                <th className="px-5 py-3 font-semibold text-white/60">Search Vol.</th>
+                <th className="px-5 py-3 font-semibold text-white/60">Trend</th>
+                <th className="px-5 py-3 font-semibold text-white/60">Status</th>
+                <th className="px-5 py-3 font-semibold text-white/60"></th>
               </tr>
             </thead>
             <tbody>
               {keywords.map((kw) => (
-                <tr key={kw.id} className="border-b border-slate-100 last:border-b-0 hover:bg-slate-50">
+                <tr key={kw.id} className="border-b border-white/[0.06] last:border-b-0 hover:bg-white/[0.03]">
                   <td className="px-5 py-3">
                     <div className="flex items-center gap-2">
-                      <span className="font-medium text-slate-900">{kw.keyword}</span>
+                      <span className="font-medium text-white">{kw.keyword}</span>
                       {kw.is_overridden && (
                         <span className="rounded bg-amber-50 px-1.5 py-0.5 text-[10px] font-semibold text-amber-700">
                           Locked
@@ -190,18 +190,18 @@ export default async function AdminSeoKeywordsPage() {
                   <td className="px-5 py-3">
                     <span
                       className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${
-                        INTENT_COLORS[kw.intent] ?? "bg-slate-100 text-slate-500"
+                        INTENT_COLORS[kw.intent] ?? "bg-white/[0.05] text-white/50"
                       }`}
                     >
                       {kw.intent}
                     </span>
                   </td>
                   <td className="px-5 py-3">
-                    <code className="rounded bg-slate-100 px-2 py-0.5 text-xs font-mono text-slate-700">
+                    <code className="rounded bg-white/[0.05] px-2 py-0.5 text-xs font-mono text-white/80">
                       {kw.target_page}
                     </code>
                   </td>
-                  <td className="px-5 py-3 tabular-nums text-slate-600">
+                  <td className="px-5 py-3 tabular-nums text-white/60">
                     {kw.search_volume.toLocaleString()}
                   </td>
                   <td className="px-5 py-3">
@@ -210,7 +210,7 @@ export default async function AdminSeoKeywordsPage() {
                   <td className="px-5 py-3">
                     <span
                       className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                        kw.is_active ? "bg-green-50 text-green-700" : "bg-slate-100 text-slate-500"
+                        kw.is_active ? "bg-green-50 text-green-700" : "bg-white/[0.05] text-white/50"
                       }`}
                     >
                       {kw.is_active ? "Active" : "Inactive"}

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect } from "react";
 import {
@@ -29,10 +29,10 @@ interface ChargerDetailsModalProps {
 
 function AvailabilityIcon({ status }: { status: ChargerAvailability }) {
   const map: Record<ChargerAvailability, { icon: React.ReactNode; label: string; cls: string }> = {
-    available: { icon: <CheckCircle className="h-5 w-5" />, label: "Available", cls: "text-green-600" },
-    occupied: { icon: <MinusCircle className="h-5 w-5" />, label: "In Use", cls: "text-amber-600" },
-    out_of_service: { icon: <XCircle className="h-5 w-5" />, label: "Out of Service", cls: "text-red-500" },
-    unknown: { icon: <HelpCircle className="h-5 w-5" />, label: "Unknown", cls: "text-[#6B7280]" },
+    available: { icon: <CheckCircle className="h-5 w-5" />, label: "Available", cls: "text-green-400" },
+    occupied: { icon: <MinusCircle className="h-5 w-5" />, label: "In Use", cls: "text-amber-400" },
+    out_of_service: { icon: <XCircle className="h-5 w-5" />, label: "Out of Service", cls: "text-red-400" },
+    unknown: { icon: <HelpCircle className="h-5 w-5" />, label: "Unknown", cls: "text-white/40" },
   };
   const { icon, label, cls } = map[status];
   return (
@@ -50,7 +50,7 @@ const AMENITY_ICONS: Record<string, React.ReactNode> = {
 
 function AmenityPill({ label }: { label: string }) {
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full border border-[#E5E7EB] bg-[#F8FAF9] px-3 py-1.5 text-xs font-medium text-[#374151]">
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-medium text-white/50">
       {AMENITY_ICONS[label] ?? <span className="h-3.5 w-3.5" />}
       {label}
     </span>
@@ -96,20 +96,20 @@ export default function ChargerDetailsModal({
       />
 
       {/* Panel */}
-      <div className="relative z-10 w-full max-w-lg max-h-[92vh] overflow-y-auto rounded-t-[2rem] sm:rounded-[2rem] bg-white shadow-2xl">
+      <div className="relative z-10 w-full max-w-lg max-h-[92vh] overflow-y-auto rounded-t-[2rem] sm:rounded-[2rem] bg-surface-panel border border-white/10 shadow-2xl">
         {/* Header */}
-        <div className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-[#E5E7EB] bg-white px-6 py-5 rounded-t-[2rem] sm:rounded-t-[2rem]">
+        <div className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-white/8 bg-surface-panel px-6 py-5 rounded-t-[2rem] sm:rounded-t-[2rem]">
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-bold uppercase tracking-wider text-[#1FBF9F]">
+            <p className="text-xs font-bold uppercase tracking-wider text-brand">
               {station.network}
             </p>
-            <h2 className="mt-0.5 text-lg font-extrabold leading-tight text-[#1A1A1A]">
+            <h2 className="mt-0.5 text-lg font-extrabold leading-tight text-white">
               {station.name}
             </h2>
           </div>
           <button
             onClick={onClose}
-            className="shrink-0 rounded-full border border-[#E5E7EB] p-2 text-[#6B7280] transition hover:bg-[#E8F8F5] hover:text-[#1FBF9F]"
+            className="shrink-0 rounded-full border border-white/10 p-2 text-white/40 transition hover:bg-brand/10 hover:text-brand"
           >
             <X className="h-5 w-5" />
           </button>
@@ -118,13 +118,13 @@ export default function ChargerDetailsModal({
         <div className="px-6 py-6 space-y-6">
           {/* Address + status */}
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-start gap-2 text-sm text-[#4B5563]">
-              <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-[#1FBF9F]" />
+            <div className="flex items-start gap-2 text-sm text-white/50">
+              <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-brand" />
               <div>
                 <p>{station.address}</p>
                 <p>{station.city}, {station.postcode}</p>
                 {station.distance_miles !== undefined && (
-                  <p className="mt-0.5 font-semibold text-[#1A1A1A]">{station.distance_miles} miles away</p>
+                  <p className="mt-0.5 font-semibold text-white">{station.distance_miles} miles away</p>
                 )}
               </div>
             </div>
@@ -133,40 +133,40 @@ export default function ChargerDetailsModal({
 
           {/* Stats row */}
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <div className="rounded-xl border border-[#E5E7EB] bg-[#F8FAF9] p-4 text-center">
-              <Zap className="mx-auto mb-2 h-5 w-5 text-[#1FBF9F]" />
-              <p className="text-lg font-bold text-[#1A1A1A]">{station.power_kw} kW</p>
-              <p className="text-xs font-medium uppercase text-[#374151]">Max Power</p>
+            <div className="rounded-xl border border-white/8 bg-white/[0.04] p-4 text-center">
+              <Zap className="mx-auto mb-2 h-5 w-5 text-brand" />
+              <p className="text-lg font-bold text-white">{station.power_kw} kW</p>
+              <p className="text-xs font-medium uppercase text-white/40">Max Power</p>
             </div>
-            <div className="rounded-xl border border-[#E5E7EB] bg-[#F8FAF9] p-4 text-center">
-              <p className="text-lg font-bold text-[#1A1A1A]">{station.number_of_connectors}</p>
-              <p className="text-xs font-medium uppercase text-[#374151]">Points</p>
+            <div className="rounded-xl border border-white/8 bg-white/[0.04] p-4 text-center">
+              <p className="text-lg font-bold text-white">{station.number_of_connectors}</p>
+              <p className="text-xs font-medium uppercase text-white/40">Points</p>
             </div>
-            <div className="rounded-xl border border-[#E5E7EB] bg-[#F8FAF9] p-4 text-center">
-              <p className="text-lg font-bold text-[#1A1A1A]">
+            <div className="rounded-xl border border-white/8 bg-white/[0.04] p-4 text-center">
+              <p className="text-lg font-bold text-white">
                 {station.price_per_kwh !== undefined ? `£${station.price_per_kwh}` : "—"}
               </p>
-              <p className="text-xs font-medium uppercase text-[#374151]">per kWh</p>
+              <p className="text-xs font-medium uppercase text-white/40">per kWh</p>
             </div>
-            <div className="rounded-xl border border-[#E5E7EB] bg-[#F8FAF9] p-4 text-center">
-              <Clock className="mx-auto mb-2 h-5 w-5 text-[#1FBF9F]" />
-              <p className="text-sm font-bold text-[#1A1A1A]">
+            <div className="rounded-xl border border-white/8 bg-white/[0.04] p-4 text-center">
+              <Clock className="mx-auto mb-2 h-5 w-5 text-brand" />
+              <p className="text-sm font-bold text-white">
                 {station.open_24_hours ? "24 / 7" : "Limited"}
               </p>
-              <p className="text-xs font-medium uppercase text-[#374151]">Hours</p>
+              <p className="text-xs font-medium uppercase text-white/40">Hours</p>
             </div>
           </div>
 
           {/* Connector types */}
           <div>
-            <p className="mb-2 text-xs font-bold uppercase tracking-wider text-[#374151]">
+            <p className="mb-2 text-xs font-bold uppercase tracking-wider text-white/40">
               Connector Types
             </p>
             <div className="flex flex-wrap gap-2">
               {station.connector_types.map((c) => (
                 <span
                   key={c}
-                  className="rounded-full border border-[#D1F2EB] bg-[#E8F8F5] px-3 py-1 text-xs font-bold text-[#1FBF9F]"
+                  className="rounded-full border border-brand/25 bg-brand/10 px-3 py-1 text-xs font-bold text-brand"
                 >
                   {c}
                 </span>
@@ -177,7 +177,7 @@ export default function ChargerDetailsModal({
           {/* Amenities */}
           {station.amenities && station.amenities.length > 0 && (
             <div>
-              <p className="mb-2 text-xs font-bold uppercase tracking-wider text-[#374151]">
+              <p className="mb-2 text-xs font-bold uppercase tracking-wider text-white/40">
                 Nearby Amenities
               </p>
               <div className="flex flex-wrap gap-2">
@@ -190,15 +190,15 @@ export default function ChargerDetailsModal({
 
           {/* Notes */}
           {station.notes && (
-            <div className="rounded-xl border border-[#E5E7EB] bg-[#F8FAF9] p-4">
-              <p className="text-xs font-bold uppercase tracking-wider text-[#374151]">Notes</p>
-              <p className="mt-1 text-sm leading-relaxed text-[#4B5563]">{station.notes}</p>
+            <div className="rounded-xl border border-white/8 bg-white/[0.03] p-4">
+              <p className="text-xs font-bold uppercase tracking-wider text-white/40">Notes</p>
+              <p className="mt-1 text-sm leading-relaxed text-white/50">{station.notes}</p>
             </div>
           )}
 
           {/* Last updated */}
           {station.last_updated && (
-            <p className="text-xs text-[#6B7280]">
+            <p className="text-xs text-white/25">
               Last updated:{" "}
               {new Date(station.last_updated).toLocaleString("en-GB", {
                 dateStyle: "medium",
@@ -209,10 +209,10 @@ export default function ChargerDetailsModal({
         </div>
 
         {/* Sticky footer CTA */}
-        <div className="sticky bottom-0 border-t border-[#E5E7EB] bg-white px-6 py-4">
+        <div className="sticky bottom-0 border-t border-white/8 bg-surface-panel px-6 py-4">
           <button
             onClick={openDirections}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#1FBF9F] py-3 text-sm font-bold text-white shadow-md transition hover:bg-[#17A589]"
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-brand py-3 text-sm font-bold text-white shadow-md transition hover:bg-brand-hover"
           >
             <Navigation className="h-4 w-4" />
             Get Directions (Google Maps)

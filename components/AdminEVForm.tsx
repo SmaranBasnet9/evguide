@@ -62,10 +62,10 @@ function Field({
   textarea?: boolean;
   rows?: number;
 }) {
-  const cls = `w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm focus:border-blue-500 focus:outline-none`;
+  const cls = `w-full rounded-2xl border border-white/15 px-4 py-3 text-sm focus:border-blue-500 focus:outline-none`;
   return (
     <div className={span2 ? "md:col-span-2" : ""}>
-      <label className="mb-1.5 block text-sm font-medium text-slate-700">{label}</label>
+      <label className="mb-1.5 block text-sm font-medium text-white/80">{label}</label>
       {textarea ? (
         <textarea name={name} value={value} onChange={onChange} rows={rows} placeholder={placeholder} className={cls} />
       ) : (
@@ -194,21 +194,21 @@ export default function AdminEVForm({ mode = "create", id, initialData }: Props)
     <form onSubmit={handleSubmit} className="space-y-10">
 
       {/* Basic Info */}
-      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-6 text-base font-semibold text-slate-900">Basic Info</h2>
+      <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 shadow-sm">
+        <h2 className="mb-6 text-base font-semibold text-white">Basic Info</h2>
         <div className="grid gap-5 md:grid-cols-2">
           <Field label="Brand" name="brand" value={formData.brand} onChange={handleChange} placeholder="Tesla" />
           <Field label="Model" name="model" value={formData.model} onChange={handleChange} placeholder="Model 3" />
 
           <div className="md:col-span-2">
-            <label className="mb-1.5 block text-sm font-medium text-slate-700">Hero Image URL</label>
+            <label className="mb-1.5 block text-sm font-medium text-white/80">Hero Image URL</label>
             <input
               type="text"
               name="hero_image"
               value={formData.hero_image}
               onChange={handleChange}
               placeholder="https://example.com/car.jpg"
-              className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-2xl border border-white/15 px-4 py-3 text-sm focus:border-blue-500 focus:outline-none"
             />
             <div className="mt-3 flex flex-col gap-2 md:flex-row md:items-center">
               <input
@@ -216,9 +216,9 @@ export default function AdminEVForm({ mode = "create", id, initialData }: Props)
                 accept="image/png,image/jpeg,image/webp"
                 onChange={handleImageUpload}
                 disabled={uploadingImage}
-                className="w-full text-sm text-slate-600 file:mr-4 file:rounded-xl file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:font-semibold file:text-blue-700 hover:file:bg-blue-100"
+                className="w-full text-sm text-white/60 file:mr-4 file:rounded-xl file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:font-semibold file:text-blue-700 hover:file:bg-blue-100"
               />
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-white/50">
                 {uploadingImage ? "Uploading..." : "Or upload PNG / JPG / WEBP (max 5 MB)"}
               </p>
             </div>
@@ -229,12 +229,12 @@ export default function AdminEVForm({ mode = "create", id, initialData }: Props)
 
           {/* Discovery classification */}
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-slate-700">Tier</label>
+            <label className="mb-1.5 block text-sm font-medium text-white/80">Tier</label>
             <select
               name="tier"
               value={formData.tier}
               onChange={(e) => setFormData((prev) => ({ ...prev, tier: e.target.value }))}
-              className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-2xl border border-white/15 px-4 py-3 text-sm focus:border-blue-500 focus:outline-none"
             >
               <option value="">Auto (from price)</option>
               <option value="affordable">Affordable (≤ £32k)</option>
@@ -244,12 +244,12 @@ export default function AdminEVForm({ mode = "create", id, initialData }: Props)
           </div>
 
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-slate-700">Body Type</label>
+            <label className="mb-1.5 block text-sm font-medium text-white/80">Body Type</label>
             <select
               name="body_type"
               value={formData.body_type}
               onChange={(e) => setFormData((prev) => ({ ...prev, body_type: e.target.value }))}
-              className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-2xl border border-white/15 px-4 py-3 text-sm focus:border-blue-500 focus:outline-none"
             >
               <option value="">Not specified</option>
               <option value="suv">SUV</option>
@@ -262,12 +262,12 @@ export default function AdminEVForm({ mode = "create", id, initialData }: Props)
           </div>
 
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-slate-700">Badge Tag (optional)</label>
+            <label className="mb-1.5 block text-sm font-medium text-white/80">Badge Tag (optional)</label>
             <select
               name="badge"
               value={formData.badge}
               onChange={(e) => setFormData((prev) => ({ ...prev, badge: e.target.value }))}
-              className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-2xl border border-white/15 px-4 py-3 text-sm focus:border-blue-500 focus:outline-none"
             >
               <option value="">Auto-assign</option>
               <option value="Best Value">Best Value</option>
@@ -283,8 +283,8 @@ export default function AdminEVForm({ mode = "create", id, initialData }: Props)
       </section>
 
       {/* Performance */}
-      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-6 text-base font-semibold text-slate-900">Performance</h2>
+      <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 shadow-sm">
+        <h2 className="mb-6 text-base font-semibold text-white">Performance</h2>
         <div className="grid gap-5 md:grid-cols-2">
           <Field label="Motor Power (kW)" name="motor_capacity_kw" value={formData.motor_capacity_kw} onChange={handleChange} type="number" placeholder="208" />
           <Field label="Torque (Nm)" name="torque_nm" value={formData.torque_nm} onChange={handleChange} type="number" placeholder="420" />
@@ -295,8 +295,8 @@ export default function AdminEVForm({ mode = "create", id, initialData }: Props)
       </section>
 
       {/* Battery & Charging */}
-      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-6 text-base font-semibold text-slate-900">Battery &amp; Charging</h2>
+      <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 shadow-sm">
+        <h2 className="mb-6 text-base font-semibold text-white">Battery &amp; Charging</h2>
         <div className="grid gap-5 md:grid-cols-2">
           <Field label="Battery Capacity (kWh)" name="battery_kwh" value={formData.battery_kwh} onChange={handleChange} type="number" step="0.1" placeholder="57.5" />
           <Field label="Range (km)" name="range_km" value={formData.range_km} onChange={handleChange} type="number" placeholder="491" />
@@ -306,8 +306,8 @@ export default function AdminEVForm({ mode = "create", id, initialData }: Props)
       </section>
 
       {/* Dimensions & Features */}
-      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-6 text-base font-semibold text-slate-900">Dimensions &amp; Features</h2>
+      <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 shadow-sm">
+        <h2 className="mb-6 text-base font-semibold text-white">Dimensions &amp; Features</h2>
         <div className="grid gap-5 md:grid-cols-2">
           <Field label="Seats" name="seats" value={formData.seats} onChange={handleChange} type="number" placeholder="5" />
           <Field label="Boot Space (litres)" name="boot_litres" value={formData.boot_litres} onChange={handleChange} type="number" placeholder="594" />
@@ -332,7 +332,7 @@ export default function AdminEVForm({ mode = "create", id, initialData }: Props)
           <button
             type="button"
             onClick={() => router.back()}
-            className="rounded-2xl border border-slate-300 px-6 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+            className="rounded-2xl border border-white/15 px-6 py-3 text-sm font-semibold text-white/80 hover:bg-white/[0.03]"
           >
             Cancel
           </button>

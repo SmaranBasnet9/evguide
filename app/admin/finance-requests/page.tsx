@@ -121,7 +121,7 @@ async function getFinanceRequests(): Promise<AdminFinanceRequestRow[]> {
       "employment_status, credit_self_rating, status, created_at",
     )
     .order("created_at", { ascending: false })
-    .limit(300);
+    .limit(50);
 
   if (error) {
     if (isMissingFinanceRequestsTableError(error.message)) {
@@ -131,7 +131,7 @@ async function getFinanceRequests(): Promise<AdminFinanceRequestRow[]> {
           "id, name, email, phone, selected_bank, selected_bank_interest_rate, vehicle_id, vehicle_name, vehicle_price, down_payment, insurance_cost, processing_fee, total_insurance_cost, loan_years, monthly_emi, total_payable, status, created_at",
         )
         .order("created_at", { ascending: false })
-        .limit(300);
+        .limit(50);
 
       if (fallback.error) {
         const consultationFallback = await admin
@@ -139,7 +139,7 @@ async function getFinanceRequests(): Promise<AdminFinanceRequestRow[]> {
           .select("id, user_id, full_name, email, phone, sector, bank_name, ev_model_label, notes, status, created_at")
           .eq("sector", "bank")
           .order("created_at", { ascending: false })
-          .limit(300);
+          .limit(50);
 
         if (consultationFallback.error) {
           console.error("[admin/finance-requests]", consultationFallback.error.message);
@@ -185,9 +185,9 @@ export default async function AdminFinanceRequestsPage() {
   return (
     <div className="space-y-8">
       <div>
-        <p className="text-sm font-semibold text-blue-600">Finance Intelligence</p>
-        <h1 className="mt-1 text-3xl font-extrabold text-slate-900">Finance Requests</h1>
-        <p className="mt-2 text-slate-500">
+        <p className="text-sm font-semibold text-blue-400">Finance Intelligence</p>
+        <h1 className="mt-1 text-3xl font-extrabold text-white">Finance Requests</h1>
+        <p className="mt-2 text-white/50">
           Submitted finance intent signals from platform users. Review, qualify, and convert.
         </p>
       </div>
@@ -198,33 +198,33 @@ export default async function AdminFinanceRequestsPage() {
           <div
             key={s}
             className={`rounded-2xl border p-4 ${
-              s === "new"       ? "border-blue-200 bg-blue-50"    :
-              s === "reviewing" ? "border-amber-200 bg-amber-50"  :
-              s === "approved"  ? "border-emerald-200 bg-emerald-50" :
-              s === "converted" ? "border-purple-200 bg-purple-50" :
-              "border-slate-200 bg-white"
+              s === "new"       ? "border-blue-500/20 bg-blue-500/10"    :
+              s === "reviewing" ? "border-amber-500/20 bg-amber-500/10"  :
+              s === "approved"  ? "border-emerald-500/20 bg-emerald-500/10" :
+              s === "converted" ? "border-purple-500/20 bg-purple-500/10" :
+              "border-white/10 bg-white/[0.03]"
             }`}
           >
-            <p className="text-xs font-semibold capitalize text-slate-500">{s}</p>
-            <p className="mt-1 text-2xl font-extrabold text-slate-900">{byStatus[s]}</p>
+            <p className="text-xs font-semibold capitalize text-white/50">{s}</p>
+            <p className="mt-1 text-2xl font-extrabold text-white">{byStatus[s]}</p>
           </div>
         ))}
-        <div className="rounded-2xl border border-slate-200 bg-white p-4">
-          <p className="text-xs font-semibold text-slate-500">Avg deposit</p>
-          <p className="mt-1 text-2xl font-extrabold text-slate-900">
+        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+          <p className="text-xs font-semibold text-white/50">Avg deposit</p>
+          <p className="mt-1 text-2xl font-extrabold text-white">
             £{avgDeposit.toLocaleString()}
           </p>
         </div>
       </div>
 
       {rows.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-slate-200 py-16 text-center text-sm text-slate-400">
+        <div className="rounded-2xl border border-dashed border-white/10 py-16 text-center text-sm text-white/40">
           No finance requests yet.
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <table className="min-w-full divide-y divide-slate-100 text-sm">
-            <thead className="bg-slate-50 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+        <div className="overflow-x-auto rounded-2xl border border-white/10 bg-white/[0.03] shadow-sm">
+          <table className="min-w-full divide-y divide-white/[0.06] text-sm">
+            <thead className="bg-white/[0.03] text-left text-xs font-semibold uppercase tracking-wider text-white/50">
               <tr>
                 <th className="px-4 py-3">Session / Profile</th>
                 <th className="px-4 py-3">Status</th>
@@ -238,18 +238,18 @@ export default async function AdminFinanceRequestsPage() {
                 <th className="px-4 py-3">Lender email</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-white/[0.06]">
               {rows.map((row) => (
-                <tr key={row.id} className="hover:bg-slate-50">
-                  <td className="px-4 py-3 font-mono text-xs text-slate-500">
+                <tr key={row.id} className="hover:bg-white/[0.03]">
+                  <td className="px-4 py-3 font-mono text-xs text-white/50">
                     <div className="mb-2 font-sans">
-                      <p className="text-sm font-medium text-slate-900">{row.applicant_name ?? "Unknown applicant"}</p>
-                      {row.applicant_email ? <p className="text-xs text-slate-500">{row.applicant_email}</p> : null}
-                      {row.applicant_phone ? <p className="text-xs text-slate-400">{row.applicant_phone}</p> : null}
+                      <p className="text-sm font-medium text-white">{row.applicant_name ?? "Unknown applicant"}</p>
+                      {row.applicant_email ? <p className="text-xs text-white/50">{row.applicant_email}</p> : null}
+                      {row.applicant_phone ? <p className="text-xs text-white/40">{row.applicant_phone}</p> : null}
                     </div>
                     <p>{row.session_id?.slice(0, 14) ?? "—"}…</p>
                     {row.profile_id && (
-                      <p className="text-slate-400">user:{row.profile_id.slice(0, 8)}…</p>
+                      <p className="text-white/40">user:{row.profile_id.slice(0, 8)}…</p>
                     )}
                   </td>
                   <td className="px-4 py-3">
@@ -258,33 +258,33 @@ export default async function AdminFinanceRequestsPage() {
                     >
                       {row.raw_status ?? row.status}
                     </span>
-                    <p className="mt-2 text-xs font-medium text-slate-700">{row.lender_name ?? "Lender not selected"}</p>
-                    <p className="text-xs text-slate-400">{row.vehicle_label ?? row.vehicle_id ?? "Vehicle not provided"}</p>
+                    <p className="mt-2 text-xs font-medium text-white/80">{row.lender_name ?? "Lender not selected"}</p>
+                    <p className="text-xs text-white/40">{row.vehicle_label ?? row.vehicle_id ?? "Vehicle not provided"}</p>
                   </td>
-                  <td className="px-4 py-3 text-slate-700">
+                  <td className="px-4 py-3 text-white/80">
                     {row.deposit_gbp !== null
                       ? `£${row.deposit_gbp.toLocaleString()}`
-                      : <span className="text-slate-300">—</span>}
+                      : <span className="text-white/30">—</span>}
                   </td>
-                  <td className="px-4 py-3 text-slate-700">
-                    {row.desired_term_months ? `${row.desired_term_months} mo` : <span className="text-slate-300">—</span>}
+                  <td className="px-4 py-3 text-white/80">
+                    {row.desired_term_months ? `${row.desired_term_months} mo` : <span className="text-white/30">—</span>}
                   </td>
-                  <td className="px-4 py-3 text-slate-700">
+                  <td className="px-4 py-3 text-white/80">
                     {row.target_monthly_budget_gbp !== null
                       ? `£${row.target_monthly_budget_gbp}/mo`
-                      : <span className="text-slate-300">—</span>}
+                      : <span className="text-white/30">—</span>}
                   </td>
-                  <td className="max-w-sm px-4 py-3 text-xs text-slate-600">
+                  <td className="max-w-sm px-4 py-3 text-xs text-white/60">
                     {row.notes ? <p className="mb-2 line-clamp-5 whitespace-pre-line">{row.notes}</p> : null}
-                    {row.estimated_income_band?.replace(/_/g, " ") ?? <span className="text-slate-300">—</span>}
+                    {row.estimated_income_band?.replace(/_/g, " ") ?? <span className="text-white/30">—</span>}
                   </td>
-                  <td className="px-4 py-3 text-slate-600 capitalize">
-                    {row.employment_status?.replace(/_/g, " ") ?? <span className="text-slate-300">—</span>}
+                  <td className="px-4 py-3 text-white/60 capitalize">
+                    {row.employment_status?.replace(/_/g, " ") ?? <span className="text-white/30">—</span>}
                   </td>
-                  <td className="px-4 py-3 text-slate-600">
-                    {row.credit_self_rating ?? <span className="text-slate-300">—</span>}
+                  <td className="px-4 py-3 text-white/60">
+                    {row.credit_self_rating ?? <span className="text-white/30">—</span>}
                   </td>
-                  <td className="px-4 py-3 text-xs text-slate-400">
+                  <td className="px-4 py-3 text-xs text-white/40">
                     {new Date(row.created_at).toLocaleDateString("en-GB", { dateStyle: "medium" })}
                   </td>
                   <td className="px-4 py-3">

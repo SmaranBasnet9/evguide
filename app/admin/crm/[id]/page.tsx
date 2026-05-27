@@ -64,64 +64,64 @@ export default async function AdminCrmLeadDetailPage({
             Back to CRM
           </Link>
           <p className="mt-3 text-sm font-semibold text-blue-600">Lead workspace</p>
-          <h1 className="mt-1 text-3xl font-extrabold text-slate-900">{lead.displayId}</h1>
-          <p className="mt-2 max-w-3xl text-slate-500">
-            Journey stage: <strong className="font-semibold text-slate-700">{lead.journey_stage}</strong>.
+          <h1 className="mt-1 text-3xl font-extrabold text-white">{lead.displayId}</h1>
+          <p className="mt-2 max-w-3xl text-white/50">
+            Journey stage: <strong className="font-semibold text-white/80">{lead.journey_stage}</strong>.
             {" "}
             {lead.journey_stage_reason}
           </p>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-500 shadow-sm">
-          <p>Intent score: <strong className="text-slate-900">{lead.intent_score}</strong></p>
-          <p className="mt-1">CRM status: <strong className="text-slate-900">{lead.crm_status}</strong></p>
-          <p className="mt-1">Priority: <strong className="text-slate-900">{lead.crm_priority}</strong></p>
+        <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-white/50 shadow-sm">
+          <p>Intent score: <strong className="text-white">{lead.intent_score}</strong></p>
+          <p className="mt-1">CRM status: <strong className="text-white">{lead.crm_status}</strong></p>
+          <p className="mt-1">Priority: <strong className="text-white">{lead.crm_priority}</strong></p>
         </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-          <p className="text-sm text-slate-500">Top interest</p>
-          <p className="mt-2 text-xl font-bold text-slate-900">{lead.strongestCarLabel ?? "-"}</p>
-          <p className="mt-1 text-xs text-slate-400">{lead.favorite_brand ?? "No favorite brand inferred"}</p>
+        <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-5 shadow-sm">
+          <p className="text-sm text-white/50">Top interest</p>
+          <p className="mt-2 text-xl font-bold text-white">{lead.strongestCarLabel ?? "-"}</p>
+          <p className="mt-1 text-xs text-white/40">{lead.favorite_brand ?? "No favorite brand inferred"}</p>
         </div>
-        <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-          <p className="text-sm text-slate-500">Research depth</p>
-          <p className="mt-2 text-xl font-bold text-slate-900">{lead.total_page_views} page views</p>
-          <p className="mt-1 text-xs text-slate-400">{lead.primary_paths.join(" • ") || "No path pattern yet"}</p>
+        <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-5 shadow-sm">
+          <p className="text-sm text-white/50">Research depth</p>
+          <p className="mt-2 text-xl font-bold text-white">{lead.total_page_views} page views</p>
+          <p className="mt-1 text-xs text-white/40">{lead.primary_paths.join(" • ") || "No path pattern yet"}</p>
         </div>
-        <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-          <p className="text-sm text-slate-500">Buyer style</p>
-          <p className="mt-2 text-xl font-bold text-slate-900">{lead.inferred_buyer_style ?? "Not enough signal"}</p>
-          <p className="mt-1 text-xs text-slate-400">{lead.inferred_buyer_style_reason ?? "No stable inference yet."}</p>
+        <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-5 shadow-sm">
+          <p className="text-sm text-white/50">Buyer style</p>
+          <p className="mt-2 text-xl font-bold text-white">{lead.inferred_buyer_style ?? "Not enough signal"}</p>
+          <p className="mt-1 text-xs text-white/40">{lead.inferred_buyer_style_reason ?? "No stable inference yet."}</p>
         </div>
-        <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-          <p className="text-sm text-slate-500">Last active</p>
-          <p className="mt-2 text-xl font-bold text-slate-900">{formatDate(lead.last_activity_at)}</p>
-          <p className="mt-1 text-xs text-slate-400">Follow-up: {formatDate(lead.next_follow_up_at)}</p>
+        <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-5 shadow-sm">
+          <p className="text-sm text-white/50">Last active</p>
+          <p className="mt-2 text-xl font-bold text-white">{formatDate(lead.last_activity_at)}</p>
+          <p className="mt-1 text-xs text-white/40">Follow-up: {formatDate(lead.next_follow_up_at)}</p>
         </div>
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
         <div className="space-y-6">
-          <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-slate-900">Journey timeline</h2>
+          <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-5 shadow-sm">
+            <h2 className="text-lg font-bold text-white">Journey timeline</h2>
             <div className="mt-4 space-y-3">
               {events.length === 0 ? (
-                <p className="text-sm text-slate-500">No raw activity events found for this lead yet.</p>
+                <p className="text-sm text-white/50">No raw activity events found for this lead yet.</p>
               ) : (
                 events.map((event) => (
-                  <div key={event.id} className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                  <div key={event.id} className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4">
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <p className="text-sm font-semibold text-slate-900">
+                      <p className="text-sm font-semibold text-white">
                         {EVENT_LABELS[event.event_type] ?? event.event_type}
                       </p>
-                      <p className="text-xs text-slate-400">{formatDate(event.created_at)}</p>
+                      <p className="text-xs text-white/40">{formatDate(event.created_at)}</p>
                     </div>
-                    <p className="mt-1 text-xs text-slate-500">
+                    <p className="mt-1 text-xs text-white/50">
                       Path: {event.page_path ?? "-"}{event.car_id ? ` • car ${event.car_id}` : ""}
                     </p>
                     {summarizeEventValue(event.event_value) && (
-                      <p className="mt-2 text-xs text-slate-500">{summarizeEventValue(event.event_value)}</p>
+                      <p className="mt-2 text-xs text-white/50">{summarizeEventValue(event.event_value)}</p>
                     )}
                   </div>
                 ))
@@ -129,16 +129,16 @@ export default async function AdminCrmLeadDetailPage({
             </div>
           </div>
 
-          <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-slate-900">CRM notes</h2>
+          <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-5 shadow-sm">
+            <h2 className="text-lg font-bold text-white">CRM notes</h2>
             <div className="mt-4 space-y-3">
               {notes.length === 0 ? (
-                <p className="text-sm text-slate-500">No notes added yet.</p>
+                <p className="text-sm text-white/50">No notes added yet.</p>
               ) : (
                 notes.map((note) => (
-                  <div key={note.id} className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                    <p className="text-sm text-slate-700">{note.body}</p>
-                    <p className="mt-2 text-xs text-slate-400">{formatDate(note.created_at)}</p>
+                  <div key={note.id} className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4">
+                    <p className="text-sm text-white/80">{note.body}</p>
+                    <p className="mt-2 text-xs text-white/40">{formatDate(note.created_at)}</p>
                   </div>
                 ))
               )}
@@ -151,9 +151,9 @@ export default async function AdminCrmLeadDetailPage({
         <div className="space-y-6">
           <CrmLeadActions profileId={lead.id} crm={crm} />
 
-          <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-bold text-slate-900">Qualification hints</h2>
-            <ul className="mt-4 space-y-2 text-sm text-slate-500">
+          <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-5 shadow-sm">
+            <h2 className="text-lg font-bold text-white">Qualification hints</h2>
+            <ul className="mt-4 space-y-2 text-sm text-white/50">
               <li>Authenticated: {lead.isAuthenticated ? "Yes" : "No"}</li>
               <li>Predicted buy window: {lead.predicted_buy_window}</li>
               <li>Affordability band: {lead.estimated_affordability_band}</li>
@@ -162,7 +162,7 @@ export default async function AdminCrmLeadDetailPage({
               <li>Tags: {lead.crm_tags.length > 0 ? lead.crm_tags.join(", ") : "None"}</li>
             </ul>
             {crm?.qualification_notes && (
-              <p className="mt-4 rounded-2xl bg-slate-50 p-4 text-sm text-slate-600">
+              <p className="mt-4 rounded-2xl bg-white/[0.03] p-4 text-sm text-white/60">
                 {crm.qualification_notes}
               </p>
             )}

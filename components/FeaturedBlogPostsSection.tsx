@@ -30,10 +30,12 @@ export default function FeaturedBlogPostsSection({ posts }: Props) {
   }
 
   function getReadMoreHref(post: FeaturedBlogPost) {
-    if (post.isDummy || !post.slug) {
-      return "/blog";
-    }
-    return `/blog/${post.slug}`;
+    if (post.slug) return `/blog/${post.slug}`;
+    const cat = (post.category ?? "").toLowerCase();
+    if (cat.includes("charging")) return "/charging";
+    if (cat.includes("finance")) return "/finance";
+    if (cat.includes("comparison")) return "/compare";
+    return "/consultation";
   }
 
   return (
