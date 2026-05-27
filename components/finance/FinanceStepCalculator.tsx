@@ -74,9 +74,9 @@ export default function FinanceStepCalculator({
   return (
     <div className="space-y-6">
       <div>
-        <p className="text-xs font-semibold uppercase tracking-[0.28em] text-cyan-300">Step 3</p>
-        <h2 className="mt-3 text-3xl font-semibold text-white">Build your finance structure</h2>
-        <p className="mt-3 max-w-2xl text-sm leading-7 text-zinc-400">
+        <p className="text-xs font-semibold uppercase tracking-[0.28em] text-emerald-600">Step 3</p>
+        <h2 className="mt-3 text-3xl font-semibold text-gray-900">Build your finance structure</h2>
+        <p className="mt-3 max-w-2xl text-sm leading-7 text-gray-500">
           Adjust deposit, insurance, and fee assumptions, then we will carry the result into a
           final summary and submission step.
         </p>
@@ -86,13 +86,13 @@ export default function FinanceStepCalculator({
         <div className="space-y-6">
           <div className="grid gap-5 md:grid-cols-2">
             <Field label="Selected bank" icon={ShieldCheck}>
-              <div className="rounded-[1.5rem] border border-white/10 bg-[#0A1013] px-4 py-3 text-sm text-white">
+              <div className="rounded-[1.5rem] border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900">
                 {selectedBank.bank}
               </div>
             </Field>
 
             <Field label="Interest rate" icon={Percent}>
-              <div className="rounded-[1.5rem] border border-white/10 bg-[#0A1013] px-4 py-3 text-sm text-white">
+              <div className="rounded-[1.5rem] border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900">
                 {selectedBank.interestRate.toFixed(1)}% APR
               </div>
             </Field>
@@ -108,13 +108,13 @@ export default function FinanceStepCalculator({
             </Field>
           </div>
 
-          <div className="rounded-[1.5rem] border border-white/8 bg-[#090D10] p-5">
+          <div className="rounded-[1.5rem] border border-gray-200 bg-gray-50 p-5">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <p className="text-sm font-medium text-white">Deposit percentage</p>
-                <p className="mt-1 text-xs text-zinc-500">A healthy deposit lowers both EMI and total payable.</p>
+                <p className="text-sm font-medium text-gray-900">Deposit percentage</p>
+                <p className="mt-1 text-xs text-gray-400">A healthy deposit lowers both EMI and total payable.</p>
               </div>
-              <span className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-sm font-semibold text-emerald-300">
+              <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-sm font-semibold text-emerald-700">
                 {depositPercent}%
               </span>
             </div>
@@ -125,7 +125,7 @@ export default function FinanceStepCalculator({
               step={500}
               value={deposit}
               onChange={(event) => onDepositChange(Number(event.target.value))}
-              className="mt-5 h-2 w-full cursor-pointer appearance-none rounded-full bg-white/8 accent-emerald-400"
+              className="mt-5 h-2 w-full cursor-pointer appearance-none rounded-full bg-gray-200 accent-emerald-600"
             />
           </div>
 
@@ -135,7 +135,7 @@ export default function FinanceStepCalculator({
               <button
                 type="button"
                 onClick={onResetInsuranceCost}
-                className="mt-2 text-xs font-semibold text-cyan-300 hover:text-cyan-200"
+                className="mt-2 text-xs font-semibold text-cyan-600 hover:text-cyan-700"
               >
                 Use estimated insurance
               </button>
@@ -146,7 +146,7 @@ export default function FinanceStepCalculator({
               <button
                 type="button"
                 onClick={onResetProcessingFee}
-                className="mt-2 text-xs font-semibold text-cyan-300 hover:text-cyan-200"
+                className="mt-2 text-xs font-semibold text-cyan-600 hover:text-cyan-700"
               >
                 Use recommended fee ({formatCurrency(recommendedProcessingFee)})
               </button>
@@ -157,11 +157,11 @@ export default function FinanceStepCalculator({
             <CurrencyInput value={monthlyBudget} onChange={onMonthlyBudgetChange} step={25} />
           </Field>
 
-          <div className="rounded-[1.5rem] border border-white/8 bg-[#090D10] p-5">
+          <div className="rounded-[1.5rem] border border-gray-200 bg-gray-50 p-5">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-sm font-medium text-white">Advanced option: balloon payment</p>
-                <p className="mt-1 text-xs leading-5 text-zinc-500">
+                <p className="text-sm font-medium text-gray-900">Advanced option: balloon payment</p>
+                <p className="mt-1 text-xs leading-5 text-gray-400">
                   Keep this if you want a lower monthly figure with a final amount due at the end.
                 </p>
               </div>
@@ -170,12 +170,12 @@ export default function FinanceStepCalculator({
                 onClick={() => onIncludeBalloonPaymentChange(!includeBalloonPayment)}
                 className={`relative inline-flex h-7 w-12 rounded-full border transition ${
                   includeBalloonPayment
-                    ? "border-cyan-400/40 bg-cyan-400/20"
-                    : "border-white/10 bg-white/5"
+                    ? "border-cyan-300 bg-cyan-100"
+                    : "border-gray-200 bg-gray-100"
                 }`}
               >
                 <span
-                  className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition ${
+                  className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition ${
                     includeBalloonPayment ? "left-6" : "left-0.5"
                   }`}
                 />
@@ -185,8 +185,8 @@ export default function FinanceStepCalculator({
             {includeBalloonPayment ? (
               <div className="mt-5">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-zinc-400">Balloon amount</span>
-                  <span className="font-semibold text-white">{balloonPercent}% of vehicle price</span>
+                  <span className="text-gray-500">Balloon amount</span>
+                  <span className="font-semibold text-gray-900">{balloonPercent}% of vehicle price</span>
                 </div>
                 <input
                   type="range"
@@ -195,7 +195,7 @@ export default function FinanceStepCalculator({
                   step={1}
                   value={balloonPercent}
                   onChange={(event) => onBalloonPercentChange(Number(event.target.value))}
-                  className="mt-4 h-2 w-full cursor-pointer appearance-none rounded-full bg-white/8 accent-cyan-400"
+                  className="mt-4 h-2 w-full cursor-pointer appearance-none rounded-full bg-gray-200 accent-cyan-600"
                 />
               </div>
             ) : null}
@@ -203,14 +203,14 @@ export default function FinanceStepCalculator({
         </div>
 
         <div className="xl:sticky xl:top-24">
-          <div className="rounded-[1.75rem] border border-white/8 bg-[#091114] p-6">
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-cyan-300">
+          <div className="rounded-[1.75rem] border border-gray-200 bg-white p-6 shadow-sm">
+            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-emerald-600">
               Live finance summary
             </p>
-            <h3 className="mt-3 text-2xl font-semibold text-white">
+            <h3 className="mt-3 text-2xl font-semibold text-gray-900">
               {selectedVehicle.brand} {selectedVehicle.model}
             </h3>
-            <p className="mt-2 text-sm text-zinc-400">
+            <p className="mt-2 text-sm text-gray-500">
               Preview based on a {termYearsPreview}-year term. You will confirm the final duration in the next step.
             </p>
 
@@ -225,26 +225,26 @@ export default function FinanceStepCalculator({
               />
             </div>
 
-            <div className="mt-6 rounded-[1.5rem] border border-emerald-400/15 bg-emerald-400/8 p-5">
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-emerald-300">
+            <div className="mt-6 rounded-[1.5rem] border border-emerald-200 bg-emerald-50 p-5">
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-emerald-600">
                 Total payable amount
               </p>
-              <p className="mt-3 text-3xl font-semibold text-white">
+              <p className="mt-3 text-3xl font-semibold text-gray-900">
                 {formatCurrency(summary.totalPayableAmount)}
               </p>
-              <p className="mt-2 text-sm leading-6 text-zinc-400">
+              <p className="mt-2 text-sm leading-6 text-gray-500">
                 Includes deposit, monthly repayments, processing fee, and total insurance across the loan term.
               </p>
             </div>
 
-            <div className="mt-5 rounded-[1.5rem] border border-white/8 bg-black/20 p-5">
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-zinc-500">
+            <div className="mt-5 rounded-[1.5rem] border border-gray-100 bg-gray-50 p-5">
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-gray-400">
                 All-in monthly ownership
               </p>
-              <p className="mt-3 text-2xl font-semibold text-white">
+              <p className="mt-3 text-2xl font-semibold text-gray-900">
                 {formatCurrency(monthlyOwnershipCost)}
               </p>
-              <p className="mt-2 text-sm leading-6 text-zinc-400">
+              <p className="mt-2 text-sm leading-6 text-gray-500">
                 Finance plus charging, insurance, and maintenance using the current assumptions.
               </p>
             </div>
@@ -256,7 +256,7 @@ export default function FinanceStepCalculator({
         <button
           type="button"
           onClick={onBack}
-          className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+          className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-5 py-3 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
         >
           <ArrowLeft className="h-4 w-4" />
           Back
@@ -265,7 +265,7 @@ export default function FinanceStepCalculator({
         <button
           type="button"
           onClick={onContinue}
-          className="inline-flex items-center gap-2 rounded-full bg-emerald-500 px-6 py-3 text-sm font-semibold text-black transition hover:bg-emerald-400"
+          className="inline-flex items-center gap-2 rounded-full bg-emerald-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700"
         >
           Continue to summary
           <ArrowRight className="h-4 w-4" />
@@ -286,8 +286,8 @@ function Field({
 }) {
   return (
     <div>
-      <div className="mb-3 flex items-center gap-2 text-sm font-medium text-zinc-300">
-        <Icon className="h-4 w-4 text-zinc-500" />
+      <div className="mb-3 flex items-center gap-2 text-sm font-medium text-gray-600">
+        <Icon className="h-4 w-4 text-gray-400" />
         {label}
       </div>
       {children}
@@ -306,7 +306,7 @@ function CurrencyInput({
 }) {
   return (
     <div className="relative">
-      <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm text-zinc-500">
+      <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm text-gray-400">
         GBP
       </span>
       <input
@@ -315,7 +315,7 @@ function CurrencyInput({
         step={step}
         value={Number.isFinite(value) ? value : 0}
         onChange={(event) => onChange(Number(event.target.value))}
-        className="w-full rounded-2xl border border-white/10 bg-[#090D10] py-3 pl-14 pr-4 text-sm text-white outline-none transition focus:border-cyan-400/40"
+        className="w-full rounded-2xl border border-gray-200 bg-white py-3 pl-14 pr-4 text-sm text-gray-900 outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
       />
     </div>
   );
@@ -323,9 +323,9 @@ function CurrencyInput({
 
 function BreakdownRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between rounded-2xl border border-white/6 bg-black/20 px-4 py-3 text-sm">
-      <span className="text-zinc-400">{label}</span>
-      <span className="font-medium text-white">{value}</span>
+    <div className="flex items-center justify-between rounded-2xl border border-gray-100 bg-gray-50 px-4 py-3 text-sm">
+      <span className="text-gray-500">{label}</span>
+      <span className="font-medium text-gray-900">{value}</span>
     </div>
   );
 }

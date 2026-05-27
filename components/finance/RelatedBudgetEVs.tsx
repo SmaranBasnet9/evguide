@@ -16,24 +16,24 @@ export default function RelatedBudgetEVs({ models }: RelatedBudgetEVsProps) {
   if (models.length === 0) return null;
 
   return (
-    <section className="bg-[#0A0D10] py-16">
+    <section className="bg-gray-50 py-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <div className="mb-8 flex flex-col gap-4 border-b border-white/8 pb-6 md:flex-row md:items-end md:justify-between">
+        <div className="mb-8 flex flex-col gap-4 border-b border-gray-200 pb-6 md:flex-row md:items-end md:justify-between">
           <div className="max-w-3xl">
-            <span className="inline-flex rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs font-semibold uppercase tracking-[0.28em] text-zinc-400">
+            <span className="inline-flex rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-semibold uppercase tracking-[0.28em] text-gray-500">
               Related EV Options
             </span>
-            <h2 className="mt-4 text-3xl font-semibold tracking-tight text-white md:text-4xl">
+            <h2 className="mt-4 text-3xl font-semibold tracking-tight text-gray-900 md:text-4xl">
               EVs that may fit your budget better
             </h2>
-            <p className="mt-3 text-base leading-7 text-zinc-400">
+            <p className="mt-3 text-base leading-7 text-gray-500">
               If this setup feels expensive, these alternatives keep you moving forward instead of
               exiting the journey.
             </p>
           </div>
           <Link
             href="/vehicles"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-white transition hover:text-emerald-300"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-gray-900 transition hover:text-emerald-600"
           >
             Compare finance-friendly EVs
             <ArrowRight className="h-4 w-4" />
@@ -44,7 +44,7 @@ export default function RelatedBudgetEVs({ models }: RelatedBudgetEVsProps) {
           {models.map(({ model, ownershipCost }) => (
             <article
               key={model.id}
-              className="group overflow-hidden rounded-[2rem] border border-white/8 bg-white/[0.03] transition duration-300 hover:-translate-y-1 hover:border-emerald-400/25"
+              className="group overflow-hidden rounded-[2rem] border border-gray-200 bg-white transition duration-300 hover:-translate-y-1 hover:border-emerald-300 hover:shadow-md"
             >
               <div className="relative aspect-[16/10] overflow-hidden">
                 <Image
@@ -53,17 +53,17 @@ export default function RelatedBudgetEVs({ models }: RelatedBudgetEVsProps) {
                   fill
                   className="object-cover transition duration-700 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                <div className="absolute left-4 top-4 rounded-full border border-white/10 bg-black/45 px-3 py-1 text-xs font-semibold text-white backdrop-blur-md">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-transparent" />
+                <div className="absolute left-4 top-4 rounded-full border border-white/20 bg-black/40 px-3 py-1 text-xs font-semibold text-white backdrop-blur-md">
                   {model.badge ?? "Finance fit"}
                 </div>
               </div>
 
               <div className="p-6">
-                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-zinc-500">
+                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-gray-400">
                   {model.brand}
                 </p>
-                <h3 className="mt-2 text-2xl font-semibold text-white">{model.model}</h3>
+                <h3 className="mt-2 text-2xl font-semibold text-gray-900">{model.model}</h3>
 
                 <div className="mt-5 grid gap-3">
                   <InfoRow icon={PoundSterling} label="Starting price" value={formatCurrency(model.price)} />
@@ -73,7 +73,7 @@ export default function RelatedBudgetEVs({ models }: RelatedBudgetEVsProps) {
 
                 <Link
                   href={`/cars/${model.id}`}
-                  className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:border-emerald-400/30 hover:bg-emerald-400/10"
+                  className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-5 py-3 text-sm font-semibold text-gray-900 transition hover:border-emerald-300 hover:bg-emerald-50"
                 >
                   View details
                   <ArrowRight className="h-4 w-4" />
@@ -97,12 +97,12 @@ function InfoRow({
   value: string;
 }) {
   return (
-    <div className="flex items-center justify-between rounded-2xl border border-white/6 bg-black/20 px-4 py-3 text-sm">
-      <div className="flex items-center gap-2 text-zinc-400">
-        <Icon className="h-4 w-4 text-zinc-500" />
+    <div className="flex items-center justify-between rounded-2xl border border-gray-100 bg-gray-50 px-4 py-3 text-sm">
+      <div className="flex items-center gap-2 text-gray-500">
+        <Icon className="h-4 w-4 text-gray-400" />
         {label}
       </div>
-      <span className="font-medium text-white">{value}</span>
+      <span className="font-medium text-gray-900">{value}</span>
     </div>
   );
 }

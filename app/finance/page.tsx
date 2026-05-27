@@ -5,7 +5,7 @@ import FinancePageClient from "@/components/finance/FinancePageClient";
 
 export default function FinancePage() {
   return (
-    <main className="min-h-screen bg-white text-gray-900 font-sans selection:bg-brand/20 overflow-x-hidden">
+    <main className="min-h-screen bg-white text-gray-900 font-sans overflow-x-hidden">
       <PremiumNavbar />
       <Suspense>
         <FinancePageClient />

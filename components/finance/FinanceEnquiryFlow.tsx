@@ -253,7 +253,7 @@ export default function FinanceEnquiryFlow({
   }
 
   return (
-    <div className="rounded-[2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.07),rgba(255,255,255,0.03))] p-6 shadow-[0_30px_100px_rgba(0,0,0,0.4)] backdrop-blur-xl md:p-8">
+    <div className="rounded-[2rem] border border-gray-200 bg-white p-6 shadow-lg md:p-8">
       <FinanceProgressIndicator currentStep={submitted ? 4 : currentStep} />
 
       <div className="mt-6">

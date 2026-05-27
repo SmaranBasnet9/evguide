@@ -49,18 +49,18 @@ export default function FinanceStepSummary({
   return (
     <div className="space-y-6">
       <div>
-        <p className="text-xs font-semibold uppercase tracking-[0.28em] text-cyan-300">Step 4</p>
-        <h2 className="mt-3 text-3xl font-semibold text-white">Finalize and submit your enquiry</h2>
-        <p className="mt-3 max-w-2xl text-sm leading-7 text-zinc-400">
+        <p className="text-xs font-semibold uppercase tracking-[0.28em] text-emerald-600">Step 4</p>
+        <h2 className="mt-3 text-3xl font-semibold text-gray-900">Finalize and submit your enquiry</h2>
+        <p className="mt-3 max-w-2xl text-sm leading-7 text-gray-500">
           Choose the loan duration, review the final finance summary, and send your details to the team.
         </p>
       </div>
 
       <div className="grid gap-8 xl:grid-cols-[1.02fr_0.98fr]">
         <div className="space-y-6">
-          <div className="rounded-[1.75rem] border border-white/8 bg-black/20 p-5">
-            <p className="text-sm font-medium text-white">Loan duration</p>
-            <p className="mt-1 text-sm leading-6 text-zinc-400">
+          <div className="rounded-[1.75rem] border border-gray-200 bg-gray-50 p-5">
+            <p className="text-sm font-medium text-gray-900">Loan duration</p>
+            <p className="mt-1 text-sm leading-6 text-gray-500">
               Changing the term updates the EMI and total payable instantly.
             </p>
             <div className="mt-5 grid grid-cols-3 gap-2 sm:grid-cols-4">
@@ -71,8 +71,8 @@ export default function FinanceStepSummary({
                   onClick={() => onTermYearsChange(value)}
                   className={`rounded-2xl border px-3 py-3 text-sm font-semibold transition ${
                     termYears === value
-                      ? "border-emerald-400/30 bg-emerald-400/12 text-emerald-300"
-                      : "border-white/8 bg-white/[0.03] text-zinc-400 hover:border-white/15 hover:text-white"
+                      ? "border-emerald-300 bg-emerald-100 text-emerald-700"
+                      : "border-gray-200 bg-white text-gray-500 hover:border-gray-300 hover:text-gray-900"
                   }`}
                 >
                   {value} yr
@@ -81,14 +81,14 @@ export default function FinanceStepSummary({
             </div>
           </div>
 
-          <div className="rounded-[1.75rem] border border-white/8 bg-black/20 p-5">
+          <div className="rounded-[1.75rem] border border-gray-200 bg-gray-50 p-5">
             <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04] text-cyan-300">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-gray-200 bg-white text-cyan-600">
                 <UserRound className="h-5 w-5" />
               </div>
               <div>
-                <p className="text-sm font-medium text-white">Contact details</p>
-                <p className="mt-1 text-sm text-zinc-400">We will use these details for your finance follow-up.</p>
+                <p className="text-sm font-medium text-gray-900">Contact details</p>
+                <p className="mt-1 text-sm text-gray-500">We will use these details for your finance follow-up.</p>
               </div>
             </div>
 
@@ -125,7 +125,7 @@ export default function FinanceStepSummary({
             </div>
 
             {serverError ? (
-              <div className="mt-4 rounded-[1.25rem] border border-rose-400/20 bg-rose-400/10 px-4 py-3 text-sm text-rose-200">
+              <div className="mt-4 rounded-[1.25rem] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                 {serverError}
               </div>
             ) : null}
@@ -133,7 +133,7 @@ export default function FinanceStepSummary({
         </div>
 
         <div className="xl:sticky xl:top-24">
-          <div className="overflow-hidden rounded-[1.9rem] border border-white/8 bg-[#091114]">
+          <div className="overflow-hidden rounded-[1.9rem] border border-gray-200 bg-white shadow-sm">
             <div className="relative aspect-[16/10] overflow-hidden">
               <Image
                 src={getSafeImageSrc(selectedVehicle.heroImage)}
@@ -141,9 +141,9 @@ export default function FinanceStepSummary({
                 fill
                 className="object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
               <div className="absolute left-5 bottom-5">
-                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-zinc-300">
+                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-gray-200">
                   Finance enquiry
                 </p>
                 <h3 className="mt-2 text-2xl font-semibold text-white">
@@ -153,14 +153,14 @@ export default function FinanceStepSummary({
             </div>
 
             <div className="space-y-5 p-6">
-              <div className="rounded-[1.4rem] border border-white/8 bg-black/20 p-4">
+              <div className="rounded-[1.4rem] border border-gray-100 bg-gray-50 p-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-zinc-400">Selected bank</span>
-                  <span className="font-semibold text-white">{selectedBank.bank}</span>
+                  <span className="text-sm text-gray-500">Selected bank</span>
+                  <span className="font-semibold text-gray-900">{selectedBank.bank}</span>
                 </div>
                 <div className="mt-3 flex items-center justify-between">
-                  <span className="text-sm text-zinc-400">Interest rate</span>
-                  <span className="font-semibold text-white">{selectedBank.interestRate.toFixed(1)}%</span>
+                  <span className="text-sm text-gray-500">Interest rate</span>
+                  <span className="font-semibold text-gray-900">{selectedBank.interestRate.toFixed(1)}%</span>
                 </div>
               </div>
 
@@ -181,7 +181,7 @@ export default function FinanceStepSummary({
         <button
           type="button"
           onClick={onBack}
-          className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+          className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-5 py-3 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
         >
           <ArrowLeft className="h-4 w-4" />
           Back
@@ -191,7 +191,7 @@ export default function FinanceStepSummary({
           type="button"
           onClick={onSubmit}
           disabled={submitting}
-          className="inline-flex items-center gap-2 rounded-full bg-emerald-500 px-6 py-3 text-sm font-semibold text-black transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex items-center gap-2 rounded-full bg-emerald-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {submitting ? "Submitting..." : "Submit finance enquiry"}
           <ArrowRight className="h-4 w-4" />
@@ -220,20 +220,20 @@ function InputField({
 }) {
   return (
     <div>
-      <label className="mb-2 block text-sm font-medium text-zinc-300">{label}</label>
+      <label className="mb-2 block text-sm font-medium text-gray-700">{label}</label>
       <div className="relative">
-        <Icon className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+        <Icon className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
         <input
           type={type}
           value={value}
           onChange={(event) => onChange(event.target.value)}
           placeholder={placeholder}
-          className={`w-full rounded-[1.25rem] border bg-[#0F1518] py-3 pl-11 pr-4 text-sm text-white outline-none transition ${
-            error ? "border-rose-400/40" : "border-white/10 focus:border-cyan-400/35"
+          className={`w-full rounded-[1.25rem] border bg-white py-3 pl-11 pr-4 text-sm text-gray-900 outline-none transition ${
+            error ? "border-red-300 focus:border-red-400" : "border-gray-200 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
           }`}
         />
       </div>
-      {error ? <p className="mt-2 text-sm text-rose-300">{error}</p> : null}
+      {error ? <p className="mt-2 text-sm text-red-600">{error}</p> : null}
     </div>
   );
 }
@@ -248,9 +248,9 @@ function BreakdownRow({
   highlight?: boolean;
 }) {
   return (
-    <div className="flex items-center justify-between rounded-2xl border border-white/6 bg-black/20 px-4 py-3 text-sm">
-      <span className="text-zinc-400">{label}</span>
-      <span className={`font-medium ${highlight ? "text-emerald-300" : "text-white"}`}>{value}</span>
+    <div className="flex items-center justify-between rounded-2xl border border-gray-100 bg-gray-50 px-4 py-3 text-sm">
+      <span className="text-gray-500">{label}</span>
+      <span className={`font-medium ${highlight ? "text-emerald-600" : "text-gray-900"}`}>{value}</span>
     </div>
   );
 }

@@ -27,17 +27,17 @@ const actions = [
 
 export default function FinanceCTA() {
   return (
-    <section className="bg-[#07090B] py-16 pb-28">
+    <section className="bg-white py-16 pb-28">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="overflow-hidden rounded-[2.5rem] border border-white/10 bg-[radial-gradient(circle_at_top_left,_rgba(16,185,129,0.16),_transparent_30%),radial-gradient(circle_at_bottom_right,_rgba(6,182,212,0.16),_transparent_32%),linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.03))] p-8 shadow-[0_30px_120px_rgba(0,0,0,0.5)] backdrop-blur-xl md:p-12">
+        <div className="overflow-hidden rounded-[2.5rem] border border-gray-200 bg-gradient-to-br from-emerald-50 via-white to-cyan-50 p-8 shadow-lg md:p-12">
           <div className="max-w-3xl">
-            <span className="inline-flex rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs font-semibold uppercase tracking-[0.28em] text-zinc-300">
+            <span className="inline-flex rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-semibold uppercase tracking-[0.28em] text-gray-500">
               Next Step
             </span>
-            <h2 className="mt-5 text-4xl font-semibold tracking-[-0.04em] text-white md:text-5xl">
+            <h2 className="mt-5 text-4xl font-semibold tracking-[-0.04em] text-gray-900 md:text-5xl">
               Turn the affordability signal into action.
             </h2>
-            <p className="mt-4 text-lg leading-8 text-zinc-300">
+            <p className="mt-4 text-lg leading-8 text-gray-600">
               You now have an indicative monthly cost. The next move is refining the shortlist,
               checking real-world affordability, or asking for a follow-up conversation.
             </p>
@@ -53,16 +53,16 @@ export default function FinanceCTA() {
                   href={action.href}
                   className={`group rounded-[2rem] border p-6 transition duration-300 ${
                     action.primary
-                      ? "border-emerald-400/30 bg-emerald-400/12 hover:bg-emerald-400/16"
-                      : "border-white/10 bg-black/20 hover:border-cyan-400/25 hover:bg-white/[0.05]"
+                      ? "border-emerald-300 bg-emerald-50 hover:bg-emerald-100"
+                      : "border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm"
                   }`}
                 >
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-black/20 text-white">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-gray-200 bg-white text-gray-700">
                     <Icon className="h-5 w-5" />
                   </div>
-                  <h3 className="mt-5 text-xl font-semibold text-white">{action.title}</h3>
-                  <p className="mt-3 text-sm leading-6 text-zinc-400">{action.description}</p>
-                  <div className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-white">
+                  <h3 className="mt-5 text-xl font-semibold text-gray-900">{action.title}</h3>
+                  <p className="mt-3 text-sm leading-6 text-gray-500">{action.description}</p>
+                  <div className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-gray-900">
                     Continue
                     <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
                   </div>

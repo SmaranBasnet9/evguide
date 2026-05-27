@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { AlertCircle, ArrowRight, CheckCircle2, ShieldAlert, Sparkles } from "lucide-react";
 import { formatCurrency, getSafeImageSrc, type AffordabilityLevel } from "./financeUtils";
 import type { EVModel } from "@/types";
@@ -23,19 +23,25 @@ const insightMap = {
     title: "Comfortable fit",
     body: "This EV appears affordable based on your selected monthly comfort zone. You have room to move without making the deal feel tight.",
     icon: CheckCircle2,
-    tone: "border-emerald-400/20 bg-emerald-400/8 text-emerald-300",
+    tone: "border-emerald-200 bg-emerald-50 text-emerald-700",
+    iconBg: "border-emerald-200 bg-emerald-100",
+    bodyText: "text-emerald-800",
   },
   Moderate: {
     title: "Moderate stretch",
     body: "This looks achievable, but it will be a visible monthly commitment. It is worth optimising the structure before you move forward.",
     icon: AlertCircle,
-    tone: "border-cyan-400/20 bg-cyan-400/8 text-cyan-300",
+    tone: "border-cyan-200 bg-cyan-50 text-cyan-700",
+    iconBg: "border-cyan-200 bg-cyan-100",
+    bodyText: "text-cyan-800",
   },
   Stretch: {
     title: "High monthly commitment",
     body: "This setup runs above your stated comfort zone, which makes it feel more like a pressure buy than a confident EV decision.",
     icon: ShieldAlert,
-    tone: "border-amber-400/20 bg-amber-400/8 text-amber-200",
+    tone: "border-amber-200 bg-amber-50 text-amber-700",
+    iconBg: "border-amber-200 bg-amber-100",
+    bodyText: "text-amber-800",
   },
 };
 
@@ -53,22 +59,22 @@ export default function AffordabilityInsight({
 
   return (
     <aside className="xl:sticky xl:top-24">
-      <div className="rounded-[2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(6,182,212,0.06),rgba(255,255,255,0.03))] p-6 shadow-[0_30px_100px_rgba(0,0,0,0.4)] backdrop-blur-xl md:p-8">
-        <span className="inline-flex rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs font-semibold uppercase tracking-[0.28em] text-zinc-400">
+      <div className="rounded-[2rem] border border-gray-200 bg-white p-6 shadow-lg md:p-8">
+        <span className="inline-flex rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.28em] text-gray-500">
           Affordability Insight
         </span>
 
         <div className={`mt-5 rounded-[1.6rem] border p-5 ${insight.tone}`}>
           <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-current/20 bg-black/20">
+            <div className={`flex h-12 w-12 items-center justify-center rounded-2xl border ${insight.iconBg}`}>
               <Icon className="h-6 w-6" />
             </div>
             <div>
-              <h3 className="text-xl font-semibold text-white">{insight.title}</h3>
-              <p className="mt-1 text-sm text-zinc-400">AI reading of this finance structure</p>
+              <h3 className="text-xl font-semibold text-gray-900">{insight.title}</h3>
+              <p className="mt-1 text-sm text-gray-500">AI reading of this finance structure</p>
             </div>
           </div>
-          <p className="mt-4 text-sm leading-7 text-zinc-300">{insight.body}</p>
+          <p className={`mt-4 text-sm leading-7 ${insight.bodyText}`}>{insight.body}</p>
         </div>
 
         <div className="mt-6 grid gap-3 sm:grid-cols-3 xl:grid-cols-1 2xl:grid-cols-3">
@@ -80,14 +86,14 @@ export default function AffordabilityInsight({
           />
         </div>
 
-        <div className="mt-6 rounded-[1.6rem] border border-white/8 bg-black/20 p-5">
+        <div className="mt-6 rounded-[1.6rem] border border-gray-200 bg-gray-50 p-5">
           <div className="flex items-start gap-3">
-            <Sparkles className="mt-0.5 h-5 w-5 text-cyan-300" />
+            <Sparkles className="mt-0.5 h-5 w-5 text-cyan-600" />
             <div>
-              <p className="text-sm font-medium text-white">Smart guidance</p>
-              <p className="mt-2 text-sm leading-6 text-zinc-400">
+              <p className="text-sm font-medium text-gray-900">Smart guidance</p>
+              <p className="mt-2 text-sm leading-6 text-gray-500">
                 A higher deposit could cut your monthly ownership cost by about{" "}
-                <span className="font-semibold text-white">
+                <span className="font-semibold text-gray-900">
                   {formatCurrency(higherDepositSavings)}
                 </span>{" "}
                 per month. That is often the cleanest way to improve comfort without
@@ -98,16 +104,16 @@ export default function AffordabilityInsight({
         </div>
 
         {bestValueOption ? (
-          <div className="mt-6 overflow-hidden rounded-[1.6rem] border border-white/8 bg-black/20">
+          <div className="mt-6 overflow-hidden rounded-[1.6rem] border border-gray-200 bg-white">
             <div
               className="h-40 bg-cover bg-center"
               style={{ backgroundImage: `url(${getSafeImageSrc(bestValueOption.model.heroImage)})` }}
             />
             <div className="p-5">
-              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-zinc-500">
+              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-gray-400">
                 Best finance-friendly EV option
               </p>
-              <h4 className="mt-3 text-xl font-semibold text-white">
+              <h4 className="mt-3 text-xl font-semibold text-gray-900">
                 {bestValueOption.model.brand} {bestValueOption.model.model}
               </h4>
               <div className="mt-4 grid grid-cols-2 gap-3">
@@ -116,7 +122,7 @@ export default function AffordabilityInsight({
               </div>
               <Link
                 href={`/cars/${bestValueOption.model.id}`}
-                className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-white transition hover:text-emerald-300"
+                className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-gray-900 transition hover:text-emerald-600"
               >
                 View details
                 <ArrowRight className="h-4 w-4" />
@@ -131,9 +137,9 @@ export default function AffordabilityInsight({
 
 function MiniStat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-[1.2rem] border border-white/8 bg-white/[0.03] p-4">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-zinc-500">{label}</p>
-      <p className="mt-2 text-base font-semibold text-white">{value}</p>
+    <div className="rounded-[1.2rem] border border-gray-100 bg-gray-50 p-4">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-gray-400">{label}</p>
+      <p className="mt-2 text-base font-semibold text-gray-900">{value}</p>
     </div>
   );
 }
