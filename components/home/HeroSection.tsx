@@ -152,6 +152,23 @@ export default function HeroSection({ featuredCard: _featuredCard }: HeroSection
           </div>
         </div>
 
+        {/* Range Fit CTA */}
+        <div className="border-b border-gray-100 bg-gradient-to-r from-brand/5 to-transparent px-4 py-3 sm:px-6 lg:px-8">
+          <div className="mx-auto flex max-w-7xl items-center gap-4">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-brand/10 text-sm">⚡</div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-bold text-gray-900 leading-tight">New: Does an EV actually fit your life?</p>
+              <p className="text-[11px] text-gray-400 hidden sm:block">Enter your real routes — we show which EVs cover them without range anxiety.</p>
+            </div>
+            <Link
+              href="/range-fit"
+              className="shrink-0 rounded-full bg-brand px-4 py-1.5 text-xs font-bold text-white transition hover:bg-brand-hover whitespace-nowrap"
+            >
+              Try Range Fit →
+            </Link>
+          </div>
+        </div>
+
         {/* Quick filter chips */}
         <div className="px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-7xl">
