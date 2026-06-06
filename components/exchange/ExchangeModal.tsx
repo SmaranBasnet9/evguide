@@ -70,10 +70,10 @@ interface SubmitResult {
 // ── Field helpers ─────────────────────────────────────────────────────────────
 
 const inputCls =
-  "w-full rounded-xl border border-white/10 bg-white/[0.06] px-4 py-2.5 text-sm text-white placeholder:text-white/40 focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20";
+  "w-full rounded-xl border border-white/10 bg-[#1f2937] px-4 py-2.5 text-sm text-white placeholder:text-white/40 focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20";
 
 const selectCls =
-  "w-full rounded-xl border border-white/10 bg-white/[0.06] px-4 py-2.5 text-sm text-white focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20";
+  "w-full rounded-xl border border-white/10 bg-[#1f2937] px-4 py-2.5 text-sm text-white focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20 [&>option]:bg-[#1f2937] [&>option]:text-white";
 
 function Field({
   label,
@@ -830,7 +830,7 @@ function ModalShell({
         onClick={onClose}
       />
       {/* Panel */}
-      <div className="relative z-10 w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-[2rem] bg-surface-card border border-white/10 p-6 shadow-2xl sm:p-8">
+      <div className="relative z-10 w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-[2rem] bg-[#111827] border border-white/10 p-6 shadow-2xl sm:p-8">
         <button
           type="button"
           onClick={onClose}

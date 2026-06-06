@@ -1,476 +1,630 @@
-# EV Guide
+# EVGuide — UK EV Marketplace Platform
 
-UK-focused EV marketplace. Helps buyers research, compare, finance, and exchange electric vehicles. Built on Next.js 16 App Router with Supabase for data and auth.
+EVGuide is a full-stack, production-grade electric vehicle marketplace for the UK market. It enables buyers to research, compare, finance, exchange, and purchase EVs and PHEVs through a unified platform serving consumers, dealers, and administrators.
 
 ---
 
 ## Table of Contents
 
-- [Stack](#stack)
-- [Pages](#pages)
-- [Component Structure](#component-structure)
-- [Design System](#design-system)
-- [Admin Panel](#admin-panel)
-- [Dealer Portal](#dealer-portal)
-- [Backend & API](#backend--api)
-- [Database](#database)
+- [Platform Overview](#platform-overview)
+- [Technology Stack](#technology-stack)
+- [Architecture](#architecture)
+- [Pages & Routes](#pages--routes)
+- [Component Library](#component-library)
+- [API Reference](#api-reference)
+- [Security Model](#security-model)
+- [Business Flow](#business-flow)
+- [Database Schema](#database-schema)
 - [Environment Variables](#environment-variables)
 - [Getting Started](#getting-started)
+- [Deployment](#deployment)
 - [Roadmap](#roadmap)
 
 ---
 
-## Stack
+## Platform Overview
 
-| Layer | Technology |
-|---|---|
-| Framework | **Next.js 16** — App Router, React Server Components, Suspense streaming |
-| UI | **React 19**, **Tailwind CSS v4**, **shadcn/ui** |
-| Animation | **Framer Motion** |
-| 3D | **Three.js / @react-three/fiber** |
-| Icons | **lucide-react** |
-| Backend | **Supabase** (Postgres + Auth + RLS) |
-| AI | **Anthropic Claude** (via Anthropic SDK) |
-| Email | **Resend** |
+### Who it serves
+
+| Persona | Journey | Key Features |
+|---|---|---|
+| **Consumer** | Research → Compare → Finance → Buy/Exchange | Vehicle search, AI recommendations, TCO calculator, finance enquiry, part-exchange, test drive booking |
+| **Dealer** | Register → List → Respond to leads | Dealer portal, vehicle listings, lead inbox, bid system, analytics |
+| **Administrator** | Manage all platform data | 40-page admin panel, CRM, lead pipeline, audit log, SEO tools |
+
+### Core capabilities
+
+- **AI-powered recommendations** — Claude-driven EV matching based on buyer profile, budget, range needs, and lifestyle
+- **EV Intelligence** — range confidence checker, real-world TCO, charging cost calculator, energy tariff widget, home charger CTA
+- **Part-exchange** — AI-assisted vehicle valuation using Claude, guided wizard, admin review flow
+- **Dealer marketplace** — dealer application → approval → listing → lead routing → bid system
+- **Finance** — PCP / HP / Lease calculator, finance enquiry flow with lender forwarding
+- **Used EVs** — private seller listings with VIN decode, admin moderation
+- **SEO** — programmatic SEO pages, keyword management, geo targeting
 
 ---
 
-## Pages
+## Technology Stack
 
-### Public Routes (`app/`)
+| Layer | Technology | Version |
+|---|---|---|
+| Framework | Next.js App Router + React Server Components | 16.2.1 |
+| UI Runtime | React + React DOM | 19.2.4 |
+| Styling | Tailwind CSS v4 + shadcn/ui | 4.x |
+| Animation | Framer Motion | 12.x |
+| 3D | Three.js / @react-three/fiber / @react-three/drei | 0.184 / 9.x / 10.x |
+| Icons | lucide-react | 1.14 |
+| Forms | react-hook-form + Zod | 7.x / 4.x |
+| Database & Auth | Supabase (Postgres + Row Level Security) | 2.49 |
+| AI | Anthropic Claude SDK | 0.81 |
+| Secondary AI | OpenAI SDK | 6.x |
+| Email | Resend | 6.x |
+| Data Fetching | TanStack Query | 5.x |
+
+### Build tooling
+
+- TypeScript 5 with strict mode
+- ESLint 9 with Next.js config
+- Turbopack (via `--webpack` flag override where needed)
+- Node.js heap set to 8 GB for large builds (`NODE_OPTIONS=--max-old-space-size=8192`)
+
+---
+
+## Architecture
+
+### Project structure
+
+```
+evguide/
+├── app/                        # Next.js App Router pages
+│   ├── (public routes)         # Consumer-facing pages
+│   ├── admin/                  # Admin panel (40+ pages, RBAC)
+│   ├── dealer/                 # Dealer portal (authenticated)
+│   ├── admin-login/            # Separate admin auth flow
+│   ├── api/                    # API route handlers
+│   │   ├── admin/              # Admin-only endpoints
+│   │   └── dealer/             # Dealer-only endpoints
+│   ├── error.tsx               # Global error boundary
+│   ├── not-found.tsx           # Global 404 page
+│   └── layout.tsx              # Root layout
+├── components/
+│   ├── home/                   # Homepage section components
+│   ├── vehicles/               # Vehicle cards, filters, widgets
+│   ├── compare/                # Side-by-side comparison engine
+│   ├── blog/                   # Blog hub + article components
+│   ├── exchange/               # Part-exchange wizard + modal
+│   ├── consultation/           # Consultation wizard
+│   ├── dealer/                 # Dealer portal components
+│   ├── admin/                  # Admin-specific components
+│   ├── finance/                # Finance calculator
+│   ├── charging/               # Charging map + cards
+│   ├── assistant/              # AI chat interface
+│   ├── recommendation/         # Recommendation engine UI
+│   ├── used-evs/               # Used EV listing components
+│   ├── auth/                   # AuthGuard, LoginPrompt
+│   ├── legal/                  # Cookie banner, privacy notice
+│   ├── ui/                     # shadcn/ui primitives
+│   └── (root)                  # Shared / cross-cutting components
+├── lib/
+│   ├── supabase/               # client / server / admin / public-server
+│   ├── auth/                   # Admin login logic
+│   ├── security/               # Guards, rate limiting, alerts
+│   ├── tracking/               # Event tracking + identity
+│   ├── profiling/              # Intent, financial, buyer-style profiles
+│   ├── personalization/        # Intent profile hook
+│   ├── recommendation-engine/  # Core scoring + explanation engine
+│   ├── vehicles/               # Filter, sort, recommend, personalized-listing
+│   ├── scoring/                # Lead scoring + recommendation scoring
+│   ├── charging/               # Charging service, filters, types, logging
+│   ├── actions/                # Server actions
+│   ├── platform/               # Session, tracking, event names
+│   ├── legal/                  # Company info
+│   └── privacy/                # GDPR consent
+├── data/                       # Static seed data (evModels, usedEvListings)
+├── public/                     # Static assets (brands SVGs, images)
+├── supabase/
+│   ├── migrations/             # Auto-generated migrations
+│   └── manual/                 # Hand-written SQL migrations
+└── Documentation/              # Additional SQL and design docs
+```
+
+### Supabase client strategy
+
+| Client | Module | Usage |
+|---|---|---|
+| Browser (anon) | `lib/supabase/client.ts` | Client components, auth state |
+| Server (cookie) | `lib/supabase/server.ts` | Server components, API routes (user context) |
+| Admin (service role) | `lib/supabase/admin.ts` | Admin API routes — bypasses RLS |
+| Public server | `lib/supabase/public-server.ts` | Public data fetches without user context |
+
+### Request flow
+
+```
+Browser → Next.js Edge/Node server
+  → API Route Handler
+    → Security guard (requireAdmin / requireDealer / auth check)
+    → Rate limiter (in-memory bucket)
+    → Supabase query (server client or admin client)
+    → Resend email (notifications / forwarding)
+    → JSON response
+```
+
+---
+
+## Pages & Routes
+
+### Public (Consumer) Pages
 
 | Route | Description |
 |---|---|
-| `/` | Homepage — hero, featured EVs, spotlight, blog preview, budget browse, marketplace pulse |
-| `/vehicles` | EV listing with advanced filter sidebar and sort |
-| `/cars/[id]` | Individual EV detail page with TCO, tariff widget, charger CTA |
+| `/` | Homepage — hero, featured EVs, EV spotlight, blog preview, accessories, budget browser |
+| `/vehicles` | Full EV catalogue with filter sidebar (brand, price, range, body type) and smart sort |
+| `/cars/[id]` | EV detail — specs, TCO calculator, energy tariff widget, charger CTA, quote modal |
 | `/used-evs` | Used EV listings with search and filters |
-| `/compare` | Side-by-side comparison with optional 3D dual-scene |
-| `/charging` | Charging station finder (OCPI data) |
-| `/finance` | Finance calculator and enquiry flow |
-| `/exchange` | Part-exchange request wizard |
-| `/recommend` | AI-powered vehicle recommendation flow |
+| `/used-evs/[id]` | Used EV detail page |
+| `/used-evs/sell` | Private seller listing form with VIN decode |
+| `/compare` | Side-by-side comparison of 2–3 vehicles with optional 3D render |
+| `/charging` | Interactive charging station map (OCPI) |
+| `/finance` | PCP / HP / Lease calculator + finance enquiry |
+| `/exchange` | Part-exchange wizard with AI valuation |
+| `/recommend` | AI recommendation flow (budget, range, lifestyle inputs → ranked results) |
 | `/consultation` | Multi-step consultation wizard |
-| `/consultation/results` | Personalised consultation results |
-| `/blog` | Blog hub with buyer journey sections |
-| `/blog/[slug]` | Individual blog article with inline EV cards |
-| `/appointment` | Book an appointment |
+| `/consultation/results` | Personalised consultation output |
+| `/blog` | Blog hub with buyer-journey sections |
+| `/blog/[slug]` | Article with inline EV cards, related articles, contextual CTAs |
+| `/appointment` | Appointment booking |
 | `/dealers` | Dealer directory |
-| `/dealer` | Dealer dashboard (authenticated dealers) |
-| `/battery-health` | Battery health report tool |
+| `/battery-health` | Battery health assessment tool |
 | `/fleet` | Fleet enquiry form |
-| `/accessories` | EV accessories marketplace |
+| `/accessories` | EV accessories marketplace (flat grid, dark theme) |
 | `/community` | Community hub |
-| `/my-quotes` | Saved quotes for signed-in users |
+| `/ai-match` | AI vehicle matching flow |
+| `/my-quotes` | Saved quotes (authenticated) |
+| `/login` / `/signup` | Consumer auth |
 | `/accessibility` | Accessibility statement |
-| `/[region]/[slug]` | Programmatic SEO — geo × EV model pages |
-| `/login` | User sign-in |
-| `/signup` | User registration |
+| `/cookies` | Cookie policy |
+| `/privacy` | Privacy policy |
+| `/terms` | Terms and conditions |
+| `/support` | Support page |
 
-### Admin Auth Routes
+### Dealer Portal (`/dealer/`)
+
+| Route | Access | Description |
+|---|---|---|
+| `/dealer` | Approved dealers | Dashboard with leads summary and listing stats |
+| `/dealer/register` | Public | Dealer application form (rate-limited: 3/15 min) |
+| `/dealer/vehicles` | Approved dealers | Vehicle listing management |
+| `/dealer/vehicles/new` | Approved dealers | Create new listing |
+| `/dealer/vehicles/[id]/edit` | Approved dealers | Edit existing listing |
+| `/dealer/enquiries` | Approved dealers | Lead inbox |
+| `/dealer/analytics` | Approved dealers | Listing and lead analytics |
+
+### Admin Panel (`/admin/`)
+
+All admin pages require `role = admin` or `role = super_admin`. Department-based sub-access available.
+
+| Route | Badge Count | Description |
+|---|---|---|
+| `/admin` | — | Dashboard with KPI summary |
+| `/admin/audit` | — | System audit log |
+| `/admin/evs` | — | EV model management |
+| `/admin/evs/new` | — | Add new EV model |
+| `/admin/evs/[id]` | — | Edit EV model |
+| `/admin/accessories` | — | Accessories CRUD |
+| `/admin/blog` | — | Blog post management |
+| `/admin/consultations` | `consultations` | Consultation requests |
+| `/admin/enquiries` | `vehicleQueries` | General enquiries |
+| `/admin/vehicle-queries` | `vehicleQueries` | Vehicle-specific queries |
+| `/admin/leads` | `leads` | Lead management |
+| `/admin/pipeline` | `leads` | Kanban lead pipeline |
+| `/admin/crm` | — | CRM profiles |
+| `/admin/crm/[id]` | — | CRM profile detail + notes |
+| `/admin/exchange` | `exchange` | Part-exchange requests |
+| `/admin/exchange/[id]` | — | Exchange detail + activity log |
+| `/admin/finance-requests` | `financeRequests` | Finance enquiries |
+| `/admin/test-drives` | — | Test drive requests |
+| `/admin/fleet-enquiries` | — | Fleet enquiry requests |
+| `/admin/battery-reports` | — | Battery health reports |
+| `/admin/dealers` | `dealerAccounts` | Dealer account management |
+| `/admin/dealers/new` | — | Manually create dealer |
+| `/admin/dealers/[id]` | — | Dealer profile + status |
+| `/admin/dealer-applications` | `dealerAccounts` | Pending dealer applications |
+| `/admin/dealer-listings` | `dealerListings` | Dealer vehicle listing review |
+| `/admin/dealer-bids` | — | Dealer bid management |
+| `/admin/used-listings` | — | Used EV listing moderation |
+| `/admin/feedback` | `feedback` | User feedback moderation |
+| `/admin/seo` | — | SEO page management |
+| `/admin/seo/new` | — | Create SEO page |
+| `/admin/seo/[id]` | — | Edit SEO page |
+| `/admin/seo/keywords` | — | SEO keyword management |
+| `/admin/seo/keywords/[id]` | — | Edit keyword |
+| `/admin/geo` | — | Geographic region management |
+| `/admin/geo/new` | — | Add region |
+| `/admin/geo/[id]` | — | Edit region |
+| `/admin/staff` | super_admin only | Staff role management |
+| `/admin/users` | super_admin only | User role management |
+| `/admin/recommendations` | — | AI recommendation log |
+| `/admin/data-insights` | — | Platform analytics |
+| `/admin/business-plan` | — | Business plan viewer |
+
+### Admin Auth
 
 | Route | Description |
 |---|---|
-| `/admin-login` | Admin email + password sign-in |
-| `/admin-login/forgot-password` | Request password reset email |
-| `/admin-login/reset-password` | Complete reset (handles Supabase PKCE code exchange) |
+| `/admin-login` | Email + password sign-in (admin/super_admin only) |
+| `/admin-login/forgot-password` | Password reset request |
+| `/admin-login/reset-password` | PKCE password reset completion |
 
 ---
 
-## Component Structure
+## Component Library
+
+### Design system
+
+The platform uses a custom design system built on Tailwind CSS v4:
+
+| Token | Value | Usage |
+|---|---|---|
+| `brand` | `#00C896` | Primary CTA, links, badges |
+| `brand-hover` | `#00B085` | Hover state for brand elements |
+| `surface-base` | `#09090B` | Dark page backgrounds |
+| `surface-card` | `#f9fafb` | Light card backgrounds |
+
+#### Component patterns
+
+- **Dark theme** (admin, test-drive widget, exchange modal): explicit `bg-[#111827]` + `bg-[#1f2937]` inputs + `[color-scheme:dark]` for native pickers
+- **Light theme** (public pages): `bg-white` + `text-gray-900` system
+- **Glass morphism**: `backdrop-blur` + `bg-white/[0.06]` borders on dark surfaces
+- **Vehicle images**: `object-contain p-4 bg-white` for product-shot presentation
+- **Skeleton loading**: `animate-pulse rounded-lg bg-gray-200` — present on all 28 admin page routes
+
+### Key shared components
+
+| Component | Location | Purpose |
+|---|---|---|
+| `PremiumNavbar` | `components/home/` | Main navigation with mobile hamburger |
+| `PremiumFooter` | `components/home/` | Footer with newsletter + social links |
+| `AdminSidebar` | `components/` | Role-aware admin navigation with live badge counts |
+| `DealerSidebar` | `components/` | Dealer portal navigation |
+| `BookTestDriveWidget` | `components/` | Floating test drive booking panel |
+| `ExchangeModal` | `components/exchange/` | Part-exchange wizard modal |
+| `LoginModal` | `components/` | Auth modal for inline sign-in prompts |
+| `CookieBanner` | `components/legal/` | GDPR-compliant cookie consent |
+
+---
+
+## API Reference
+
+### Authentication model
+
+| Endpoint prefix | Guard | Mechanism |
+|---|---|---|
+| `/api/admin/*` | `requireAdmin()` | Supabase session + profile `role = admin\|super_admin` |
+| `/api/dealer/*` | `requireDealer()` | Supabase session + `role = dealer` + `dealer_status = approved` |
+| `/api/used-listings` POST | Supabase auth | Any authenticated user |
+| All others | None | Public (with rate limiting where applicable) |
+
+### Rate limiting
+
+Applied endpoints:
+
+| Endpoint | Limit | Window |
+|---|---|---|
+| `POST /api/dealer/register` | 3 requests | 15 minutes |
+| `POST /api/dealer-applications` | 3 requests | 15 minutes |
+| `POST /api/used-listings` | 3 requests | 15 minutes |
+| `POST /api/leads` | Configurable | Per IP |
+
+> Rate limiting uses an in-memory bucket strategy per server instance. For horizontally-scaled deployments, replace with a Redis-backed store.
+
+### Key public endpoints
+
+| Method | Path | Description |
+|---|---|---|
+| GET | `/api/evs` | List all EV models |
+| GET | `/api/evs/[id]` | Single EV model |
+| GET | `/api/chargers/nearby` | OCPI charging stations near lat/lng |
+| GET | `/api/used-listings` | All approved used listings |
+| GET | `/api/bank-offers` | Available finance offers |
+| GET | `/api/valuations` | Vehicle valuation data |
+| GET | `/api/health` | Platform health check (Supabase + AI) |
+| POST | `/api/leads` | Capture a lead |
+| POST | `/api/enquiries` | Submit a general enquiry |
+| POST | `/api/test-drives` | Book a test drive |
+| POST | `/api/exchange-requests` | Submit part-exchange request |
+| POST | `/api/finance-enquiries` | Submit finance enquiry |
+| POST | `/api/fleet-enquiries` | Submit fleet enquiry |
+| POST | `/api/consultation` | Submit consultation |
+| POST | `/api/battery-health` | Submit battery assessment |
+| POST | `/api/tco-calculate` | Calculate total cost of ownership |
+| POST | `/api/recommendations` | Get AI vehicle recommendations |
+| POST | `/api/newsletter` | Newsletter subscription |
+| POST | `/api/consent` | Record GDPR consent |
+| POST | `/api/chat` | OpenAI-powered chat |
+| POST | `/api/vin-decode` | VIN lookup and decode |
+
+---
+
+## Security Model
+
+### Authentication
+
+- **Consumer auth**: Supabase Auth with email/password + OAuth
+- **Admin auth**: Separate `/admin-login` flow — signs in via Supabase then verifies `profile.role IN ('admin', 'super_admin')` before granting access
+- **Session strategy**: SSR cookies via `@supabase/ssr` — uses `getUser()` (server-validated) not `getSession()` (client cache)
+- **PKCE flow**: Used for all password resets and OAuth callbacks
+
+### Role-based access control
+
+| Role | Access |
+|---|---|
+| `user` | Consumer features, saved quotes, test drive booking |
+| `dealer` | Dealer portal (requires `dealer_status = approved`) |
+| `admin` | Full admin panel (blocked from super_admin functions) |
+| `super_admin` | Full access including staff management, user role changes |
+
+Department-based access: admins can be scoped to specific departments via `profile.department` — enforced by `requireAdminForDepartments()`.
+
+### HTTP security headers (production)
+
+| Header | Value |
+|---|---|
+| `Content-Security-Policy` | `default-src 'self'`, strict with `upgrade-insecure-requests` |
+| `Strict-Transport-Security` | `max-age=63072000; includeSubDomains; preload` |
+| `X-Frame-Options` | `DENY` |
+| `X-Content-Type-Options` | `nosniff` |
+| `Referrer-Policy` | `strict-origin-when-cross-origin` |
+| `Permissions-Policy` | Blocks camera, microphone, geolocation, browsing-topics |
+| `Cache-Control` | `no-store` on all `/api/*` routes |
+
+### Security alerts
+
+Unauthorised admin access attempts trigger email notifications via Resend to the configured support email, with a 10-minute cooldown to prevent alert flooding. Implemented in `lib/security/alerts.ts`.
+
+---
+
+## Business Flow
+
+### Consumer → Lead
 
 ```
-components/
-  ui/                     # shadcn/ui primitives (Button, Card, Input, Dialog, …)
-  home/                   # Homepage sections
-    HeroScene.tsx           # Three.js animated hero
-    HeroSection.tsx         # Full hero with search console
-    FeaturedEVs.tsx         # Featured EV cards
-    EVSpotlight.tsx         # EV of the moment spotlight
-    BrowseByBudget.tsx      # Budget-range quick filters
-    QuickFilterStrip.tsx    # Horizontal filter strip
-    MarketplacePulse.tsx    # Live stats / marketplace activity
-    UsedEVsSection.tsx      # Used EV preview section
-    DealerMarketplacePreview.tsx  # Dealer highlights
-    EVAccessories.tsx       # Accessories preview
-    CompareTeaserSection.tsx # Compare CTA teaser
-    ActionBanners.tsx       # Promotional banners
-    BlogPreview.tsx         # Latest articles preview
-    Testimonials.tsx        # Social proof section
-    AIRecommendation.tsx    # AI recommendation CTA
-    FinancePreview.tsx      # Finance calculator preview
-    HowItWorks.tsx          # How EV Guide works
-    TrustStrip.tsx          # Trust badges
-    FinalCTA.tsx            # Bottom CTA
-    PremiumNavbar.tsx       # Top navigation with mobile hamburger
-    PremiumFooter.tsx       # Footer with newsletter, trust badges, FCA disclaimer
-    MobileBottomNav.tsx     # Sticky mobile bottom navigation bar
-    NewsletterSection.tsx   # Newsletter signup section
-    FooterSocialLinks.tsx   # Social media links
-  vehicles/               # Listing and vehicle detail
-    SmartVehicleListing.tsx # Main listing with filters
-    PremiumFilterSidebar.tsx # Advanced filter sidebar
-    PremiumVehicleCard.tsx  # EV card with glassmorphism
-    VehicleDiscovery.tsx    # Discovery/search interface
-    VehicleSort.tsx         # Sort controls
-    EnergyTariffWidget.tsx  # Live energy tariff / charging cost widget
-    HomeChargerCTA.tsx      # Home charger installation CTA
-    InsuranceWidget.tsx     # EV insurance quote widget
-    TestDriveButton.tsx     # Book test drive button
-    VehicleQuoteButton.tsx  # Request dealer quote button
-    DealerBidModal.tsx      # Dealer bid submission modal
-  compare/                # Comparison feature
-    ComparePageClient.tsx   # Main comparison client
-    PremiumCompareTable.tsx # Spec comparison table
-    PremiumCompareInsights.tsx # AI-generated insights
-    PremiumCompareSummary.tsx  # Summary panel
-    PremiumCompareCTA.tsx   # CTA panel
-    PremiumCompareHero.tsx  # Comparison hero
-    CompareDual3DScene.tsx  # 3D dual-vehicle render
-  charging/               # Charging station finder
-  finance/                # Finance calculator and enquiry
-  exchange/               # Part-exchange wizard
-  consultation/           # Multi-step consultation wizard
-  enquiry/                # Enquiry forms
-  assistant/              # EVChatInterface (Claude-powered AI chat)
-  blog/
-    article/              # Article page components
-    hub/                  # Blog hub components
-  dealer/
-    TestDriveBookingsTable.tsx  # Dealer test-drive inbox
-    DealerLeadsInbox.tsx        # Dealer leads dashboard
-    DealerPendingScreen.tsx     # Pending approval state
-    DealerRejectedScreen.tsx    # Rejected state
-  used-evs/               # Used EV listing components
-  auth/                   # Login prompt, auth guards
-  legal/                  # Cookie consent, privacy
-  design-system/          # Shared design primitives (GradientDivider, …)
-  tracking/               # Client-side event tracking wrappers
-  personalization/        # Intent-aware recommendation UI
-  admin/
-    StaffPanel.tsx          # Staff management panel
-    FinanceRequestForwardButton.tsx
-    EnquiriesToolbar.tsx    # Bulk actions toolbar
-    DealerBidsTable.tsx     # Dealer bid review table
-  AdminSidebar.tsx        # Role/department-aware nav sidebar
-  Admin*.tsx              # Admin action buttons, forms, delete controls
-  DealerSidebar.tsx       # Dealer portal navigation
-  DealerVehicleForm.tsx   # Dealer vehicle listing form
-  DealerEnquiryForm.tsx   # Dealer enquiry form
+Homepage / Search → Vehicle Detail → Quote Modal → Lead captured
+                 ↓
+           AI Recommendation → Consultation → Finance Enquiry → Lender forward (Resend)
+                 ↓
+           Part-Exchange → AI Valuation (Claude) → Admin review → Dealer assignment
+                 ↓
+           Test Drive → Admin forward → Dealer confirmation
+```
+
+### Dealer onboarding
+
+```
+/dealer/register (rate-limited) → dealer_profiles row (status: pending_approval)
+→ Admin reviews /admin/dealer-applications → Approve/Reject
+→ On approval: dealer can access portal, create listings, receive leads
+→ Dealer listings → Admin review /admin/dealer-listings → Approve to go live
+→ Live listing → Consumer enquiry → Dealer lead inbox → Dealer bid → Admin bid review
+```
+
+### Admin review workflow
+
+All inbound requests follow the same pattern:
+
+```
+Inbound form/API → Supabase table (status: pending/new)
+→ Badge count increments on AdminSidebar
+→ Admin reviews → updates status → optional Resend email to consumer/dealer
+→ Badge count clears
 ```
 
 ---
 
-## Design System
+## Database Schema
 
-Consistent dark glassmorphism across all pages:
-
-| Token | Value |
-|---|---|
-| Background | `#0A0A0A` |
-| Card surface | `bg-white/[0.06]` with `backdrop-blur-xl` |
-| Card border | `border-white/10` |
-| Accent / primary | `#1FBF9F` (teal-green) |
-| Muted text | `text-white/60`, `text-white/40` |
-| Card glow | `shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_32px_80px_rgba(0,0,0,0.5)]` |
-| Corner glow | `shadow-[0_0_60px_rgba(31,191,159,0.15)]` on hover |
-
-All cards use premium glassmorphism with teal corner glow on hover. Mobile-first responsive with a hamburger menu and sticky bottom navigation bar on small screens.
-
----
-
-## Admin Panel
-
-Accessed at `/admin`. Every page load validates auth + role server-side.
-
-### Auth Flow
-
-1. `/admin-login` — email + password form
-2. `lib/auth/admin-login.ts` signs in via Supabase, then checks `profiles.role` is `admin` or `super_admin`
-3. On success → redirect to `/admin`. On role failure → immediate sign-out + error
-4. Forgot password → `/admin-login/forgot-password` → Supabase sends reset email
-5. Email link → `/admin-login/reset-password?code=…` → PKCE code exchanged → set-password form → done
-
-### Role-Based Sidebar Access
-
-| Role / Department | Visible sections |
-|---|---|
-| `super_admin` | All sections |
-| `admin` + `management` | General, Content, Vehicles, Finance |
-| `admin` + `sales` / `support` | General, Vehicles |
-| `admin` + `operations` | General, Vehicles, Finance |
-| `admin` + `finance` | General, Finance |
-| `admin` + `technical` / `marketing` | General, Content |
-| `admin` (no department) | General, Content, Vehicles, Finance |
-
-### Admin Modules
-
-| Route | Purpose |
-|---|---|
-| `/admin` | Dashboard — live counts from all tables |
-| `/admin/audit` | System audit log |
-| `/admin/evs` | EV model CRUD |
-| `/admin/blog` | Blog post CRUD |
-| `/admin/feedback` | User review moderation |
-| `/admin/seo` | Programmatic SEO page management |
-| `/admin/seo/keywords` | SEO keyword management |
-| `/admin/geo` | Geo region management |
-| `/admin/leads` | Lead pipeline list |
-| `/admin/pipeline` | Pipeline board (kanban-style) |
-| `/admin/recommendations` | AI recommendation results |
-| `/admin/consultations` | Consultation request handling |
-| `/admin/crm` | CRM customer journey |
-| `/admin/crm/[profileId]` | Individual customer view with notes |
-| `/admin/vehicle-queries` | Find My EV query inbox |
-| `/admin/exchange` | Exchange request management |
-| `/admin/finance-requests` | Finance enquiry inbox |
-| `/admin/test-drives` | Test drive booking management |
-| `/admin/staff` | Staff account management |
-| `/admin/users` | User access management |
-| `/admin/dealers` | Dealer account management |
-| `/admin/dealer-applications` | Dealer onboarding approvals |
-| `/admin/dealer-listings` | Dealer vehicle listing review |
-| `/admin/dealer-bids` | Dealer bid management |
-| `/admin/used-listings` | Used EV listing management |
-| `/admin/accessories` | Accessories catalogue management |
-| `/admin/enquiries` | General enquiry inbox |
-| `/admin/fleet-enquiries` | Fleet enquiry management |
-| `/admin/battery-reports` | Battery health report management |
-| `/admin/data-insights` | Platform analytics and insights |
-| `/admin/business-plan` | Business plan and KPI tracker |
-
----
-
-## Dealer Portal
-
-Dealers can apply, manage listings, receive leads, and respond to test-drive requests.
-
-### Dealer Auth Flow
-
-1. Dealer applies via `/dealer-applications` endpoint
-2. Admin reviews and approves at `/admin/dealer-applications`
-3. On approval, dealer gains access to `/dealer` dashboard
-4. Pending state → `DealerPendingScreen`; rejected → `DealerRejectedScreen`
-
-### Dealer Modules (`/dealer`)
-
-| Section | Purpose |
-|---|---|
-| Vehicle listings | Create and manage listings via `DealerVehicleForm` |
-| Leads inbox | View and respond to enquiries via `DealerLeadsInbox` |
-| Test drive bookings | Manage test drive requests via `TestDriveBookingsTable` |
-| Dealer bids | Submit bids on vehicle queries via `DealerBidModal` |
-
-### Security
-
-- `lib/security/dealer.ts` — dealer-specific RLS enforcement and access guards
-- Dealer routes validate both auth and dealer approval status server-side
-
----
-
-## Backend & API
-
-### Supabase Clients
-
-| Module | When to use |
-|---|---|
-| `lib/supabase/client.ts` | Browser (client components, interactive forms) |
-| `lib/supabase/server.ts` | Server components and API routes (reads cookies) |
-| `lib/supabase/admin.ts` | Server-only, service role key — bypasses RLS |
-
-Auth uses `@supabase/ssr` with PKCE. Sessions are cookie-based. All protected routes call `supabase.auth.getUser()` (not `getSession()`) to avoid stale token bugs.
-
-### API Routes (`app/api/`)
-
-**EV data:**
-- `GET/POST /api/evs/` — list and create EV models
-- `GET/PATCH/DELETE /api/evs/[id]` — individual EV CRUD
-- `POST /api/admin/seed-vehicles/` — seed from static data
-- `GET /api/vin-decode/` — VIN lookup and decode
-
-**User flows:**
-- `POST /api/consultation/` — submit consultation request
-- `POST /api/test-drives/` — book a test drive
-- `POST /api/exchange-requests/` — submit part-exchange
-- `POST /api/finance-enquiries/` — finance enquiry
-- `POST /api/leads/` — lead capture
-- `POST /api/enquiries/` — general enquiry
-- `POST /api/fleet-enquiries/` — fleet enquiry
-- `POST /api/insurance-leads/` — insurance lead capture
-- `GET/POST /api/saved-vehicles/` — saved EV list
-- `POST /api/tco-calculate/` — total cost of ownership
-
-**Dealer:**
-- `POST /api/dealer-applications/` — dealer onboarding application
-- `GET/POST /api/dealer-quotes/` — dealer quote requests
-- `GET/POST /api/dealer/` — dealer portal API
-- `GET/POST /api/admin/dealers/` — admin dealer management
-- `GET/POST /api/admin/dealer-listings/` — admin listing review
-- `GET/POST /api/admin/dealer-bids/` — admin bid management
-- `GET/POST /api/used-listings/` — used EV listings
-
-**AI / Intelligence:**
-- `POST /api/claude/` — EV assistant (Claude via Anthropic SDK)
-- `POST /api/recommendations/` — AI vehicle matching
-- `POST /api/ai-match/complete` — complete AI match flow
-- `GET /api/battery-health/` — battery health assessment
-
-**Admin:**
-- `GET/POST /api/admin/blog/` — blog CRUD
-- `GET/POST /api/admin/consultations/` — consultation management
-- `POST /api/admin/consultations/export/` — export consultations to CSV
-- `POST /api/admin/consultations/forward/` — forward to sales
-- `GET/POST /api/admin/crm/[profileId]/` — CRM profile
-- `POST /api/admin/crm/[profileId]/notes/` — CRM notes
-- `GET/POST /api/admin/feedback/[userId]/` — user feedback
-- `POST /api/admin/feedback/bulk/` — bulk feedback moderation
-- `POST /api/admin/test-drives/forward/` — forward test drive to dealer
-- `GET/POST /api/admin/accessories/` — accessories management
-- `GET/POST /api/admin/enquiries/` — enquiry management
-
-**Infrastructure:**
-- `GET /api/chargers/nearby` — OCPI charging station lookup
-- `GET /api/bank-offers/` — financing offer data
-- `GET /api/valuations/` — vehicle valuation
-- `POST /api/newsletter/` — newsletter signup (Resend)
-- `POST /api/consent/` — GDPR consent recording
-- `GET /api/health` — health check (Supabase + Anthropic)
-
-**Tracking:**
-- `POST /api/platform/track` — platform event tracking
-- `POST /api/platform/session` — session management
-
-### Business Logic (`lib/`)
-
-| Module | Purpose |
-|---|---|
-| `lib/evs.ts` | Fetch and cache EV models from Supabase |
-| `lib/blog.ts` | Fetch blog posts with dummy fallback |
-| `lib/leads.ts` / `lib/lead-pipeline.ts` | Lead scoring and pipeline state |
-| `lib/vehicles/` | Filter, sort, search logic |
-| `lib/recommendation-engine/` | Scored AI recommendation engine with explanations |
-| `lib/finance-engine.ts` | PCP / HP / lease calculations |
-| `lib/charging-engine.ts` | Charging cost and time calculations |
-| `lib/comparison.ts` | Side-by-side scoring |
-| `lib/ev-intelligence.ts` | Range confidence, TCO, enrichment |
-| `lib/price-intelligence.ts` | Market price analysis |
-| `lib/crm.ts` | CRM data access |
-| `lib/seo.ts` / `lib/seo-keywords.ts` | SEO page and keyword CRUD |
-| `lib/accessories.ts` / `lib/accessories-static.ts` | Accessories catalogue |
-| `lib/profiling/` | Intent, financial, and buyer-style profiling |
-| `lib/tracking/` | Event catalog, client tracking, identity |
-| `lib/security/` | Rate limiting, admin verification, dealer guards, alerts |
-| `lib/auth/admin-login.ts` | Admin-only login with role verification |
-
-### Static Data (`data/`)
-
-| File | Purpose |
-|---|---|
-| `data/evModels.ts` | Static EV model seed data |
-| `data/usedEvListings.ts` | Static used EV listings data |
-
----
-
-## Database
-
-### Tables (Supabase)
+### Core tables
 
 | Table | Description |
 |---|---|
-| `profiles` | User profiles — `role` (`admin`/`super_admin`/`user`/`dealer`) and `department` |
-| `ev_models` | EV vehicle records |
-| `blog_posts` | Blog content with `published` flag |
-| `user_ev_feedback` | User reviews — moderated via `is_approved` |
-| `consultation_requests` | Consultation enquiries with status workflow |
-| `vehicle_queries` | Find My EV queries |
-| `seo_pages` | Programmatic SEO pages with `is_active` |
-| `geo_regions` | Geographic regions for SEO targeting |
-| `seo_keywords` | Keyword targeting rules |
-| `dealers` | Dealer accounts and approval status |
-| `dealer_listings` | Dealer vehicle listings pending review |
-| `dealer_bids` | Dealer bids on vehicle queries |
-| `used_listings` | Used EV listings |
-| `accessories` | EV accessories catalogue |
-| `enquiries` | General customer enquiries |
-| `fleet_enquiries` | Fleet customer enquiries |
+| `profiles` | User profiles — extends Supabase auth.users with role, department |
+| `ev_models` | EV model catalogue (brand, specs, pricing, images) |
+| `dealer_profiles` | Dealer accounts with status, contact, address |
+| `dealer_listings` | Dealer vehicle listings with approval workflow |
+| `dealer_bids` | Dealer bids on used EV exchange requests |
+| `used_ev_listings` | Private seller listings with moderation status |
+| `consultation_requests` | Consultation form submissions |
+| `finance_requests` | Finance enquiry submissions |
+| `exchange_requests` | Part-exchange requests with AI valuations |
+| `test_drive_bookings` | Test drive booking requests |
+| `leads` | General lead capture |
+| `crm_leads` | CRM pipeline leads |
+| `crm_lead_notes` | Notes on CRM leads |
+| `vehicle_queries` | Vehicle-specific queries from consumers |
+| `fleet_enquiries` | Fleet enquiry submissions |
+| `battery_health_reports` | Battery assessment results |
+| `accessories` | Product catalogue for accessories marketplace |
+| `accessory_categories` | Category taxonomy for accessories |
+| `blog_posts` | Blog articles with SEO metadata |
+| `seo_pages` | Programmatic SEO page definitions |
+| `seo_keywords` | Keyword targets and tracking |
+| `geo_regions` | Geographic targeting data |
+| `user_ev_feedback` | User reviews and feedback (moderated) |
+| `saved_vehicles` | User saved/shortlisted vehicles |
+| `newsletter_subscribers` | Email newsletter list |
+| `consent_records` | GDPR consent audit trail |
+| `platform_events` | Platform event tracking |
+| `user_sessions` | Session tracking |
+| `user_intent_profiles` | AI-built buyer intent profiles |
+| `user_car_interest` | Car interest tracking per user |
+| `financial_profiles` | User financial capability profiles |
+| `security_events` | Security alert log |
+| `audit_log` | Admin action audit trail |
 
-RLS is enabled on all tables. The admin service-role client bypasses RLS for internal operations.
+### Row Level Security
 
-### Migrations
+RLS is enabled on all tables. Key policies:
 
-Migrations live in `supabase/migrations/`. Apply in order:
+- Users can read/write only their own rows (profiles, saved_vehicles, feedback)
+- Dealers can read/write only their own dealer profile and listings
+- Admin bypasses RLS via the service role key (admin Supabase client)
+- Public data (ev_models, blog_posts, accessories) is readable by all
 
-| Migration | Purpose |
-|---|---|
-| `20260515000000_dealer_portal.sql` | Dealer portal tables, RLS, and policies |
-| `20260520000000_create_accessories.sql` | Accessories catalogue table |
-| `supabase/manual/018_apply_pending_migrations.sql` | Catch-up migration script |
+### Database migrations
 
-Run `scripts/run-dealer-migration.mjs` to apply dealer migration programmatically.
+Migrations are managed in two places:
 
-### Admin DB Setup
+1. `supabase/migrations/` — auto-generated by Supabase CLI
+2. `supabase/manual/` — hand-written SQL for complex operations
 
-Run `Documentation/supabase-admin-auth.sql` in the Supabase SQL editor, then promote an account:
-
-```sql
-select public.promote_user_to_admin('admin@example.com');
-```
+See `MIGRATIONS_TO_APPLY.md` for the ordered list of migrations to apply before first deployment.
 
 ---
 
 ## Environment Variables
 
-```env
+Copy `.env.example` to `.env.local` and fill in all values.
+
+```bash
 # Supabase
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-SUPABASE_SERVICE_ROLE_KEY=
+NEXT_PUBLIC_SUPABASE_URL=              # Project URL (public)
+NEXT_PUBLIC_SUPABASE_ANON_KEY=         # Anon key (public)
+SUPABASE_SERVICE_ROLE_KEY=             # Service role key (NEVER expose client-side)
 
 # AI
-ANTHROPIC_API_KEY=
+ANTHROPIC_API_KEY=                     # Claude API key
+OPENAI_API_KEY=                        # OpenAI key (chat fallback)
 
 # Email
-RESEND_API_KEY=
+RESEND_API_KEY=                        # Resend for transactional email
+RESEND_FROM_EMAIL=                     # Sender address (e.g. noreply@evguide.co.uk)
+
+# Platform
+NEXT_PUBLIC_SITE_URL=                  # Production URL (https://evguide.co.uk)
+NEXT_PUBLIC_SUPPORT_EMAIL=             # Support + security alert recipient
+NEXT_PUBLIC_GOOGLE_MAPS_KEY=           # Maps (charging finder)
+
+# Admin (optional override)
+ADMIN_EMAIL=                           # Default admin email for seeding
 ```
+
+> **Security**: Never commit secrets to version control. Use Vercel environment variable management for production. The `.env.local` file is listed in `.gitignore` and must never be committed.
 
 ---
 
 ## Getting Started
 
+### Prerequisites
+
+- Node.js 20+
+- A Supabase project (free tier works for development)
+- Anthropic API key (for AI features)
+- Resend account (for email)
+
+### Local setup
+
 ```bash
-# Install dependencies
+# Clone and install
+git clone https://github.com/your-org/evguide.git
+cd evguide
 npm install
 
-# Start dev server
-npm run dev
+# Configure environment
+cp .env.example .env.local
+# Fill in all values in .env.local
 
-# Build for production
-npm run build
+# Run database migrations
+# Apply migrations in order from MIGRATIONS_TO_APPLY.md via Supabase SQL editor
+
+# Start development server
+npm run dev
+# → http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+### Creating an admin account
+
+1. Sign up at `/signup` with your email
+2. In Supabase dashboard → Table editor → `profiles` → find your row → set `role` to `super_admin`
+3. Sign in at `/admin-login`
+
+### Seeding EV data
+
+After signing in as admin, navigate to `/admin/evs` and use the "Seed vehicles" button to populate the EV catalogue from static data.
+
+---
+
+## Deployment
+
+### Vercel (recommended)
+
+1. Connect the repository to a Vercel project
+2. Set all environment variables in Vercel project settings (never in the repository)
+3. Set `NODE_OPTIONS=--max-old-space-size=8192` in Vercel environment variables
+4. Deploy — Next.js App Router is fully supported
+
+### Pre-deployment checklist
+
+- [ ] All database migrations from `MIGRATIONS_TO_APPLY.md` applied
+- [ ] All environment variables set in Vercel (not in repo)
+- [ ] Supabase RLS policies verified
+- [ ] Resend domain verified for transactional email
+- [ ] NEXT_PUBLIC_SITE_URL set to production URL
+- [ ] Admin account created and tested
+- [ ] Health check at `/api/health` returns OK
 
 ---
 
 ## Roadmap
 
-### High Value
-- **Saved comparisons** — persist compare selections across sessions for signed-in users
-- **Email alerts** — notify admin on new leads/consultations via Resend
-- **Exchange valuation estimate** — show a live estimated value on the exchange wizard
-- **EV search autocomplete** — instant search on `/vehicles` using debounced Supabase `ilike`
-- **Dealer reviews** — user ratings for dealer accounts
-- **Battery health API integration** — live battery state via third-party VIN service
+### Phase 1 (Launched)
+- [x] Vehicle catalogue with search and filter
+- [x] EV detail page with TCO and tariff widget
+- [x] AI recommendation engine
+- [x] Part-exchange with AI valuation
+- [x] Finance calculator and enquiry
+- [x] Admin panel (40+ pages)
+- [x] Dealer portal with listing and lead management
+- [x] Used EV marketplace
+- [x] Blog platform
+- [x] Accessories marketplace
+- [x] Battery health assessment
+- [x] Fleet enquiry
+- [x] GDPR-compliant consent management
+- [x] Programmatic SEO
 
-### Admin Improvements
-- **Bulk blog publish/unpublish** — checkbox select + bulk action in `/admin/blog`
-- **Lead status history** — timeline view of status changes per lead in CRM
-- **Export to CSV** — download button on consultations, finance-requests, fleet-enquiries
-- **Admin notifications badge** — live count of new/unread items in the sidebar
+### Phase 2 (In progress)
+- [ ] Redis-backed rate limiting for distributed deployments
+- [ ] Sentry / LogRocket error monitoring
+- [ ] OpenAPI / Swagger documentation
+- [ ] E2E test suite (Playwright)
+- [ ] Admin audit log UI
+- [ ] Bulk actions on admin tables
+- [ ] Pagination on all admin tables (currently fixed limits)
+- [ ] CSV export for all admin pages
 
-### Platform
-- **Webhook for new leads** — POST to Slack/Teams/Zapier on new consultation or lead
-- **A/B test framework** — use `lib/tracking/` + a simple cookie to split-test hero CTAs
-- **Rate limit dashboard** — surface `lib/security/rate-limit.ts` data in the audit page
-- **Sitemap auto-generation** — dynamic `sitemap.xml` pulling from `seo_pages` and `geo_regions`
-- **Dealer analytics** — impressions, clicks, and conversion per dealer listing
+### Phase 3 (Planned)
+- [ ] Real OCPI charging station integration
+- [ ] Stripe payment integration for deposit/booking fees
+- [ ] Dealer subscription tiers and billing
+- [ ] Mobile app (React Native)
+- [ ] Multi-language support (Welsh, Scots Gaelic)
+- [ ] Vehicle history report integration (HPI / Motorway)
+- [ ] Insurance quote integration
+- [ ] Smart charging schedule optimiser
+
+---
+
+## Contributing
+
+See `CONTRIBUTING.md` (coming soon). In the meantime:
+
+1. Branch from `main`
+2. Follow existing naming conventions (kebab-case files, PascalCase components)
+3. Keep components under 300 lines — extract sub-components when needed
+4. All API routes must include input validation and appropriate auth guard
+5. No secrets in code — use environment variables only
+
+---
+
+## License
+
+Proprietary — all rights reserved. Contact the EVGuide team for licensing enquiries.

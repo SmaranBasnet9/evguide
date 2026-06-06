@@ -61,7 +61,7 @@ const STATUS_COLORS: Record<ExchangeStatus, string> = {
   offer_sent:           "bg-orange-100 text-orange-700",
   converted:            "bg-emerald-100 text-emerald-700",
   rejected:             "bg-red-100 text-red-700",
-  archived:             "bg-white/[0.05] text-white/50",
+  archived:             "bg-gray-100 text-gray-500",
 };
 
 // ── Page ──────────────────────────────────────────────────────────────────────
@@ -90,20 +90,20 @@ export default async function AdminExchangeDetailPage({ params }: Props) {
       <div>
         <Link
           href="/admin/exchange"
-          className="text-sm text-white/50 hover:text-blue-600"
+          className="text-sm text-gray-500 hover:text-blue-600"
         >
           ← Exchange Requests
         </Link>
         <div className="mt-3 flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-white">
+            <h1 className="text-2xl font-bold text-gray-900">
               {r.customer_name}
             </h1>
-            <p className="mt-0.5 text-sm text-white/50">
+            <p className="mt-0.5 text-sm text-gray-500">
               {r.email} · {r.phone}
               {r.city ? ` · ${r.city}` : ""}
             </p>
-            <p className="mt-1 text-xs text-white/40">
+            <p className="mt-1 text-xs text-gray-400">
               Submitted {new Date(r.created_at).toLocaleString("en-GB", { dateStyle: "long", timeStyle: "short" })}
             </p>
           </div>
@@ -115,12 +115,12 @@ export default async function AdminExchangeDetailPage({ params }: Props) {
               r.priority === "urgent" ? "bg-red-100 text-red-700" :
               r.priority === "high"   ? "bg-amber-100 text-amber-700" :
               r.priority === "medium" ? "bg-blue-100 text-blue-700" :
-              "bg-white/[0.05] text-white/60"
+              "bg-gray-100 text-gray-600"
             }`}>
               {r.priority} priority
             </span>
             {r.assigned_to && (
-              <span className="rounded-full bg-white/[0.05] px-3 py-1 text-xs text-white/60">
+              <span className="rounded-full bg-gray-100 px-3 py-1 text-xs text-gray-600">
                 Assigned: {r.assigned_to}
               </span>
             )}
@@ -153,9 +153,9 @@ export default async function AdminExchangeDetailPage({ params }: Props) {
               <FlagBadge label="Insurance valid" active={r.insurance_valid} />
             </div>
             {r.remarks && (
-              <div className="mt-3 rounded-xl border border-white/[0.06] bg-white/[0.03] p-3">
-                <p className="text-xs font-semibold text-white/50">Customer remarks</p>
-                <p className="mt-1 text-sm text-white/80">{r.remarks}</p>
+              <div className="mt-3 rounded-xl border border-gray-100 bg-gray-50 p-3">
+                <p className="text-xs font-semibold text-gray-500">Customer remarks</p>
+                <p className="mt-1 text-sm text-gray-700">{r.remarks}</p>
               </div>
             )}
           </Card>
@@ -165,16 +165,16 @@ export default async function AdminExchangeDetailPage({ params }: Props) {
             <Card title="Desired EV">
               <div className="flex items-center gap-4">
                 {r.target_ev_image && (
-                  <div className="relative h-16 w-24 overflow-hidden rounded-xl bg-white/[0.05] flex-shrink-0">
+                  <div className="relative h-16 w-24 overflow-hidden rounded-xl bg-gray-100 flex-shrink-0">
                     <Image src={r.target_ev_image} alt={r.target_ev_model ?? ""} fill className="object-cover" unoptimized />
                   </div>
                 )}
                 <div>
-                  <p className="text-lg font-bold text-white">
+                  <p className="text-lg font-bold text-gray-900">
                     {r.target_ev_brand} {r.target_ev_model}
                   </p>
                   {r.target_ev_price != null && (
-                    <p className="text-sm text-white/50">
+                    <p className="text-sm text-gray-500">
                       Listed at £{Number(r.target_ev_price).toLocaleString()}
                     </p>
                   )}
@@ -202,7 +202,7 @@ export default async function AdminExchangeDetailPage({ params }: Props) {
                     ? `£${Number(r.estimated_value).toLocaleString()}`
                     : "—"}
                 </p>
-                <p className="text-xs text-white/50 capitalize">
+                <p className="text-xs text-gray-500 capitalize">
                   {r.valuation_confidence ?? "unknown"} confidence
                 </p>
               </div>
@@ -213,20 +213,20 @@ export default async function AdminExchangeDetailPage({ params }: Props) {
                     ? `£${Number(r.final_offer_value).toLocaleString()}`
                     : "Not set"}
                 </p>
-                <p className="text-xs text-white/50">Set by admin after review</p>
+                <p className="text-xs text-gray-500">Set by admin after review</p>
               </div>
             </div>
             {r.expected_value != null && (
-              <p className="mt-2 text-xs text-white/50">
+              <p className="mt-2 text-xs text-gray-500">
                 Customer expectation: £{Number(r.expected_value).toLocaleString()}
               </p>
             )}
             {r.valuation_notes && (
-              <div className="mt-3 rounded-xl border border-white/[0.06] bg-white/[0.03] p-3">
-                <p className="text-xs font-semibold text-white/50">Valuation notes</p>
+              <div className="mt-3 rounded-xl border border-gray-100 bg-gray-50 p-3">
+                <p className="text-xs font-semibold text-gray-500">Valuation notes</p>
                 <ul className="mt-1 space-y-0.5">
                   {r.valuation_notes.split(" | ").map((note, i) => (
-                    <li key={i} className="text-xs text-white/60">• {note}</li>
+                    <li key={i} className="text-xs text-gray-600">• {note}</li>
                   ))}
                 </ul>
               </div>
@@ -243,9 +243,9 @@ export default async function AdminExchangeDetailPage({ params }: Props) {
                     href={img.file_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group relative block overflow-hidden rounded-xl border border-white/[0.06]"
+                    className="group relative block overflow-hidden rounded-xl border border-gray-100"
                   >
-                    <div className="relative aspect-[4/3] bg-white/[0.05]">
+                    <div className="relative aspect-[4/3] bg-gray-100">
                       <Image
                         src={img.file_url}
                         alt={img.image_type}
@@ -254,7 +254,7 @@ export default async function AdminExchangeDetailPage({ params }: Props) {
                         unoptimized
                       />
                     </div>
-                    <p className="bg-white/[0.03] px-2 py-1 text-center text-[10px] capitalize text-white/50">
+                    <p className="bg-gray-50 px-2 py-1 text-center text-[10px] capitalize text-gray-500">
                       {img.image_type}
                     </p>
                   </a>
@@ -266,27 +266,27 @@ export default async function AdminExchangeDetailPage({ params }: Props) {
           {/* Activity timeline */}
           <Card title="Activity Timeline">
             {activity.length === 0 ? (
-              <p className="text-sm text-white/40">No activity logged yet.</p>
+              <p className="text-sm text-gray-400">No activity logged yet.</p>
             ) : (
-              <ol className="relative border-l border-white/10 pl-5 space-y-4">
+              <ol className="relative border-l border-gray-200 pl-5 space-y-4">
                 {activity.map((entry) => (
                   <li key={entry.id} className="relative">
-                    <div className="absolute -left-[22px] top-0.5 h-3.5 w-3.5 rounded-full border-2 border-white bg-white/30" />
-                    <p className="text-xs text-white/40">
+                    <div className="absolute -left-[22px] top-0.5 h-3.5 w-3.5 rounded-full border-2 border-gray-300 bg-gray-100" />
+                    <p className="text-xs text-gray-400">
                       {new Date(entry.created_at).toLocaleString("en-GB", {
                         dateStyle: "medium",
                         timeStyle: "short",
                       })}
                       {entry.created_by ? ` · ${entry.created_by}` : ""}
                     </p>
-                    <p className="mt-0.5 text-sm font-medium text-white capitalize">
+                    <p className="mt-0.5 text-sm font-medium text-gray-900 capitalize">
                       {entry.action_type.replace(/_/g, " ")}
                       {entry.old_status && entry.new_status
                         ? ` — ${entry.old_status} → ${entry.new_status}`
                         : ""}
                     </p>
                     {entry.note && (
-                      <p className="mt-0.5 text-xs text-white/50">{entry.note}</p>
+                      <p className="mt-0.5 text-xs text-gray-500">{entry.note}</p>
                     )}
                   </li>
                 ))}
@@ -309,12 +309,12 @@ export default async function AdminExchangeDetailPage({ params }: Props) {
           {/* Contact info card */}
           <Card title="Contact Details">
             <div className="space-y-2 text-sm">
-              <p><span className="text-white/50">Name:</span> {r.customer_name}</p>
-              <p><span className="text-white/50">Phone:</span> {r.phone}</p>
-              <p><span className="text-white/50">Email:</span> {r.email}</p>
-              {r.city && <p><span className="text-white/50">City:</span> {r.city}</p>}
+              <p><span className="text-gray-500">Name:</span> {r.customer_name}</p>
+              <p><span className="text-gray-500">Phone:</span> {r.phone}</p>
+              <p><span className="text-gray-500">Email:</span> {r.email}</p>
+              {r.city && <p><span className="text-gray-500">City:</span> {r.city}</p>}
               <p>
-                <span className="text-white/50">Preferred contact:</span>{" "}
+                <span className="text-gray-500">Preferred contact:</span>{" "}
                 <span className="capitalize">{r.preferred_contact_method ?? "phone"}</span>
               </p>
             </div>
@@ -322,8 +322,8 @@ export default async function AdminExchangeDetailPage({ params }: Props) {
 
           {/* Meta */}
           <Card title="Submission Info">
-            <div className="space-y-1.5 text-xs text-white/50">
-              <p>ID: <span className="font-mono text-white/80">{r.id.slice(0, 8)}…</span></p>
+            <div className="space-y-1.5 text-xs text-gray-500">
+              <p>ID: <span className="font-mono text-gray-700">{r.id.slice(0, 8)}…</span></p>
               {r.source_page && <p>Source: {r.source_page}</p>}
               <p>Submitted: {new Date(r.created_at).toLocaleString("en-GB", { dateStyle: "long", timeStyle: "short" })}</p>
               <p>Last updated: {new Date(r.updated_at).toLocaleString("en-GB", { dateStyle: "long", timeStyle: "short" })}</p>
@@ -339,8 +339,8 @@ export default async function AdminExchangeDetailPage({ params }: Props) {
 
 function Card({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 shadow-sm">
-      <h2 className="mb-4 border-b border-white/[0.06] pb-3 text-sm font-bold text-white/80">
+    <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+      <h2 className="mb-4 border-b border-gray-100 pb-3 text-sm font-bold text-gray-700">
         {title}
       </h2>
       {children}
@@ -363,8 +363,8 @@ function DetailRow({
 }) {
   return (
     <div className="flex flex-col py-1 border-b border-slate-50 last:border-0">
-      <p className="text-[10px] font-semibold uppercase tracking-wider text-white/40">{label}</p>
-      <p className={`text-sm font-medium text-white ${capitalize ? "capitalize" : ""}`}>{value}</p>
+      <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">{label}</p>
+      <p className={`text-sm font-medium text-gray-900 ${capitalize ? "capitalize" : ""}`}>{value}</p>
     </div>
   );
 }
@@ -382,7 +382,7 @@ function FlagBadge({
     ? "bg-red-100 text-red-700 border-red-200"
     : active
     ? "bg-emerald-100 text-emerald-700 border-emerald-200"
-    : "bg-white/[0.05] text-white/40 border-white/10";
+    : "bg-gray-100 text-gray-400 border-gray-200";
 
   return (
     <div className={`rounded-xl border px-3 py-2 text-center text-xs font-semibold ${activeClass}`}>

@@ -11,8 +11,8 @@ interface Props {
 }
 
 export default function EnquiriesToolbar({ from, to, total }: Props) {
-  const router      = useRouter();
-  const pathname    = usePathname();
+  const router       = useRouter();
+  const pathname     = usePathname();
   const searchParams = useSearchParams();
 
   const updateParam = useCallback(
@@ -45,23 +45,23 @@ export default function EnquiriesToolbar({ from, to, total }: Props) {
     <div className="flex flex-wrap items-center gap-3">
       {/* From */}
       <div className="flex flex-col gap-1">
-        <label className="text-[10px] font-semibold uppercase tracking-wider text-white/30">From</label>
+        <label className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">From</label>
         <input
           type="date"
           value={from}
           onChange={(e) => updateParam("from", e.target.value)}
-          className="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-sm text-white outline-none focus:border-brand/40 focus:ring-2 focus:ring-brand/20 [color-scheme:dark]"
+          className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 outline-none focus:border-brand/40 focus:ring-2 focus:ring-brand/20"
         />
       </div>
 
       {/* To */}
       <div className="flex flex-col gap-1">
-        <label className="text-[10px] font-semibold uppercase tracking-wider text-white/30">To</label>
+        <label className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">To</label>
         <input
           type="date"
           value={to}
           onChange={(e) => updateParam("to", e.target.value)}
-          className="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-sm text-white outline-none focus:border-brand/40 focus:ring-2 focus:ring-brand/20 [color-scheme:dark]"
+          className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 outline-none focus:border-brand/40 focus:ring-2 focus:ring-brand/20"
         />
       </div>
 
@@ -69,15 +69,15 @@ export default function EnquiriesToolbar({ from, to, total }: Props) {
       {hasFilter && (
         <button
           onClick={clearDates}
-          className="mt-5 flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-xs text-white/50 transition hover:border-white/20 hover:text-white"
+          className="mt-5 flex items-center gap-1.5 rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-xs text-gray-500 transition hover:border-gray-300 hover:text-gray-900"
         >
           <X className="h-3.5 w-3.5" /> Clear
         </button>
       )}
 
       {/* Spacer */}
-      <div className="mt-5 ml-auto flex items-center gap-3">
-        <p className="text-xs text-white/30">
+      <div className="ml-auto mt-5 flex items-center gap-3">
+        <p className="text-xs text-gray-400">
           {total} {total === 1 ? "result" : "results"}
         </p>
         <button

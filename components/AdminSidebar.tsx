@@ -34,8 +34,11 @@ import {
   CarFront,
   ExternalLink,
   LogOut,
+  Menu,
+  X,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { useState } from "react";
 
 export type PendingCounts = {
   consultations:   number;
@@ -56,8 +59,6 @@ type NavLink = {
   badge?:  keyof PendingCounts;
 };
 type NavSection = "general" | "content" | "vehicles" | "dealers" | "finance" | "platform";
-
-// ── Nav sections ──────────────────────────────────────────────────────────────
 
 const SECTION_META: Record<NavSection, { label: string }> = {
   general:  { label: "General" },
@@ -84,38 +85,36 @@ const SECTION_LINKS: Record<NavSection, NavLink[]> = {
     { href: "/admin/geo",          label: "GEO Regions",    icon: MapPin },
   ],
   vehicles: [
-    { href: "/admin/enquiries",        label: "Enquiries",          icon: MessageSquare,  badge: "consultations" },
-    { href: "/admin/leads",           label: "Lead Pipeline",      icon: Users,          badge: "leads" },
-    { href: "/admin/pipeline",        label: "Pipeline Board",     icon: Kanban },
-    { href: "/admin/recommendations", label: "AI Recommendations", icon: Sparkles },
-    { href: "/admin/consultations",   label: "Vehicle Consultancy", icon: CalendarCheck,  badge: "consultations" },
-    { href: "/admin/crm",             label: "CRM Journey",        icon: UserCheck },
-    { href: "/admin/vehicle-queries", label: "Vehicle Queries",    icon: ClipboardList,  badge: "vehicleQueries" },
-    { href: "/admin/exchange",        label: "Exchange Requests",  icon: ArrowLeftRight, badge: "exchange" },
-    { href: "/admin/test-drives",     label: "Test Drives",        icon: CalendarCheck },
-    { href: "/admin/used-listings",   label: "Used Listings",      icon: CarUsed },
-    { href: "/admin/battery-reports", label: "Battery Reports",    icon: HeartPulse },
-    { href: "/admin/fleet-enquiries", label: "Fleet Enquiries",    icon: Truck },
+    { href: "/admin/enquiries",        label: "Enquiries",           icon: MessageSquare,  badge: "consultations" },
+    { href: "/admin/leads",            label: "Lead Pipeline",       icon: Users,          badge: "leads" },
+    { href: "/admin/pipeline",         label: "Pipeline Board",      icon: Kanban },
+    { href: "/admin/recommendations",  label: "AI Recommendations",  icon: Sparkles },
+    { href: "/admin/consultations",    label: "Vehicle Consultancy", icon: CalendarCheck,  badge: "consultations" },
+    { href: "/admin/crm",              label: "CRM Journey",         icon: UserCheck },
+    { href: "/admin/vehicle-queries",  label: "Vehicle Queries",     icon: ClipboardList,  badge: "vehicleQueries" },
+    { href: "/admin/exchange",         label: "Exchange Requests",   icon: ArrowLeftRight, badge: "exchange" },
+    { href: "/admin/test-drives",      label: "Test Drives",         icon: CalendarCheck },
+    { href: "/admin/used-listings",    label: "Used Listings",       icon: CarUsed },
+    { href: "/admin/battery-reports",  label: "Battery Reports",     icon: HeartPulse },
+    { href: "/admin/fleet-enquiries",  label: "Fleet Enquiries",     icon: Truck },
   ],
   dealers: [
-    { href: "/admin/dealers",             label: "All Dealers",        icon: Building2,  badge: "dealerAccounts" },
-    { href: "/admin/dealers/new",         label: "Create Dealer",      icon: Plus },
-    { href: "/admin/dealer-listings",     label: "Dealer Vehicles",    icon: CarFront,   badge: "dealerListings" },
-    { href: "/admin/dealer-bids",         label: "Dealer Bids",        icon: Gavel },
-    { href: "/admin/dealer-applications", label: "Dealer Partners",    icon: Code2 },
+    { href: "/admin/dealers",              label: "All Dealers",     icon: Building2,  badge: "dealerAccounts" },
+    { href: "/admin/dealers/new",          label: "Create Dealer",   icon: Plus },
+    { href: "/admin/dealer-listings",      label: "Dealer Vehicles", icon: CarFront,   badge: "dealerListings" },
+    { href: "/admin/dealer-bids",          label: "Dealer Bids",     icon: Gavel },
+    { href: "/admin/dealer-applications",  label: "Dealer Partners", icon: Code2 },
   ],
   finance: [
     { href: "/admin/finance-requests", label: "Finance Requests", icon: CreditCard, badge: "financeRequests" },
   ],
   platform: [
-    { href: "/admin/staff",         label: "Staff & Access",  icon: Shield },
-    { href: "/admin/users",         label: "Users & Access",  icon: UserCog },
-    { href: "/admin/data-insights", label: "Data Insights",   icon: DatabaseZap },
-    { href: "/admin/business-plan", label: "Business Plan",   icon: TrendingUp },
+    { href: "/admin/staff",          label: "Staff & Access",  icon: Shield },
+    { href: "/admin/users",          label: "Users & Access",  icon: UserCog },
+    { href: "/admin/data-insights",  label: "Data Insights",   icon: DatabaseZap },
+    { href: "/admin/business-plan",  label: "Business Plan",   icon: TrendingUp },
   ],
 };
-
-// ── Department → visible sections ─────────────────────────────────────────────
 
 function getVisibleSections(role: string, department: string | null): NavSection[] {
   if (role === "super_admin") {
@@ -140,18 +139,14 @@ function getVisibleSections(role: string, department: string | null): NavSection
   }
 }
 
-// ── Badge pill ────────────────────────────────────────────────────────────────
-
 function Badge({ count }: { count: number }) {
   if (count <= 0) return null;
   return (
-    <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500/90 px-1.5 text-[10px] font-bold leading-none text-white tabular-nums">
+    <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-[10px] font-bold leading-none text-white tabular-nums">
       {count > 99 ? "99+" : count}
     </span>
   );
 }
-
-// ── Component ─────────────────────────────────────────────────────────────────
 
 interface Props {
   role:          string;
@@ -163,6 +158,7 @@ export default function AdminSidebar({ role, department, pendingCounts }: Props)
   const pathname = usePathname();
   const router   = useRouter();
   const supabase = createClient();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   async function handleSignOut() {
     await supabase.auth.signOut();
@@ -172,36 +168,48 @@ export default function AdminSidebar({ role, department, pendingCounts }: Props)
 
   const visibleSections = getVisibleSections(role, department);
   const isSuperAdmin    = role === "super_admin";
+  const totalPending    = Object.values(pendingCounts).reduce((a, b) => a + b, 0);
 
-  // Total unread for the header dot
-  const totalPending = Object.values(pendingCounts).reduce((a, b) => a + b, 0);
-
-  return (
-    <aside className="flex w-60 flex-col border-r border-white/10 bg-surface-panel px-4 py-8">
+  const sidebarContent = (
+    <>
       {/* Brand */}
-      <div className="mb-8 px-2">
-        <p className="text-xs font-semibold uppercase tracking-widest text-white/40">
-          {isSuperAdmin ? "Super Admin" : "Admin Panel"}
-        </p>
-        <div className="mt-1 flex items-center gap-2">
-          <p className="text-lg font-bold text-white">EV Guide</p>
-          {totalPending > 0 && (
-            <span className="flex h-2 w-2 rounded-full bg-red-500 ring-2 ring-surface-panel" aria-label={`${totalPending} pending items`} />
+      <div className="mb-8 flex items-start justify-between px-2">
+        <div>
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">
+            {isSuperAdmin ? "Super Admin" : "Admin Panel"}
+          </p>
+          <div className="mt-1 flex items-center gap-2">
+            <p className="text-lg font-bold text-gray-900">EV Guide</p>
+            {totalPending > 0 && (
+              <span
+                className="flex h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"
+                aria-label={`${totalPending} pending items`}
+              />
+            )}
+          </div>
+          {!isSuperAdmin && department && (
+            <p className="mt-0.5 text-xs capitalize text-gray-400">{department}</p>
           )}
         </div>
-        {!isSuperAdmin && department && (
-          <p className="mt-0.5 text-xs capitalize text-white/40">{department}</p>
-        )}
+        {/* Close button — mobile only */}
+        <button
+          type="button"
+          onClick={() => setMobileOpen(false)}
+          className="rounded-lg p-1.5 text-gray-400 transition hover:bg-gray-100 hover:text-gray-700 lg:hidden"
+          aria-label="Close menu"
+        >
+          <X className="h-5 w-5" />
+        </button>
       </div>
 
       {/* Nav */}
-      <nav className="flex flex-1 flex-col gap-4 overflow-y-auto">
+      <nav className="flex flex-1 flex-col gap-5 overflow-y-auto">
         {visibleSections.map((sectionKey) => {
           const links = SECTION_LINKS[sectionKey];
           const meta  = SECTION_META[sectionKey];
           return (
             <div key={sectionKey}>
-              <p className="mb-1 px-3 text-[10px] font-semibold uppercase tracking-widest text-white/30">
+              <p className="mb-1.5 px-3 text-[10px] font-semibold uppercase tracking-widest text-gray-400">
                 {meta.label}
               </p>
               <div className="flex flex-col gap-0.5">
@@ -212,10 +220,11 @@ export default function AdminSidebar({ role, department, pendingCounts }: Props)
                     <Link
                       key={href}
                       href={href}
+                      onClick={() => setMobileOpen(false)}
                       className={`flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-medium transition-colors duration-150 ${
                         active
                           ? "border-l-2 border-brand bg-brand/10 text-brand"
-                          : "text-white/60 hover:bg-white/[0.06] hover:text-white"
+                          : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                       }`}
                     >
                       <Icon className="h-4 w-4 shrink-0" />
@@ -231,22 +240,67 @@ export default function AdminSidebar({ role, department, pendingCounts }: Props)
       </nav>
 
       {/* Footer */}
-      <div className="mt-auto border-t border-white/10 pt-4">
+      <div className="mt-auto border-t border-gray-200 pt-4">
         <Link
           href="/"
-          className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-medium text-white/60 transition-colors duration-150 hover:bg-white/[0.06] hover:text-white"
+          className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-medium text-gray-600 transition-colors duration-150 hover:bg-gray-100 hover:text-gray-900"
         >
           <ExternalLink className="h-4 w-4 shrink-0" />
           View Site
         </Link>
         <button
           onClick={handleSignOut}
-          className="mt-1 flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left text-sm font-medium text-red-400 transition-colors duration-150 hover:bg-red-500/10"
+          className="mt-1 flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left text-sm font-medium text-red-600 transition-colors duration-150 hover:bg-red-50"
         >
           <LogOut className="h-4 w-4 shrink-0" />
           Sign Out
         </button>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* ── Mobile top bar ─────────────────────────────────────────────────────── */}
+      <div className="fixed inset-x-0 top-0 z-30 flex h-14 items-center gap-3 border-b border-gray-200 bg-white px-4 lg:hidden">
+        <button
+          type="button"
+          onClick={() => setMobileOpen(true)}
+          className="rounded-lg p-1.5 text-gray-500 transition hover:bg-gray-100 hover:text-gray-700"
+          aria-label="Open menu"
+        >
+          <Menu className="h-5 w-5" />
+        </button>
+        <span className="text-sm font-bold text-gray-900">EV Guide Admin</span>
+        {totalPending > 0 && (
+          <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-[10px] font-bold text-white tabular-nums">
+            {totalPending > 99 ? "99+" : totalPending}
+          </span>
+        )}
+      </div>
+
+      {/* ── Mobile overlay ─────────────────────────────────────────────────────── */}
+      {mobileOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm lg:hidden"
+          onClick={() => setMobileOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      {/* ── Mobile drawer ──────────────────────────────────────────────────────── */}
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-gray-200 bg-white px-4 py-8 transition-transform duration-300 lg:hidden ${
+          mobileOpen ? "translate-x-0 shadow-xl" : "-translate-x-full"
+        }`}
+      >
+        {sidebarContent}
+      </aside>
+
+      {/* ── Desktop sidebar ────────────────────────────────────────────────────── */}
+      <aside className="hidden w-60 flex-col border-r border-gray-200 bg-white px-4 py-8 lg:flex">
+        {sidebarContent}
+      </aside>
+    </>
   );
 }

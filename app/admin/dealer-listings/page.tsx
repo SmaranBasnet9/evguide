@@ -28,9 +28,9 @@ async function getDealerNames(dealerIds: string[]) {
 }
 
 const STATUS_STYLES: Record<string, string> = {
-  pending:  "border-amber-500/20 bg-amber-500/10 text-amber-300",
+  pending:  "border-amber-200 bg-amber-50 text-amber-700",
   live:     "border-brand/20 bg-brand/10 text-brand",
-  rejected: "border-red-500/20 bg-red-500/10 text-red-400",
+  rejected: "border-red-200 bg-red-50 text-red-600",
 };
 
 export default async function AdminDealerListingsPage() {
@@ -43,30 +43,30 @@ export default async function AdminDealerListingsPage() {
   return (
     <div className="mx-auto max-w-6xl">
       <div>
-        <h1 className="text-3xl font-bold text-white">Dealer Listings</h1>
-        <p className="mt-1 text-white/50">{listings.length} total · {pending} pending review · {live} live</p>
+        <h1 className="text-3xl font-bold text-gray-900">Dealer Listings</h1>
+        <p className="mt-1 text-gray-500">{listings.length} total · {pending} pending review · {live} live</p>
       </div>
 
       <div className="mt-8">
         {listings.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-white/10 bg-white/[0.02] py-20 text-center">
-            <p className="text-white/50">No dealer listings yet.</p>
+          <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50 py-20 text-center">
+            <p className="text-gray-500">No dealer listings yet.</p>
           </div>
         ) : (
           <div className="space-y-4">
             {listings.map((listing) => (
-              <div key={listing.id} className="rounded-2xl border border-white/10 bg-white/[0.02] p-6">
+              <div key={listing.id} className="rounded-2xl border border-gray-200 bg-white p-6">
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div className="flex-1">
                     <div className="flex flex-wrap items-center gap-3">
-                      <h2 className="text-lg font-semibold text-white">
+                      <h2 className="text-lg font-semibold text-gray-900">
                         {listing.year} {listing.brand} {listing.model}
                       </h2>
                       <span className={`rounded-full border px-3 py-0.5 text-xs font-semibold ${STATUS_STYLES[listing.status] ?? ""}`}>
                         {listing.status}
                       </span>
                     </div>
-                    <p className="mt-1 text-sm text-white/60">
+                    <p className="mt-1 text-sm text-gray-600">
                       £{Number(listing.price).toLocaleString()} · {Number(listing.mileage).toLocaleString()} mi
                       {listing.location ? ` · ${listing.location}` : ""}
                       {listing.battery_kwh ? ` · ${listing.battery_kwh} kWh` : ""}
@@ -76,7 +76,7 @@ export default async function AdminDealerListingsPage() {
                       {dealerMap[listing.dealer_id] ?? "Unknown dealer"}
                     </p>
                     {listing.description ? (
-                      <p className="mt-2 line-clamp-2 text-sm text-white/40">{listing.description}</p>
+                      <p className="mt-2 line-clamp-2 text-sm text-gray-400">{listing.description}</p>
                     ) : null}
                     {listing.images && listing.images.length > 0 ? (
                       <div className="mt-3 flex gap-2">
@@ -86,7 +86,7 @@ export default async function AdminDealerListingsPage() {
                         ))}
                       </div>
                     ) : null}
-                    <p className="mt-2 text-xs text-white/30">
+                    <p className="mt-2 text-xs text-gray-400">
                       Submitted {new Date(listing.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
                     </p>
                   </div>

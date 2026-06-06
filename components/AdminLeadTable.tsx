@@ -70,7 +70,7 @@ export default function AdminLeadTable({ leads }: Props) {
           placeholder="Search by ID, email, or vehicle…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
 
         <div className="flex flex-wrap gap-1.5">
@@ -82,9 +82,9 @@ export default function AdminLeadTable({ leads }: Props) {
               className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
                 categoryFilter === value
                   ? value === "all"
-                    ? "bg-surface-card text-white"
+                    ? "bg-gray-200 text-gray-900"
                     : CATEGORY_COLORS[value as LeadScoreCategory]
-                  : "bg-white/[0.05] text-white/50 hover:bg-white/[0.08]"
+                  : "bg-gray-100 text-gray-500 hover:bg-gray-200"
               }`}
             >
               {label}
@@ -101,9 +101,9 @@ export default function AdminLeadTable({ leads }: Props) {
               className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
                 stageFilter === value
                   ? value === "all"
-                    ? "bg-surface-card text-white"
+                    ? "bg-gray-200 text-gray-900"
                     : STAGE_COLORS[value as LeadPipelineStage]
-                  : "bg-white/[0.05] text-white/50 hover:bg-white/[0.08]"
+                  : "bg-gray-100 text-gray-500 hover:bg-gray-200"
               }`}
             >
               {label}
@@ -111,18 +111,18 @@ export default function AdminLeadTable({ leads }: Props) {
           ))}
         </div>
 
-        <p className="ml-auto text-xs text-white/40">{filtered.length} leads</p>
+        <p className="ml-auto text-xs text-gray-400">{filtered.length} leads</p>
       </div>
 
       {/* Table */}
       {filtered.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-white/10 py-16 text-center text-sm text-white/40">
+        <div className="rounded-2xl border border-dashed border-gray-200 py-16 text-center text-sm text-gray-400">
           No leads match your filters.
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-2xl border border-white/10 bg-white/[0.03] shadow-sm">
-          <table className="min-w-full divide-y divide-white/[0.06] text-sm">
-            <thead className="bg-white/[0.03] text-left text-xs font-semibold uppercase tracking-wider text-white/50">
+        <div className="overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-sm">
+          <table className="min-w-full divide-y divide-gray-100 text-sm">
+            <thead className="bg-gray-50 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
               <tr>
                 <th className="px-4 py-3">Lead</th>
                 <th className="px-4 py-3">Score</th>
@@ -135,23 +135,23 @@ export default function AdminLeadTable({ leads }: Props) {
                 <th className="px-4 py-3"></th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/[0.06]">
+            <tbody className="divide-y divide-gray-100">
               {filtered.map((lead) => (
                 <Fragment key={lead.id}>
                   <tr
                     key={lead.id}
-                    className="hover:bg-white/[0.03] cursor-pointer"
+                    className="hover:bg-gray-50 cursor-pointer"
                     onClick={() => setExpandedId(expandedId === lead.id ? null : lead.id)}
                   >
                     {/* Lead identity */}
                     <td className="px-4 py-3">
-                      <p className="font-medium text-white">
+                      <p className="font-medium text-gray-900">
                         {lead.full_name ?? lead.display_id}
                       </p>
                       {lead.email && (
-                        <p className="text-white/40 text-xs">{lead.email}</p>
+                        <p className="text-gray-400 text-xs">{lead.email}</p>
                       )}
-                      <p className="text-white/40 text-[10px] font-mono">{shortLeadIdentity(lead)}</p>
+                      <p className="text-gray-400 text-[10px] font-mono">{shortLeadIdentity(lead)}</p>
                     </td>
 
                     {/* Score */}
@@ -160,37 +160,37 @@ export default function AdminLeadTable({ leads }: Props) {
                     </td>
 
                     {/* Consultation summary */}
-                    <td className="px-4 py-3 text-white/60">
+                    <td className="px-4 py-3 text-gray-600">
                       {lead.consultation_id ? (
                         <div>
                           <p className="capitalize">{lead.consultation_reason?.replace(/_/g, " ") ?? "—"}</p>
                           {lead.consultation_budget_max && (
-                            <p className="text-xs text-white/40">
+                            <p className="text-xs text-gray-400">
                               Budget £{lead.consultation_budget_max.toLocaleString()}
                             </p>
                           )}
                           {lead.consultation_daily_miles && (
-                            <p className="text-xs text-white/40">
+                            <p className="text-xs text-gray-400">
                               {lead.consultation_daily_miles} mi/day
                             </p>
                           )}
                         </div>
                       ) : (
-                        <span className="text-white/30">No consultation</span>
+                        <span className="text-gray-400">No consultation</span>
                       )}
                     </td>
 
                     {/* Top recommended vehicle */}
-                    <td className="px-4 py-3 text-white/80">
+                    <td className="px-4 py-3 text-gray-700">
                       {lead.top_recommended_vehicle ? (
                         <div>
                           <p>{lead.top_recommended_vehicle}</p>
                           {lead.recommendation_score && (
-                            <p className="text-xs text-white/40">{lead.recommendation_score}% match</p>
+                            <p className="text-xs text-gray-400">{lead.recommendation_score}% match</p>
                           )}
                         </div>
                       ) : (
-                        <span className="text-white/30">—</span>
+                        <span className="text-gray-400">—</span>
                       )}
                     </td>
 
@@ -203,7 +203,7 @@ export default function AdminLeadTable({ leads }: Props) {
                           {lead.finance_status}
                         </span>
                       ) : (
-                        <span className="text-white/30 text-xs">—</span>
+                        <span className="text-gray-400 text-xs">—</span>
                       )}
                     </td>
 
@@ -226,7 +226,7 @@ export default function AdminLeadTable({ leads }: Props) {
                     </td>
 
                     {/* Created */}
-                    <td className="px-4 py-3 text-xs text-white/40">
+                    <td className="px-4 py-3 text-xs text-gray-400">
                       {new Date(lead.created_at).toLocaleDateString("en-GB", { dateStyle: "medium" })}
                     </td>
 
@@ -238,21 +238,21 @@ export default function AdminLeadTable({ leads }: Props) {
 
                   {/* Expanded scoring reasons */}
                   {expandedId === lead.id && (
-                    <tr key={`${lead.id}-detail`} className="bg-white/[0.03]">
+                    <tr key={`${lead.id}-detail`} className="bg-gray-50">
                       <td colSpan={9} className="px-6 py-4">
                         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                           {/* Scoring reasons */}
                           <div>
-                            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-white/50">
+                            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500">
                               Scoring reasons
                             </p>
                             {lead.scoring_reasons.length === 0 ? (
-                              <p className="text-xs text-white/40">No reasons recorded.</p>
+                              <p className="text-xs text-gray-400">No reasons recorded.</p>
                             ) : (
                               <ul className="space-y-1">
                                 {lead.scoring_reasons.map((r, i) => (
                                   <li key={i} className="flex items-center justify-between text-xs">
-                                    <span className="text-white/60">{r.label}</span>
+                                    <span className="text-gray-600">{r.label}</span>
                                     <span
                                       className={`font-semibold ${r.points >= 0 ? "text-emerald-600" : "text-red-500"}`}
                                     >
@@ -266,10 +266,10 @@ export default function AdminLeadTable({ leads }: Props) {
 
                           {/* Vehicle + finance details */}
                           <div>
-                            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-white/50">
+                            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500">
                               Details
                             </p>
-                            <ul className="space-y-1 text-xs text-white/60">
+                            <ul className="space-y-1 text-xs text-gray-600">
                               <li>Home charging: {lead.consultation_home_charging === true ? "Yes" : lead.consultation_home_charging === false ? "No" : "—"}</li>
                               {lead.finance_deposit && <li>Deposit: £{lead.finance_deposit.toLocaleString()}</li>}
                               {lead.finance_income_band && <li>Income band: {lead.finance_income_band.replace(/_/g, " ")}</li>}
@@ -280,7 +280,7 @@ export default function AdminLeadTable({ leads }: Props) {
 
                           {/* Quick links */}
                           <div>
-                            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-white/50">
+                            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500">
                               Quick links
                             </p>
                             <div className="flex flex-col gap-1.5">
@@ -305,7 +305,7 @@ export default function AdminLeadTable({ leads }: Props) {
                           </div>
                         </div>
 
-                        <p className="mt-3 text-[10px] text-white/40">
+                        <p className="mt-3 text-[10px] text-gray-400">
                           Last scored: {new Date(lead.last_calculated_at).toLocaleString("en-GB")}
                         </p>
                       </td>

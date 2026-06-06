@@ -1,5 +1,5 @@
 function Skeleton({ className }: { className?: string }) {
-  return <div className={`animate-pulse rounded-lg bg-white/[0.06] ${className ?? ""}`} />;
+  return <div className={`animate-pulse rounded-lg bg-gray-200 ${className ?? ""}`} />;
 }
 
 export default function AdminLoading() {
@@ -20,11 +20,11 @@ export default function AdminLoading() {
       </div>
 
       {/* Table */}
-      <div className="overflow-hidden rounded-2xl border border-white/[0.06]">
-        <div className="border-b border-white/[0.06] bg-white/[0.03] px-4 py-3">
+      <div className="overflow-hidden rounded-2xl border border-gray-200">
+        <div className="border-b border-gray-100 bg-gray-50 px-4 py-3">
           <Skeleton className="h-4 w-40" />
         </div>
-        <div className="divide-y divide-white/[0.06]">
+        <div className="divide-y divide-gray-100">
           {Array.from({ length: 8 }).map((_, i) => (
             <div key={i} className="flex items-center gap-4 px-4 py-3">
               <Skeleton className="h-4 w-32" />

@@ -142,15 +142,15 @@ export default function RangeConfidenceChecker({ rangeKm, vehicleLabel }: Props)
 
               {/* Stats grid */}
               <div className="mt-4 grid grid-cols-3 gap-3">
-                <div className="rounded-lg bg-white/70 p-3 text-center">
+                <div className="rounded-lg bg-white p-3 text-center border border-white/60">
                   <p className="text-xs text-slate-500">WLTP range</p>
                   <p className="text-lg font-bold text-slate-900">{result.wltpMiles} mi</p>
                 </div>
-                <div className="rounded-lg bg-white/70 p-3 text-center">
+                <div className="rounded-lg bg-white p-3 text-center border border-white/60">
                   <p className="text-xs text-slate-500">Real world</p>
                   <p className="text-lg font-bold text-slate-900">{result.realWorldMiles} mi</p>
                 </div>
-                <div className="rounded-lg bg-white/70 p-3 text-center">
+                <div className="rounded-lg bg-white p-3 text-center border border-white/60">
                   <p className="text-xs text-slate-500">Winter est.</p>
                   <p className="text-lg font-bold text-slate-900">{result.winterMiles} mi</p>
                 </div>

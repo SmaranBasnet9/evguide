@@ -33,8 +33,8 @@ export default async function TestDrivesAdminPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-white">Test Drive Bookings</h1>
-        <p className="mt-1 text-sm text-white/50">
+        <h1 className="text-2xl font-bold text-gray-900">Test Drive Bookings</h1>
+        <p className="mt-1 text-sm text-gray-500">
           Manage all test drive requests. Forward to dealers or update booking status.
         </p>
       </div>
@@ -42,17 +42,17 @@ export default async function TestDrivesAdminPage() {
       {/* Stats strip */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         {[
-          { label: "Total requests", value: counts.total, color: "text-white" },
-          { label: "Awaiting action", value: counts.requested, color: "text-amber-400" },
-          { label: "Reviewing", value: counts.reviewing, color: "text-blue-400" },
-          { label: "Scheduled", value: counts.scheduled, color: "text-brand" },
+          { label: "Total requests",  value: counts.total,     color: "text-gray-900" },
+          { label: "Awaiting action", value: counts.requested, color: "text-amber-600" },
+          { label: "Reviewing",       value: counts.reviewing, color: "text-blue-600" },
+          { label: "Scheduled",       value: counts.scheduled, color: "text-brand" },
         ].map((stat) => (
           <div
             key={stat.label}
-            className="rounded-2xl border border-white/8 bg-white/[0.04] px-5 py-4"
+            className="rounded-2xl border border-gray-200 bg-white px-5 py-4"
           >
             <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
-            <p className="mt-1 text-xs text-white/40">{stat.label}</p>
+            <p className="mt-1 text-xs text-gray-400">{stat.label}</p>
           </div>
         ))}
       </div>

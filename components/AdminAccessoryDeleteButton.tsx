@@ -22,7 +22,7 @@ export default function AdminAccessoryDeleteButton({ id }: { id: string }) {
         <button onClick={handleDelete} disabled={loading} className="text-xs font-semibold text-red-500 hover:underline disabled:opacity-50">
           {loading ? "Deleting…" : "Confirm"}
         </button>
-        <button onClick={() => setConfirming(false)} className="text-xs font-semibold text-white/40 hover:underline">Cancel</button>
+        <button onClick={() => setConfirming(false)} className="text-xs font-semibold text-gray-400 hover:underline">Cancel</button>
       </span>
     );
   }

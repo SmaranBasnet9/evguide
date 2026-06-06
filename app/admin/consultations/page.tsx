@@ -22,9 +22,9 @@ type ConsultationRow = {
 };
 
 const STATUS_STYLES: Record<string, string> = {
-  pending:   "bg-amber-500/15 text-amber-400 border-amber-500/20",
-  contacted: "bg-blue-500/15  text-blue-400  border-blue-500/20",
-  resolved:  "bg-emerald-500/15 text-emerald-400 border-emerald-500/20",
+  pending:   "bg-amber-50 text-amber-700 border-amber-200",
+  contacted: "bg-blue-50  text-blue-700  border-blue-200",
+  resolved:  "bg-emerald-50 text-emerald-700 border-emerald-200",
 };
 
 async function getConsultations(): Promise<ConsultationRow[]> {
@@ -65,14 +65,14 @@ export default async function AdminConsultationsPage() {
       {/* Header */}
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-sm font-semibold text-[#1FBF9F]">Vehicle Consultancy</p>
-          <h1 className="text-3xl font-bold text-white">Vehicle Enquiries</h1>
-          <p className="mt-1 text-sm text-white/50">{rows.length} total enquiries</p>
+          <p className="text-sm font-semibold text-emerald-600">Vehicle Consultancy</p>
+          <h1 className="text-3xl font-bold text-gray-900">Vehicle Enquiries</h1>
+          <p className="mt-1 text-sm text-gray-500">{rows.length} total enquiries</p>
         </div>
         <Link
           href="/api/admin/consultations/export"
           download
-          className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.06] px-4 py-2 text-sm font-semibold text-white/70 transition-colors duration-150 hover:bg-white/[0.10] hover:text-white"
+          className="flex items-center gap-2 rounded-xl border border-gray-200 bg-gray-50 px-4 py-2 text-sm font-semibold text-gray-600 transition-colors duration-150 hover:bg-gray-100 hover:text-gray-900"
         >
           <Download className="h-4 w-4" />
           Export CSV
@@ -82,12 +82,12 @@ export default async function AdminConsultationsPage() {
       {/* Stats strip */}
       <div className="mb-8 grid grid-cols-3 gap-4">
         {[
-          { label: "Pending",   value: pending,   color: "text-amber-400",   bg: "bg-amber-500/10 border-amber-500/20" },
-          { label: "Contacted", value: contacted, color: "text-blue-400",    bg: "bg-blue-500/10 border-blue-500/20" },
-          { label: "Resolved",  value: resolved,  color: "text-emerald-400", bg: "bg-emerald-500/10 border-emerald-500/20" },
+          { label: "Pending",   value: pending,   color: "text-amber-700",   bg: "bg-amber-50 border-amber-200" },
+          { label: "Contacted", value: contacted, color: "text-blue-700",    bg: "bg-blue-50 border-blue-200" },
+          { label: "Resolved",  value: resolved,  color: "text-emerald-700", bg: "bg-emerald-50 border-emerald-200" },
         ].map(({ label, value, color, bg }) => (
           <div key={label} className={`rounded-2xl border px-5 py-4 ${bg}`}>
-            <p className="text-sm font-medium text-white/60">{label}</p>
+            <p className="text-sm font-medium text-gray-600">{label}</p>
             <p className={`mt-1 text-3xl font-bold ${color}`}>{value}</p>
           </div>
         ))}
@@ -95,23 +95,23 @@ export default async function AdminConsultationsPage() {
 
       {/* Table */}
       {rows.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-white/10 py-20 text-center text-white/30">
+        <div className="rounded-2xl border border-dashed border-gray-200 py-20 text-center text-gray-400">
           No consultation requests yet.
         </div>
       ) : (
-        <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-sm">
+        <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
           <div className="overflow-x-auto">
             <table className="min-w-full text-sm">
               <thead>
-                <tr className="border-b border-white/10 bg-white/[0.03] text-left">
-                  <th className="px-5 py-3 text-xs font-semibold uppercase tracking-widest text-white/40">Applicant</th>
-                  <th className="px-5 py-3 text-xs font-semibold uppercase tracking-widest text-white/40">Selection</th>
-                  <th className="px-5 py-3 text-xs font-semibold uppercase tracking-widest text-white/40">Contact</th>
-                  <th className="px-5 py-3 text-xs font-semibold uppercase tracking-widest text-white/40">Preferred Time</th>
-                  <th className="px-5 py-3 text-xs font-semibold uppercase tracking-widest text-white/40">Notes</th>
-                  <th className="px-5 py-3 text-xs font-semibold uppercase tracking-widest text-white/40">Submitted</th>
-                  <th className="px-5 py-3 text-xs font-semibold uppercase tracking-widest text-white/40">Status</th>
-                  <th className="px-5 py-3 text-xs font-semibold uppercase tracking-widest text-white/40">Actions</th>
+                <tr className="border-b border-gray-200 bg-gray-50 text-left">
+                  <th className="px-5 py-3 text-xs font-semibold uppercase tracking-widest text-gray-400">Applicant</th>
+                  <th className="px-5 py-3 text-xs font-semibold uppercase tracking-widest text-gray-400">Selection</th>
+                  <th className="px-5 py-3 text-xs font-semibold uppercase tracking-widest text-gray-400">Contact</th>
+                  <th className="px-5 py-3 text-xs font-semibold uppercase tracking-widest text-gray-400">Preferred Time</th>
+                  <th className="px-5 py-3 text-xs font-semibold uppercase tracking-widest text-gray-400">Notes</th>
+                  <th className="px-5 py-3 text-xs font-semibold uppercase tracking-widest text-gray-400">Submitted</th>
+                  <th className="px-5 py-3 text-xs font-semibold uppercase tracking-widest text-gray-400">Status</th>
+                  <th className="px-5 py-3 text-xs font-semibold uppercase tracking-widest text-gray-400">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -129,20 +129,20 @@ export default async function AdminConsultationsPage() {
                       ? evLabel ?? "Finance request"
                       : evLabel ?? "-";
 
-                  const statusStyle = STATUS_STYLES[row.status] ?? "bg-white/10 text-white/50 border-white/10";
+                  const statusStyle = STATUS_STYLES[row.status] ?? "bg-gray-100 text-gray-600 border-gray-200";
 
                   return (
-                    <tr key={row.id} className="border-b border-white/[0.06] last:border-b-0 transition-colors hover:bg-white/[0.04]">
+                    <tr key={row.id} className="border-b border-gray-100 last:border-b-0 transition-colors hover:bg-gray-50">
                       <td className="px-5 py-4">
-                        <p className="font-semibold text-white">{row.full_name}</p>
-                        <p className="text-xs text-white/40">{row.email}</p>
+                        <p className="font-semibold text-gray-900">{row.full_name}</p>
+                        <p className="text-xs text-gray-400">{row.email}</p>
                       </td>
                       <td className="px-5 py-4">
-                        <p className="text-white/80">{selectionLabel}</p>
-                        <p className="text-xs capitalize text-white/40">{row.sector}</p>
+                        <p className="text-gray-700">{selectionLabel}</p>
+                        <p className="text-xs capitalize text-gray-400">{row.sector}</p>
                       </td>
-                      <td className="px-5 py-4 text-white/50">{row.phone ?? "-"}</td>
-                      <td className="px-5 py-4 text-white/50">
+                      <td className="px-5 py-4 text-gray-500">{row.phone ?? "-"}</td>
+                      <td className="px-5 py-4 text-gray-500">
                         {row.preferred_time
                           ? new Date(row.preferred_time).toLocaleString("en-GB", {
                               dateStyle: "medium",
@@ -150,10 +150,10 @@ export default async function AdminConsultationsPage() {
                             })
                           : "-"}
                       </td>
-                      <td className="max-w-[180px] px-5 py-4 text-white/50">
+                      <td className="max-w-[180px] px-5 py-4 text-gray-500">
                         <p className="line-clamp-2 text-xs">{row.notes ?? "-"}</p>
                       </td>
-                      <td className="px-5 py-4 text-white/50">
+                      <td className="px-5 py-4 text-gray-500">
                         {new Date(row.created_at).toLocaleDateString("en-GB", { dateStyle: "medium" })}
                       </td>
                       <td className="px-5 py-4">

@@ -78,17 +78,16 @@ function DealCard({ model, index }: { model: EVModel; index: number }) {
         )}
       </div>
 
-      {/* Car image — large, side profile */}
-      <div className="relative mt-4 h-40 w-full overflow-hidden sm:h-44">
-        {/* Green glow behind car */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-brand/[0.07] to-transparent" />
+      {/* Car image — fixed aspect ratio ensures identical height across all cards */}
+      <div className="relative mt-4 w-full overflow-hidden bg-gray-50" style={{ aspectRatio: "16/9" }}>
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-brand/[0.07] to-transparent" />
         {model.heroImage ? (
           <Image
             src={model.heroImage}
             alt={`${model.brand} ${model.model}`}
             fill
             sizes="(max-width: 640px) 100vw, 33vw"
-            className="object-contain object-center transition-transform duration-500 group-hover:scale-105"
+            className="object-contain p-2 transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
           <VehicleImagePlaceholder

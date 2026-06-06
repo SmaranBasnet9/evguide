@@ -12,10 +12,10 @@ type Props = {
 const ACTIONS: Record<string, { label: string; next: string; cls: string }[]> = {
   pending_approval: [
     { label: "Approve", next: "approve",  cls: "bg-brand hover:bg-brand-hover text-white" },
-    { label: "Reject",  next: "reject",   cls: "border border-red-500/20 bg-red-500/10 text-red-400 hover:bg-red-500/20" },
+    { label: "Reject",  next: "reject",   cls: "border border-red-200 bg-red-50 text-red-600 hover:bg-red-100" },
   ],
   approved: [
-    { label: "Suspend", next: "suspend",  cls: "border border-orange-500/20 bg-orange-500/10 text-orange-300 hover:bg-orange-500/20" },
+    { label: "Suspend", next: "suspend",  cls: "border border-orange-200 bg-orange-50 text-orange-700 hover:bg-orange-100" },
   ],
   suspended: [
     { label: "Reinstate", next: "approve", cls: "bg-brand hover:bg-brand-hover text-white" },
@@ -60,7 +60,7 @@ export default function AdminDealerStatusButton({ dealerProfileId, userId, curre
           value={reason}
           onChange={(e) => setReason(e.target.value)}
           placeholder="Rejection reason (optional)"
-          className="rounded-xl border border-white/10 bg-white/[0.06] px-3 py-2 text-sm text-white placeholder:text-white/30 focus:border-red-400 focus:outline-none"
+          className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-red-400 focus:outline-none"
         />
         <div className="flex gap-2">
           <button
@@ -72,7 +72,7 @@ export default function AdminDealerStatusButton({ dealerProfileId, userId, curre
           </button>
           <button
             onClick={() => setShowReason(false)}
-            className="rounded-xl border border-white/10 px-4 py-2 text-sm text-white/60 transition hover:text-white"
+            className="rounded-xl border border-gray-200 px-4 py-2 text-sm text-gray-500 transition hover:text-gray-900"
           >
             Cancel
           </button>

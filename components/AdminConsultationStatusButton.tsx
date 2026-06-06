@@ -50,7 +50,7 @@ export default function AdminConsultationStatusButton({
       onClick={cycle}
       disabled={loading}
       title="Click to advance status"
-      className={`rounded-full px-3 py-1 text-xs font-semibold transition-opacity disabled:opacity-50 ${STATUS_COLORS[status] ?? "bg-white/[0.05] text-white/60"}`}
+      className={`rounded-full px-3 py-1 text-xs font-semibold transition-opacity disabled:opacity-50 ${STATUS_COLORS[status] ?? "bg-gray-100 text-gray-600"}`}
     >
       {STATUS_LABELS[status] ?? status}
     </button>

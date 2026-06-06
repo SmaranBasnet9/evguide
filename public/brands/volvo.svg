@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Volvo iron symbol: circle with diagonal arrow at top-right -->
+  <circle cx="90" cy="110" r="75" fill="none" stroke="#003057" stroke-width="14"/>
+  <!-- Arrow pointing top-right: diagonal line + arrowhead -->
+  <line x1="140" y1="62" x2="190" y2="14" stroke="#003057" stroke-width="14" stroke-linecap="round"/>
+  <!-- Arrowhead -->
+  <polyline points="155,14 190,14 190,48" fill="none" stroke="#003057" stroke-width="14" stroke-linejoin="round" stroke-linecap="round"/>
+</svg>

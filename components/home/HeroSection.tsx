@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Zap, Leaf, Car, Users, Gauge, PoundSterling,
   BatteryCharging, MapPin, Star, CreditCard, Flame,
@@ -15,18 +16,18 @@ interface HeroSectionProps {
 }
 
 const BRANDS = [
-  { label: "Tesla",   href: "/vehicles?q=Tesla",   emoji: "⚡" },
-  { label: "BMW",     href: "/vehicles?q=BMW",     emoji: "🔵" },
-  { label: "Kia",     href: "/vehicles?q=Kia",     emoji: "🌿" },
-  { label: "BYD",     href: "/vehicles?q=BYD",     emoji: "🔋" },
-  { label: "VW",      href: "/vehicles?q=VW",      emoji: "🚗" },
-  { label: "Hyundai", href: "/vehicles?q=Hyundai", emoji: "🌐" },
-  { label: "Audi",    href: "/vehicles?q=Audi",    emoji: "💎" },
-  { label: "Volvo",   href: "/vehicles?q=Volvo",   emoji: "🛡️" },
-  { label: "Polestar",href: "/vehicles?q=Polestar",emoji: "✨" },
-  { label: "MG",      href: "/vehicles?q=MG",      emoji: "🎯" },
-  { label: "Renault", href: "/vehicles?q=Renault", emoji: "🔷" },
-  { label: "Nissan",  href: "/vehicles?q=Nissan",  emoji: "🌊" },
+  { label: "Tesla",    href: "/vehicles?q=Tesla",    logo: "tesla.svg",    logoW: 20, logoH: 24 },
+  { label: "BMW",      href: "/vehicles?q=BMW",      logo: "bmw.svg",      logoW: 24, logoH: 24 },
+  { label: "Kia",      href: "/vehicles?q=Kia",      logo: "kia.svg",      logoW: 40, logoH: 20 },
+  { label: "BYD",      href: "/vehicles?q=BYD",      logo: "byd.svg",      logoW: 40, logoH: 20 },
+  { label: "VW",       href: "/vehicles?q=VW",       logo: "vw.svg",       logoW: 24, logoH: 24 },
+  { label: "Hyundai",  href: "/vehicles?q=Hyundai",  logo: "hyundai.svg",  logoW: 36, logoH: 18 },
+  { label: "Audi",     href: "/vehicles?q=Audi",     logo: "audi.svg",     logoW: 44, logoH: 16 },
+  { label: "Volvo",    href: "/vehicles?q=Volvo",    logo: "volvo.svg",    logoW: 24, logoH: 24 },
+  { label: "Polestar", href: "/vehicles?q=Polestar", logo: "polestar.svg", logoW: 20, logoH: 20 },
+  { label: "MG",       href: "/vehicles?q=MG",       logo: "mg.svg",       logoW: 22, logoH: 22 },
+  { label: "Renault",  href: "/vehicles?q=Renault",  logo: "renault.svg",  logoW: 22, logoH: 22 },
+  { label: "Nissan",   href: "/vehicles?q=Nissan",   logo: "nissan.svg",   logoW: 44, logoH: 18 },
 ];
 
 const CHIPS = [
@@ -125,10 +126,19 @@ export default function HeroSection({ featuredCard: _featuredCard }: HeroSection
                 <Link
                   key={b.label}
                   href={b.href}
-                  className="anim-fade-up group flex shrink-0 items-center gap-1.5 rounded-full border border-gray-200 bg-gray-50 px-4 py-2 text-xs font-semibold text-gray-500 transition-all duration-200 hover:border-brand/40 hover:bg-brand/10 hover:text-brand"
+                  className="anim-fade-up group flex shrink-0 items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs font-semibold text-gray-600 shadow-sm transition-all duration-200 hover:border-brand/40 hover:bg-brand/10 hover:text-brand"
                   style={{ animationDelay: `${320 + i * 30}ms` }}
                 >
-                  <span className="text-sm leading-none">{b.emoji}</span>
+                  <span className="flex shrink-0 items-center justify-center">
+                    <Image
+                      src={`/brands/${b.logo}`}
+                      alt={b.label}
+                      width={b.logoW}
+                      height={b.logoH}
+                      className="object-contain"
+                      unoptimized
+                    />
+                  </span>
                   <span className="whitespace-nowrap">{b.label}</span>
                 </Link>
               ))}

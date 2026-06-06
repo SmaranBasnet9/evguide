@@ -124,22 +124,22 @@ export default function EVIntelligenceBadges({ vehicle, variant = "card" }: Prop
   // Card variant — compact inline row
   return (
     <div className="flex flex-wrap gap-1.5">
-      <span className="inline-flex items-center gap-1 rounded-full border border-blue-500/20 bg-blue-500/10 px-2.5 py-1 text-xs font-semibold text-blue-300">
+      <span className="inline-flex items-center gap-1 rounded-full border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700">
         🔋 {realWorldMiles} mi real range
       </span>
       {vehicle.chargingSpeedDcKw && (
-        <span className="inline-flex items-center gap-1 rounded-full border border-yellow-500/20 bg-yellow-500/10 px-2.5 py-1 text-xs font-semibold text-yellow-300">
+        <span className="inline-flex items-center gap-1 rounded-full border border-yellow-200 bg-yellow-50 px-2.5 py-1 text-xs font-semibold text-yellow-700">
           <Zap className="h-3 w-3" />
           {vehicle.chargingSpeedDcKw} kW DC
         </span>
       )}
       {vehicle.chargePortType && (
-        <span className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-medium text-zinc-400">
+        <span className="inline-flex items-center gap-1 rounded-full border border-gray-200 bg-gray-50 px-2.5 py-1 text-xs font-medium text-gray-600">
           {vehicle.chargePortType}
         </span>
       )}
       {vehicle.v2gCapable && (
-        <span className="inline-flex items-center gap-1 rounded-full border border-teal-500/20 bg-teal-500/10 px-2.5 py-1 text-xs font-semibold text-teal-300">
+        <span className="inline-flex items-center gap-1 rounded-full border border-teal-200 bg-teal-50 px-2.5 py-1 text-xs font-semibold text-teal-700">
           V2G
         </span>
       )}
@@ -152,11 +152,11 @@ export default function EVIntelligenceBadges({ vehicle, variant = "card" }: Prop
 type BadgeColor = "blue" | "yellow" | "emerald" | "violet" | "teal";
 
 const colorMap: Record<BadgeColor, { bg: string; icon: string; value: string }> = {
-  blue:    { bg: "bg-blue-500/10 border-blue-500/20",     icon: "text-blue-400",    value: "text-blue-200" },
-  yellow:  { bg: "bg-yellow-500/10 border-yellow-500/20", icon: "text-yellow-400",  value: "text-yellow-200" },
-  emerald: { bg: "bg-emerald-500/10 border-emerald-500/20", icon: "text-emerald-400", value: "text-emerald-200" },
-  violet:  { bg: "bg-violet-500/10 border-violet-500/20", icon: "text-violet-400",  value: "text-violet-200" },
-  teal:    { bg: "bg-teal-500/10 border-teal-500/20",     icon: "text-teal-400",    value: "text-teal-200" },
+  blue:    { bg: "bg-blue-50 border-blue-200",     icon: "text-blue-600",    value: "text-blue-700" },
+  yellow:  { bg: "bg-yellow-50 border-yellow-200", icon: "text-yellow-600",  value: "text-yellow-700" },
+  emerald: { bg: "bg-emerald-50 border-emerald-200", icon: "text-emerald-600", value: "text-emerald-700" },
+  violet:  { bg: "bg-violet-50 border-violet-200", icon: "text-violet-600",  value: "text-violet-700" },
+  teal:    { bg: "bg-teal-50 border-teal-200",     icon: "text-teal-600",    value: "text-teal-700" },
 };
 
 function IntelBadge({
@@ -177,10 +177,10 @@ function IntelBadge({
     <div className={`rounded-xl border p-3 ${c.bg}`}>
       <div className="flex items-center gap-2 mb-1">
         <span className={c.icon}>{icon}</span>
-        <span className="text-xs font-medium text-zinc-500">{label}</span>
+        <span className="text-xs font-medium text-gray-500">{label}</span>
       </div>
       <p className={`text-lg font-bold ${c.value}`}>{value}</p>
-      <p className="text-xs text-zinc-600 mt-0.5">{sub}</p>
+      <p className="text-xs text-gray-500 mt-0.5">{sub}</p>
     </div>
   );
 }

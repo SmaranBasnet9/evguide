@@ -66,20 +66,20 @@ function formatUserDate(date: string) {
 function RoleBadge({ role }: { role: string }) {
   if (role === "super_admin") {
     return (
-      <span className="rounded-full bg-violet-500/20 px-2.5 py-0.5 text-xs font-semibold text-violet-300">
+      <span className="rounded-full bg-violet-50 px-2.5 py-0.5 text-xs font-semibold text-violet-700">
         Super Admin
       </span>
     );
   }
   if (role === "admin") {
     return (
-      <span className="rounded-full bg-blue-500/20 px-2.5 py-0.5 text-xs font-semibold text-blue-300">
+      <span className="rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-blue-700">
         Admin
       </span>
     );
   }
   return (
-    <span className="rounded-full bg-white/[0.05] px-2.5 py-0.5 text-xs font-semibold text-white/60">
+    <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-semibold text-gray-600">
       User
     </span>
   );
@@ -97,28 +97,28 @@ function StaticUserTable({
   isSuperAdmin: boolean;
 }) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] shadow-sm">
+    <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
       {rows.length === 0 ? (
-        <p className="px-6 py-8 text-sm text-white/50">{emptyText}</p>
+        <p className="px-6 py-8 text-sm text-gray-500">{emptyText}</p>
       ) : (
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-white/[0.06] bg-white/[0.03] text-left">
-              <th className="px-6 py-3 font-semibold text-white/60">Name</th>
-              <th className="px-6 py-3 font-semibold text-white/60">Email</th>
-              <th className="px-6 py-3 font-semibold text-white/60">Joined</th>
-              <th className="px-6 py-3 font-semibold text-white/60">Role</th>
-              <th className="px-6 py-3 font-semibold text-white/60"></th>
+            <tr className="border-b border-gray-100 bg-gray-50 text-left">
+              <th className="px-6 py-3 font-semibold text-gray-500">Name</th>
+              <th className="px-6 py-3 font-semibold text-gray-500">Email</th>
+              <th className="px-6 py-3 font-semibold text-gray-500">Joined</th>
+              <th className="px-6 py-3 font-semibold text-gray-500">Role</th>
+              <th className="px-6 py-3 font-semibold text-gray-500"></th>
             </tr>
           </thead>
           <tbody>
             {rows.map((user) => (
-              <tr key={user.id} className="border-b border-white/[0.06] last:border-b-0">
-                <td className="px-6 py-4 font-medium text-white">
-                  {user.name ?? <span className="text-white/40 italic">-</span>}
+              <tr key={user.id} className="border-b border-gray-100 last:border-b-0">
+                <td className="px-6 py-4 font-medium text-gray-900">
+                  {user.name ?? <span className="text-gray-400 italic">-</span>}
                 </td>
-                <td className="px-6 py-4 text-white/80">{user.email}</td>
-                <td className="px-6 py-4 text-white/50">{formatUserDate(user.created_at)}</td>
+                <td className="px-6 py-4 text-gray-700">{user.email}</td>
+                <td className="px-6 py-4 text-gray-500">{formatUserDate(user.created_at)}</td>
                 <td className="px-6 py-4">
                   <RoleBadge role={user.role} />
                 </td>
@@ -154,8 +154,8 @@ export default async function AdminUsersPage() {
   return (
     <div className="mx-auto max-w-5xl space-y-10">
       <div>
-        <h1 className="text-3xl font-bold text-white">Users & Access</h1>
-        <p className="mt-1 text-white/50">
+        <h1 className="text-3xl font-bold text-gray-900">Users & Access</h1>
+        <p className="mt-1 text-gray-500">
           {users.length} total —{" "}
           {superAdmins.length} super admin,{" "}
           {admins.length} admin{admins.length !== 1 ? "s" : ""},{" "}
@@ -165,14 +165,14 @@ export default async function AdminUsersPage() {
 
       {/* Permission notice for non-super admins */}
       {!isSuperAdmin && (
-        <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-5 py-4 text-sm text-amber-300">
+        <div className="rounded-xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm text-amber-700">
           <strong>View only.</strong> Only the super admin can assign or revoke roles.
         </div>
       )}
 
       {/* Super admins */}
       <section>
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-widest text-white/40">
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-widest text-gray-400">
           Super Admin
         </h2>
         <StaticUserTable
@@ -186,10 +186,10 @@ export default async function AdminUsersPage() {
       {/* Admins */}
       <section>
         <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-sm font-semibold uppercase tracking-widest text-white/40">
+          <h2 className="text-sm font-semibold uppercase tracking-widest text-gray-400">
             Admins
           </h2>
-          <span className="rounded-full bg-blue-500/20 px-2.5 py-1 text-xs font-semibold text-blue-300">
+          <span className="rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700">
             {admins.length}
           </span>
         </div>
@@ -204,10 +204,10 @@ export default async function AdminUsersPage() {
       {/* Regular users */}
       <section>
         <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-sm font-semibold uppercase tracking-widest text-white/40">
+          <h2 className="text-sm font-semibold uppercase tracking-widest text-gray-400">
             Users
           </h2>
-          <span className="rounded-full bg-white/[0.05] px-2.5 py-1 text-xs font-semibold text-white/60">
+          <span className="rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-600">
             {regularUsers.length}
           </span>
         </div>
@@ -218,7 +218,7 @@ export default async function AdminUsersPage() {
           isSuperAdmin={isSuperAdmin}
         />
         {isSuperAdmin && regularUsers.length > 0 && (
-          <p className="mt-2 text-xs text-white/40">
+          <p className="mt-2 text-xs text-gray-400">
             Click <strong>Make Admin</strong> on any user to grant them admin access.
           </p>
         )}

@@ -9,12 +9,12 @@ export function GeoFormFields({ defaultValues }: Props) {
   return (
     <>
       {/* Identity */}
-      <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 shadow-sm">
-        <h2 className="mb-4 text-base font-semibold text-white">Region Identity</h2>
+      <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+        <h2 className="mb-4 text-base font-semibold text-gray-900">Region Identity</h2>
 
         <div className="grid grid-cols-2 gap-4">
           <label className="col-span-2 block">
-            <span className="text-sm font-medium text-white/80">
+            <span className="text-sm font-medium text-gray-700">
               Name <span className="text-red-500">*</span>
             </span>
             <input
@@ -23,12 +23,12 @@ export function GeoFormFields({ defaultValues }: Props) {
               type="text"
               placeholder="Greater London"
               defaultValue={defaultValues?.name ?? ""}
-              className="mt-1 block w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm text-white placeholder-white/30 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="mt-1 block w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
           </label>
 
           <label className="block">
-            <span className="text-sm font-medium text-white/80">
+            <span className="text-sm font-medium text-gray-700">
               Slug <span className="text-red-500">*</span>
             </span>
             <input
@@ -38,20 +38,20 @@ export function GeoFormFields({ defaultValues }: Props) {
               placeholder="greater-london"
               defaultValue={defaultValues?.slug ?? ""}
               pattern="[a-z0-9-]+"
-              className="mt-1 block w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm text-white placeholder-white/30 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="mt-1 block w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
-            <p className="mt-1 text-xs text-white/50">Lowercase, hyphens only</p>
+            <p className="mt-1 text-xs text-gray-500">Lowercase, hyphens only</p>
           </label>
 
           <label className="block">
-            <span className="text-sm font-medium text-white/80">
+            <span className="text-sm font-medium text-gray-700">
               Type <span className="text-red-500">*</span>
             </span>
             <select
               required
               name="region_type"
               defaultValue={defaultValues?.region_type ?? "city"}
-              className="mt-1 block w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="mt-1 block w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             >
               {REGION_TYPES.map((t) => (
                 <option key={t} value={t} className="capitalize">
@@ -62,38 +62,38 @@ export function GeoFormFields({ defaultValues }: Props) {
           </label>
 
           <label className="block">
-            <span className="text-sm font-medium text-white/80">Country Code</span>
+            <span className="text-sm font-medium text-gray-700">Country Code</span>
             <input
               name="country"
               type="text"
               maxLength={2}
               placeholder="GB"
               defaultValue={defaultValues?.country ?? "GB"}
-              className="mt-1 block w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm text-white placeholder-white/30 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="mt-1 block w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
           </label>
 
           <label className="block">
-            <span className="text-sm font-medium text-white/80">Sort Order</span>
+            <span className="text-sm font-medium text-gray-700">Sort Order</span>
             <input
               name="sort_order"
               type="number"
               min={0}
               placeholder="0"
               defaultValue={defaultValues?.sort_order ?? 0}
-              className="mt-1 block w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm text-white placeholder-white/30 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="mt-1 block w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
           </label>
         </div>
 
         <label className="mt-4 block">
-          <span className="text-sm font-medium text-white/80">Description</span>
+          <span className="text-sm font-medium text-gray-700">Description</span>
           <textarea
             name="description"
             rows={2}
             placeholder="Optional description for this region…"
             defaultValue={defaultValues?.description ?? ""}
-            className="mt-1 block w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm text-white placeholder-white/30 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="mt-1 block w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
         </label>
 
@@ -102,18 +102,18 @@ export function GeoFormFields({ defaultValues }: Props) {
             type="checkbox"
             name="is_active"
             defaultChecked={defaultValues?.is_active ?? true}
-            className="h-4 w-4 rounded border-white/15 text-blue-600 focus:ring-blue-500"
+            className="h-4 w-4 rounded border-gray-200 text-blue-600 focus:ring-blue-500"
           />
-          <span className="text-sm font-medium text-white/80">Active</span>
+          <span className="text-sm font-medium text-gray-700">Active</span>
         </label>
       </div>
 
       {/* Coordinates */}
-      <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 shadow-sm">
-        <h2 className="mb-4 text-base font-semibold text-white">Coordinates</h2>
+      <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+        <h2 className="mb-4 text-base font-semibold text-gray-900">Coordinates</h2>
         <div className="grid grid-cols-2 gap-4">
           <label className="block">
-            <span className="text-sm font-medium text-white/80">Latitude</span>
+            <span className="text-sm font-medium text-gray-700">Latitude</span>
             <input
               name="lat"
               type="number"
@@ -122,11 +122,11 @@ export function GeoFormFields({ defaultValues }: Props) {
               max={90}
               placeholder="51.5074"
               defaultValue={defaultValues?.lat ?? ""}
-              className="mt-1 block w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm text-white placeholder-white/30 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="mt-1 block w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
           </label>
           <label className="block">
-            <span className="text-sm font-medium text-white/80">Longitude</span>
+            <span className="text-sm font-medium text-gray-700">Longitude</span>
             <input
               name="lng"
               type="number"
@@ -135,11 +135,11 @@ export function GeoFormFields({ defaultValues }: Props) {
               max={180}
               placeholder="-0.1278"
               defaultValue={defaultValues?.lng ?? ""}
-              className="mt-1 block w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm text-white placeholder-white/30 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="mt-1 block w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
           </label>
         </div>
-        <p className="mt-2 text-xs text-white/50">
+        <p className="mt-2 text-xs text-gray-500">
           Used for map display and distance calculations. You can look up coordinates on{" "}
           <a
             href="https://www.latlong.net/"

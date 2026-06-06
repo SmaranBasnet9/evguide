@@ -44,21 +44,21 @@ const STATUS_LABELS: Record<ExchangeStatus, string> = {
 };
 
 const STATUS_COLORS: Record<ExchangeStatus, string> = {
-  new:                  "bg-blue-500/20 text-blue-300",
-  contacted:            "bg-cyan-500/20 text-cyan-300",
-  valuation_reviewed:   "bg-violet-500/20 text-violet-300",
-  inspection_scheduled: "bg-amber-500/20 text-amber-300",
-  offer_sent:           "bg-orange-500/20 text-orange-300",
-  converted:            "bg-emerald-500/20 text-emerald-300",
-  rejected:             "bg-red-500/20 text-red-300",
-  archived:             "bg-white/[0.05] text-white/50",
+  new:                  "bg-blue-50 text-blue-700",
+  contacted:            "bg-cyan-50 text-cyan-700",
+  valuation_reviewed:   "bg-violet-50 text-violet-700",
+  inspection_scheduled: "bg-amber-50 text-amber-700",
+  offer_sent:           "bg-orange-50 text-orange-700",
+  converted:            "bg-emerald-50 text-emerald-700",
+  rejected:             "bg-red-50 text-red-700",
+  archived:             "bg-gray-100 text-gray-500",
 };
 
 const PRIORITY_COLORS: Record<string, string> = {
-  low:    "bg-white/[0.05] text-white/60",
-  medium: "bg-blue-500/20 text-blue-300",
-  high:   "bg-amber-500/20 text-amber-300",
-  urgent: "bg-red-500/20 text-red-300",
+  low:    "bg-gray-100 text-gray-600",
+  medium: "bg-blue-50 text-blue-700",
+  high:   "bg-amber-50 text-amber-700",
+  urgent: "bg-red-50 text-red-700",
 };
 
 // ── Page ──────────────────────────────────────────────────────────────────────
@@ -100,8 +100,8 @@ export default async function AdminExchangePage({ searchParams }: Props) {
       {/* Header */}
       <div className="mb-6 flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Exchange Requests</h1>
-          <p className="mt-1 text-sm text-white/50">
+          <h1 className="text-2xl font-bold text-gray-900">Exchange Requests</h1>
+          <p className="mt-1 text-sm text-gray-500">
             {allRows.length} total · {unreadCount} unread
           </p>
         </div>
@@ -116,7 +116,7 @@ export default async function AdminExchangePage({ searchParams }: Props) {
             className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
               activeStatus === tab.value
                 ? "bg-blue-600 text-white"
-                : "bg-white/[0.05] text-white/60 hover:bg-white/[0.08]"
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
             }`}
           >
             {tab.label}
@@ -129,13 +129,13 @@ export default async function AdminExchangePage({ searchParams }: Props) {
 
       {/* Table */}
       {rows.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-white/10 py-16 text-center text-white/40">
+        <div className="rounded-2xl border border-dashed border-gray-200 py-16 text-center text-gray-400">
           No exchange requests found.
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-2xl border border-white/10">
-          <table className="min-w-full divide-y divide-white/[0.06] text-sm">
-            <thead className="bg-white/[0.03] text-left text-xs font-semibold uppercase tracking-wider text-white/50">
+        <div className="overflow-x-auto rounded-2xl border border-gray-200">
+          <table className="min-w-full divide-y divide-gray-200 text-sm">
+            <thead className="bg-gray-50 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
               <tr>
                 <th className="px-4 py-3">Customer</th>
                 <th className="px-4 py-3">Current vehicle</th>
@@ -147,11 +147,11 @@ export default async function AdminExchangePage({ searchParams }: Props) {
                 <th className="px-4 py-3">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/[0.06]">
+            <tbody className="divide-y divide-gray-200">
               {rows.map((row) => (
                 <tr
                   key={row.id}
-                  className={`transition hover:bg-white/[0.03] ${!row.is_read ? "bg-blue-500/[0.06]" : ""}`}
+                  className={`transition hover:bg-gray-50 ${!row.is_read ? "bg-blue-50/40" : ""}`}
                 >
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
@@ -159,64 +159,64 @@ export default async function AdminExchangePage({ searchParams }: Props) {
                         <span className="h-2 w-2 flex-shrink-0 rounded-full bg-blue-500" title="Unread" />
                       )}
                       <div>
-                        <p className="font-semibold text-white">{row.customer_name}</p>
-                        <p className="text-xs text-white/50">{row.email}</p>
-                        <p className="text-xs text-white/40">{row.phone}</p>
+                        <p className="font-semibold text-gray-900">{row.customer_name}</p>
+                        <p className="text-xs text-gray-500">{row.email}</p>
+                        <p className="text-xs text-gray-400">{row.phone}</p>
                       </div>
                     </div>
                   </td>
 
                   <td className="px-4 py-3">
-                    <p className="font-medium text-white">
+                    <p className="font-medium text-gray-900">
                       {row.current_vehicle_year} {row.current_vehicle_brand} {row.current_vehicle_model}
                     </p>
-                    <p className="text-xs text-white/50 capitalize">{row.fuel_type}</p>
+                    <p className="text-xs text-gray-500 capitalize">{row.fuel_type}</p>
                     {row.mileage != null && (
-                      <p className="text-xs text-white/40">{row.mileage.toLocaleString()} km</p>
+                      <p className="text-xs text-gray-400">{row.mileage.toLocaleString()} km</p>
                     )}
                   </td>
 
                   <td className="px-4 py-3">
                     {row.target_ev_brand ? (
                       <div>
-                        <p className="font-medium text-white">
+                        <p className="font-medium text-gray-900">
                           {row.target_ev_brand} {row.target_ev_model}
                         </p>
                         {row.target_ev_price != null && (
-                          <p className="text-xs text-white/50">
+                          <p className="text-xs text-gray-500">
                             £{Number(row.target_ev_price).toLocaleString()}
                           </p>
                         )}
                       </div>
                     ) : (
-                      <span className="text-white/40">—</span>
+                      <span className="text-gray-400">—</span>
                     )}
                   </td>
 
                   <td className="px-4 py-3">
                     {row.estimated_value != null ? (
                       <div>
-                        <p className="font-semibold text-white">
+                        <p className="font-semibold text-gray-900">
                           £{Number(row.estimated_value).toLocaleString()}
                         </p>
                         {row.final_offer_value != null && (
-                          <p className="text-xs text-emerald-400 font-semibold">
+                          <p className="text-xs text-emerald-600 font-semibold">
                             Final: £{Number(row.final_offer_value).toLocaleString()}
                           </p>
                         )}
-                        <p className="text-xs text-white/40 capitalize">
+                        <p className="text-xs text-gray-400 capitalize">
                           {row.valuation_confidence} conf.
                         </p>
                       </div>
                     ) : (
-                      <span className="text-white/40">—</span>
+                      <span className="text-gray-400">—</span>
                     )}
                   </td>
 
                   <td className="px-4 py-3">
                     <span
                       className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                        STATUS_COLORS[row.status as ExchangeStatus] ?? "bg-white/[0.05] text-white/60"
+                        STATUS_COLORS[row.status as ExchangeStatus] ?? "bg-gray-100 text-gray-600"
                       }`}
                     >
                       {STATUS_LABELS[row.status as ExchangeStatus] ?? row.status}
@@ -226,21 +226,21 @@ export default async function AdminExchangePage({ searchParams }: Props) {
                   <td className="px-4 py-3">
                     <span
                       className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${
-                        PRIORITY_COLORS[row.priority] ?? "bg-white/[0.05] text-white/60"
+                        PRIORITY_COLORS[row.priority] ?? "bg-gray-100 text-gray-600"
                       }`}
                     >
                       {row.priority}
                     </span>
                   </td>
 
-                  <td className="px-4 py-3 text-xs text-white/50 whitespace-nowrap">
+                  <td className="px-4 py-3 text-xs text-gray-500 whitespace-nowrap">
                     {new Date(row.created_at).toLocaleDateString("en-GB", { dateStyle: "medium" })}
                   </td>
 
                   <td className="px-4 py-3">
                     <Link
                       href={`/admin/exchange/${row.id}`}
-                      className="rounded-lg bg-white/[0.06] px-3 py-1.5 text-xs font-semibold text-white/70 hover:bg-white/[0.12] whitespace-nowrap"
+                      className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-xs font-semibold text-gray-700 hover:bg-gray-100 whitespace-nowrap"
                     >
                       View
                     </Link>

@@ -1,5 +1,5 @@
 function Skeleton({ className }: { className?: string }) {
-  return <div className={`animate-pulse rounded-lg bg-white/[0.06] ${className ?? ""}`} />;
+  return <div className={`animate-pulse rounded-lg bg-gray-200 ${className ?? ""}`} />;
 }
 export default function FinanceRequestsLoading() {
   return (
@@ -11,9 +11,9 @@ export default function FinanceRequestsLoading() {
       <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-6">
         {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-20 rounded-2xl" />)}
       </div>
-      <div className="overflow-hidden rounded-2xl border border-white/[0.06]">
+      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
         {Array.from({ length: 10 }).map((_, i) => (
-          <div key={i} className="flex gap-4 border-b border-white/[0.06] px-4 py-3">
+          <div key={i} className="flex gap-4 border-b border-gray-100 px-4 py-3">
             <Skeleton className="h-4 w-28" /><Skeleton className="h-4 w-20" /><Skeleton className="h-4 w-16" /><Skeleton className="h-4 w-24" />
           </div>
         ))}

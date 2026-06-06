@@ -17,10 +17,10 @@ function StatCard({
   sub: string;
 }) {
   return (
-    <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-5 shadow-sm">
-      <p className="text-sm font-medium text-white/50">{label}</p>
-      <p className="mt-2 text-3xl font-bold text-white">{value}</p>
-      <p className="mt-1 text-xs text-white/40">{sub}</p>
+    <div className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm">
+      <p className="text-sm font-medium text-gray-500">{label}</p>
+      <p className="mt-2 text-3xl font-bold text-gray-900">{value}</p>
+      <p className="mt-1 text-xs text-gray-400">{sub}</p>
     </div>
   );
 }
@@ -42,8 +42,8 @@ export default async function AdminCrmPage() {
     <div className="space-y-8">
       <div>
         <p className="text-sm font-semibold text-blue-600">Behavior CRM</p>
-        <h1 className="mt-1 text-3xl font-extrabold text-white">Customer Journey CRM</h1>
-        <p className="mt-2 max-w-3xl text-white/50">
+        <h1 className="mt-1 text-3xl font-extrabold text-gray-900">Customer Journey CRM</h1>
+        <p className="mt-2 max-w-3xl text-gray-500">
           Real user activity is now grouped into journey stages so the admin team can identify
           serious buyers, track their reading pattern, and run follow-up like a lightweight CRM.
         </p>
@@ -57,8 +57,8 @@ export default async function AdminCrmPage() {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[2fr_1fr]">
-        <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-5 shadow-sm">
-          <h2 className="text-lg font-bold text-white">Journey funnel snapshot</h2>
+        <div className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm">
+          <h2 className="text-lg font-bold text-gray-900">Journey funnel snapshot</h2>
           <div className="mt-4 grid gap-3 sm:grid-cols-5">
             {[
               { label: "Awareness", value: leads.filter((lead) => lead.journey_stage === "awareness").length },
@@ -67,17 +67,17 @@ export default async function AdminCrmPage() {
               { label: "Finance", value: financeStage },
               { label: "Conversion", value: conversionStage },
             ].map((item) => (
-              <div key={item.label} className="rounded-2xl bg-white/[0.03] p-4">
-                <p className="text-xs font-semibold uppercase tracking-wide text-white/40">{item.label}</p>
-                <p className="mt-2 text-2xl font-bold text-white">{item.value}</p>
+              <div key={item.label} className="rounded-2xl bg-gray-50 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">{item.label}</p>
+                <p className="mt-2 text-2xl font-bold text-gray-900">{item.value}</p>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-5 shadow-sm">
-          <h2 className="text-lg font-bold text-white">What this CRM tracks</h2>
-          <ul className="mt-4 space-y-2 text-sm text-white/50">
+        <div className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm">
+          <h2 className="text-lg font-bold text-gray-900">What this CRM tracks</h2>
+          <ul className="mt-4 space-y-2 text-sm text-gray-500">
             <li>Page-by-page browsing and route journey</li>
             <li>Research depth from scroll and dwell milestones</li>
             <li>Recommendation wizard start and completion</li>

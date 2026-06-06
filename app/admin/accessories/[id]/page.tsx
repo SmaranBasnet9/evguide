@@ -37,13 +37,13 @@ export default async function EditAccessoryPage({ params }: { params: Promise<{ 
 
   return (
     <div className="mx-auto max-w-3xl">
-      <div className="flex items-center gap-2 text-sm text-white/50">
-        <Link href="/admin/accessories" className="hover:text-white hover:underline">Accessories</Link>
+      <div className="flex items-center gap-2 text-sm text-gray-500">
+        <Link href="/admin/accessories" className="hover:text-gray-900 hover:underline">Accessories</Link>
         <span>/</span>
-        <span className="text-white">{product.name}</span>
+        <span className="text-gray-900">{product.name}</span>
       </div>
-      <h1 className="mt-3 text-3xl font-bold text-white">Edit Product</h1>
-      <p className="mt-1 text-white/50">Changes are saved directly to the database.</p>
+      <h1 className="mt-3 text-3xl font-bold text-gray-900">Edit Product</h1>
+      <p className="mt-1 text-gray-500">Changes are saved directly to the database.</p>
       <div className="mt-8">
         <AdminAccessoryForm mode="edit" id={id} categories={categories} initialData={initialData} />
       </div>

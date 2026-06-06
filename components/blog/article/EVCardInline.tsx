@@ -20,9 +20,9 @@ export default function EVCardInline({ item }: EVCardInlineProps) {
   const compareHref = `/compare?carA=${item.model.id}`;
 
   return (
-    <article className="group relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04] p-4 shadow-[0_20px_60px_rgba(0,0,0,0.35)] transition duration-300 hover:-translate-y-1 hover:border-emerald-400/30 hover:bg-white/[0.06]">
+    <article className="group relative overflow-hidden rounded-[2rem] border border-gray-200 bg-white p-4 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-emerald-400/30">
       <div className="absolute inset-x-10 top-0 h-24 rounded-full bg-emerald-400/10 blur-3xl opacity-0 transition duration-500 group-hover:opacity-100" />
-      <div className="relative aspect-[16/11] overflow-hidden rounded-[1.5rem] border border-white/10 bg-white/[0.06]">
+      <div className="relative aspect-[16/11] overflow-hidden rounded-[1.5rem] border border-gray-200 bg-gray-50">
         {item.model.heroImage ? (
           <Image
             src={item.model.heroImage}
@@ -43,10 +43,10 @@ export default function EVCardInline({ item }: EVCardInlineProps) {
       <div className="relative mt-5">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-white/40">
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-black">
               {item.model.brand}
             </p>
-            <h3 className="mt-2 text-2xl font-semibold text-white">
+            <h3 className="mt-2 text-2xl font-semibold text-black">
               {item.model.model}
             </h3>
           </div>
@@ -54,11 +54,11 @@ export default function EVCardInline({ item }: EVCardInlineProps) {
             <p className="text-lg font-semibold text-emerald-300">
               {formatCurrency(item.model.price)}
             </p>
-            <p className="text-sm text-white/40">from {formatCurrency(item.monthlyCost)}/mo</p>
+            <p className="text-sm text-black">from {formatCurrency(item.monthlyCost)}/mo</p>
           </div>
         </div>
 
-        <p className="mt-4 text-sm leading-7 text-white/60">{item.summary}</p>
+        <p className="mt-4 text-sm leading-7 text-black">{item.summary}</p>
 
         <div className="mt-5 grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
           {[
@@ -67,9 +67,9 @@ export default function EVCardInline({ item }: EVCardInlineProps) {
             { label: "Charge", value: item.model.fastChargeTime },
             { label: "Best for", value: item.model.bestFor },
           ].map(({ label, value }) => (
-            <div key={label} className="rounded-2xl border border-white/10 bg-white/[0.04] p-3">
-              <p className="text-white/40">{label}</p>
-              <p className="mt-1 font-medium text-white">{value}</p>
+            <div key={label} className="rounded-2xl border border-gray-200 bg-gray-50 p-3">
+              <p className="text-black">{label}</p>
+              <p className="mt-1 font-medium text-black">{value}</p>
             </div>
           ))}
         </div>
@@ -83,14 +83,14 @@ export default function EVCardInline({ item }: EVCardInlineProps) {
           </Link>
           <Link
             href={compareHref}
-            className="inline-flex items-center justify-center gap-2 rounded-full border border-white/10 bg-white/[0.06] px-5 py-3 text-sm font-semibold text-white transition hover:border-cyan-300/40 hover:bg-white/[0.10]"
+            className="inline-flex items-center justify-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-5 py-3 text-sm font-semibold text-black transition hover:border-cyan-300/40 hover:bg-cyan-50"
           >
             Compare
             <ArrowUpRight className="h-4 w-4" />
           </Link>
         </div>
 
-        <div className="mt-5 flex flex-wrap gap-4 text-xs text-white/40">
+        <div className="mt-5 flex flex-wrap gap-4 text-xs text-black">
           <span className="inline-flex items-center gap-1.5"><PoundSterling className="h-3.5 w-3.5" />UK finance-aligned estimate</span>
           <span className="inline-flex items-center gap-1.5"><Route className="h-3.5 w-3.5" />Real-world buyer context</span>
           <span className="inline-flex items-center gap-1.5"><BatteryCharging className="h-3.5 w-3.5" />Platform-matched EV specs</span>

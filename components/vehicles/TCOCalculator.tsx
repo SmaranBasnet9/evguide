@@ -12,7 +12,7 @@
 
 import React from "react";
 import { useState } from "react";
-import { ClipboardList, CreditCard, PoundSterling, Settings, Shield, TrendingDown, Wrench, Zap, ChevronDown, ChevronUp } from "lucide-react";
+import { ClipboardList, CreditCard, PoundSterling, Shield, TrendingDown, Wrench, Zap, ChevronDown, ChevronUp } from "lucide-react";
 import { calcTCO, DEFAULT_ENERGY_RATE_PENCE, DEFAULT_FUEL_PRICE_GBP } from "@/lib/ev-intelligence";
 import type { TCOResult } from "@/types";
 

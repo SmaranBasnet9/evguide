@@ -52,18 +52,18 @@ export default async function EditEVPage({
 
   return (
     <div className="mx-auto max-w-4xl">
-      <div className="flex items-center gap-2 text-sm text-white/50">
+      <div className="flex items-center gap-2 text-sm text-gray-500">
         <Link href="/admin/evs" className="hover:text-blue-600 hover:underline">
           EV Models
         </Link>
         <span>/</span>
-        <span className="text-white font-medium">{ev.brand} {ev.model}</span>
+        <span className="text-gray-900 font-medium">{ev.brand} {ev.model}</span>
       </div>
 
-      <h1 className="mt-3 text-3xl font-bold text-white">
+      <h1 className="mt-3 text-3xl font-bold text-gray-900">
         Edit {ev.brand} {ev.model}
       </h1>
-      <p className="mt-1 text-white/50">Changes are saved directly to the database.</p>
+      <p className="mt-1 text-gray-500">Changes are saved directly to the database.</p>
 
       <div className="mt-8">
         <AdminEVForm mode="edit" id={id} initialData={initialData} />

@@ -40,59 +40,47 @@ function ProductCard({ product }: { product: Accessory }) {
   return (
     <Link
       href={href}
-      className="group flex h-full flex-col gap-3 rounded-2xl border border-white/[0.08] bg-[#111] p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-white/20 hover:shadow-[0_16px_40px_rgba(0,0,0,0.6)]"
+      className="group flex h-full flex-col gap-2 rounded-xl border border-white/[0.08] bg-[#111] p-2.5 transition-all duration-200 hover:-translate-y-0.5 hover:border-white/20 hover:shadow-[0_10px_30px_rgba(0,0,0,0.5)]"
     >
       {/* Image */}
-      <div className="relative flex h-36 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white/[0.04]">
+      <div className="relative flex h-20 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white/[0.04]">
         {product.imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={product.imageUrl} alt={product.name} className="h-full w-full object-cover transition duration-300 group-hover:scale-105" />
+          <img src={product.imageUrl} alt={product.name} className="h-full w-full object-contain transition duration-300 group-hover:scale-105" />
         ) : (
-          <span className="text-5xl opacity-40 select-none">📦</span>
+          <span className="text-3xl opacity-40 select-none">📦</span>
         )}
         {product.badge && (
-          <span className={`absolute left-2 top-2 rounded-full border border-white/10 bg-black/60 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide backdrop-blur-sm ${BADGE_COLOR[product.badge] ?? "text-white/60"}`}>
+          <span className={`absolute left-1 top-1 rounded-full bg-black/70 px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wide ${BADGE_COLOR[product.badge] ?? "text-white/60"}`}>
             {product.badge}
           </span>
-        )}
-        {product.compatibleWith.length > 0 && (
-          <div className="absolute bottom-2 right-2 flex gap-1">
-            {product.compatibleWith.slice(0, 2).map((c) => (
-              <span key={c} className="rounded bg-black/50 px-1.5 py-0.5 text-[9px] font-semibold text-white/70 backdrop-blur-sm">
-                {c}
-              </span>
-            ))}
-          </div>
         )}
       </div>
 
       {/* Info */}
-      <div className="flex flex-1 flex-col gap-1.5">
+      <div className="flex flex-1 flex-col gap-0.5">
         {product.brand && (
-          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/35">{product.brand}</p>
+          <p className="text-[8px] font-semibold uppercase tracking-[0.15em] text-white/35 truncate">{product.brand}</p>
         )}
-        <p className="text-sm font-bold leading-snug text-white group-hover:text-brand transition-colors line-clamp-2">
+        <p className="text-[11px] font-bold leading-tight text-white group-hover:text-brand transition-colors line-clamp-2">
           {product.name}
         </p>
-        {product.description && (
-          <p className="text-xs leading-relaxed text-white/45 line-clamp-2">{product.description}</p>
-        )}
         {product.rating != null && (
-          <div className="flex items-center gap-1 mt-0.5">
-            <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
-            <span className="text-xs font-semibold text-amber-400">{product.rating.toFixed(1)}</span>
-            <span className="text-[11px] text-white/35">({product.reviewCount})</span>
+          <div className="flex items-center gap-0.5 mt-0.5">
+            <Star className="h-2.5 w-2.5 fill-amber-400 text-amber-400" />
+            <span className="text-[10px] font-semibold text-amber-400">{product.rating.toFixed(1)}</span>
+            <span className="text-[9px] text-white/35">({product.reviewCount})</span>
           </div>
         )}
       </div>
 
       {/* Price + CTA */}
-      <div className="flex items-center justify-between border-t border-white/[0.06] pt-3">
-        <span className="text-base font-black text-white">
-          {product.priceGbp != null ? `£${product.priceGbp.toFixed(2)}` : "View price"}
+      <div className="flex items-center justify-between border-t border-white/[0.06] pt-1.5">
+        <span className="text-xs font-black text-white">
+          {product.priceGbp != null ? `£${product.priceGbp.toFixed(2)}` : "View"}
         </span>
-        <span className="flex items-center gap-1.5 rounded-full bg-brand/10 px-3 py-1.5 text-[11px] font-semibold text-brand transition group-hover:bg-brand group-hover:text-white">
-          <ShoppingCart className="h-3 w-3" /> Buy
+        <span className="flex items-center gap-0.5 rounded-full bg-brand/10 px-2 py-0.5 text-[9px] font-semibold text-brand transition group-hover:bg-brand group-hover:text-white">
+          <ShoppingCart className="h-2 w-2" /> Buy
         </span>
       </div>
     </Link>

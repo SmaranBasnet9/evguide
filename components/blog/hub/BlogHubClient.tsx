@@ -61,20 +61,20 @@ export default function BlogHubClient({ articles }: BlogHubClientProps) {
         <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-zinc-500">Editorial picks</p>
-              <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-black">Editorial picks</p>
+              <h2 className="mt-3 text-3xl font-semibold tracking-tight text-black sm:text-4xl">
                 Research that leads into action
               </h2>
             </div>
-            <p className="max-w-xl text-sm leading-7 text-zinc-400">
+            <p className="max-w-xl text-sm leading-7 text-black">
               High-intent EV content built to answer buyer questions and guide the next product step.
             </p>
           </div>
 
           {filteredArticles.length === 0 ? (
-            <div className="rounded-[2rem] border border-dashed border-white/12 bg-white/[0.03] px-6 py-16 text-center">
-              <p className="text-lg font-medium text-white">No articles match that search yet.</p>
-              <p className="mt-3 text-sm leading-7 text-zinc-400">
+            <div className="rounded-[2rem] border border-dashed border-gray-200 bg-white px-6 py-16 text-center">
+              <p className="text-lg font-medium text-black">No articles match that search yet.</p>
+              <p className="mt-3 text-sm leading-7 text-black">
                 Try a broader query or jump straight into AI Match, Compare EVs, or Check affordability.
               </p>
             </div>
@@ -111,12 +111,12 @@ export default function BlogHubClient({ articles }: BlogHubClientProps) {
         <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-zinc-500">Latest posts</p>
-              <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-black">Latest posts</p>
+              <h2 className="mt-3 text-3xl font-semibold tracking-tight text-black sm:text-4xl">
                 More ways to de-risk your EV decision
               </h2>
             </div>
-            <p className="max-w-xl text-sm leading-7 text-zinc-400">
+            <p className="max-w-xl text-sm leading-7 text-black">
               Keep exploring charging, finance, and comparison content without losing the path into the product.
             </p>
           </div>
@@ -128,8 +128,8 @@ export default function BlogHubClient({ articles }: BlogHubClientProps) {
               ))}
             </div>
           ) : filteredArticles.length > 0 ? (
-            <div className="rounded-[2rem] border border-white/10 bg-white/[0.03] px-6 py-12 text-center">
-              <p className="text-sm leading-7 text-zinc-400">
+            <div className="rounded-[2rem] border border-gray-200 bg-white px-6 py-12 text-center">
+              <p className="text-sm leading-7 text-black">
                 More posts will appear here as the content library expands. For now, the top stories cover the highest-intent buyer questions.
               </p>
             </div>

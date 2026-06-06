@@ -6,8 +6,8 @@ import { ArrowLeft, CheckCircle, Loader2, PoundSterling, Battery, Shield } from 
 import PremiumNavbar from "@/components/home/PremiumNavbar";
 import PremiumFooter from "@/components/home/PremiumFooter";
 
-const inputCls = "w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-white placeholder-white/30 focus:border-brand/40 focus:outline-none focus:ring-2 focus:ring-brand/20";
-const labelCls = "mb-1.5 block text-xs font-semibold text-white/50";
+const inputCls = "w-full rounded-xl border border-white/10 bg-white/[0.06] px-4 py-3 text-sm text-white caret-brand shadow-sm placeholder:text-white/35 focus:border-brand/50 focus:bg-white/[0.08] focus:outline-none focus:ring-2 focus:ring-brand/20";
+const labelCls = "mb-1.5 block text-xs font-semibold text-white/70";
 
 export default function SellEVPage() {
   const [submitting, setSubmitting] = useState(false);
@@ -76,7 +76,7 @@ export default function SellEVPage() {
   }
 
   return (
-    <main className="min-h-screen bg-surface-base text-white">
+    <main className="min-h-screen bg-[#071211] text-white">
       <PremiumNavbar />
 
       <div className="mx-auto max-w-2xl px-4 pt-8 pb-20">

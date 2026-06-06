@@ -67,31 +67,31 @@ export default function InsuranceWidget({ vehicleId, vehicleLabel }: Props) {
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-sm">
+    <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
       <button
         onClick={() => setOpen(!open)}
-        className="flex w-full items-center justify-between px-5 py-4 text-left transition-colors hover:bg-white/[0.03]"
+        className="flex w-full items-center justify-between px-5 py-4 text-left transition-colors hover:bg-gray-50"
         aria-expanded={open}
       >
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-violet-500/20 bg-violet-500/10">
-            <Shield className="h-4 w-4 text-violet-400" />
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-violet-200 bg-violet-50">
+            <Shield className="h-4 w-4 text-violet-700" />
           </div>
           <div>
-            <p className="font-semibold text-white">EV insurance comparison</p>
-            <p className="text-sm text-white/50">
+            <p className="font-semibold text-gray-900">EV insurance comparison</p>
+            <p className="text-sm text-gray-600">
               Specialist EV policies — covers{" "}
-              <span className="font-semibold text-violet-400">charging cables & battery</span>
+              <span className="font-semibold text-violet-700">charging cables &amp; battery</span>
             </p>
           </div>
         </div>
         {open
-          ? <ChevronUp className="h-4 w-4 shrink-0 text-white/30" />
-          : <ChevronDown className="h-4 w-4 shrink-0 text-white/30" />}
+          ? <ChevronUp className="h-4 w-4 shrink-0 text-gray-400" />
+          : <ChevronDown className="h-4 w-4 shrink-0 text-gray-400" />}
       </button>
 
       {open && (
-        <div className="border-t border-white/[0.06] px-5 pb-5 pt-4 space-y-4">
+        <div className="border-t border-gray-100 px-5 pb-5 pt-4 space-y-4">
 
           {/* Why EV-specific */}
           <div className="grid grid-cols-3 gap-3">
@@ -100,47 +100,47 @@ export default function InsuranceWidget({ vehicleId, vehicleLabel }: Props) {
               { label: "Battery failure", value: "Included",   sub: "Beyond warranty" },
               { label: "Public charger", value: "Protected",   sub: "Damage & theft" },
             ].map((s) => (
-              <div key={s.label} className="rounded-xl border border-white/8 bg-white/[0.04] p-3 text-center">
-                <p className="text-sm font-bold text-white">{s.value}</p>
-                <p className="text-[10px] uppercase tracking-wider text-white/30 mt-0.5">{s.label}</p>
-                <p className="text-[10px] text-white/40">{s.sub}</p>
+              <div key={s.label} className="rounded-xl border border-gray-200 bg-gray-100 p-3 text-center">
+                <p className="text-sm font-bold text-gray-900">{s.value}</p>
+                <p className="text-[10px] uppercase tracking-wider text-gray-500 mt-0.5">{s.label}</p>
+                <p className="text-[10px] text-gray-400">{s.sub}</p>
               </div>
             ))}
           </div>
 
           {/* Providers */}
           <div className="space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-widest text-white/30">EV specialist insurers</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-gray-400">EV specialist insurers</p>
             {PROVIDERS.map((p) => (
               <div
                 key={p.name}
-                className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4"
+                className="rounded-xl border border-gray-100 bg-gray-50 p-4"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <p className="text-sm font-bold text-white">{p.name}</p>
+                      <p className="text-sm font-bold text-gray-900">{p.name}</p>
                       {p.badge && (
-                        <span className="rounded-full border border-violet-500/20 bg-violet-500/15 px-2 py-0.5 text-[10px] font-semibold text-violet-400">
+                        <span className="rounded-full border border-violet-200 bg-violet-50 px-2 py-0.5 text-[10px] font-semibold text-violet-700">
                           {p.badge}
                         </span>
                       )}
                     </div>
-                    <p className="mt-0.5 text-xs text-white/50">{p.tagline}</p>
+                    <p className="mt-0.5 text-xs text-gray-600">{p.tagline}</p>
                     <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1">
                       {p.features.map((f) => (
-                        <span key={f} className="flex items-center gap-1 text-[11px] text-white/40">
-                          <CheckCircle className="h-3 w-3 text-violet-400/60 shrink-0" />
+                        <span key={f} className="flex items-center gap-1 text-[11px] text-gray-500">
+                          <CheckCircle className="h-3 w-3 text-violet-500 shrink-0" />
                           {f}
                         </span>
                       ))}
                     </div>
-                    <p className="mt-2 text-[11px] text-white/30">{p.note}</p>
+                    <p className="mt-2 text-[11px] text-gray-400">{p.note}</p>
                   </div>
                   <button
                     onClick={() => handleProviderClick(p.name, p.url)}
                     disabled={tracking === p.name}
-                    className="shrink-0 flex items-center gap-1.5 rounded-xl border border-violet-500/20 bg-violet-500/10 px-3 py-2 text-xs font-semibold text-violet-400 transition hover:bg-violet-500/20 disabled:opacity-60"
+                    className="shrink-0 flex items-center gap-1.5 rounded-xl border border-violet-200 bg-violet-50 px-3 py-2 text-xs font-semibold text-violet-700 transition hover:bg-violet-100 disabled:opacity-60"
                   >
                     {tracking === p.name ? "…" : (
                       <>Get quote <ExternalLink className="h-3 w-3" /></>
@@ -151,7 +151,7 @@ export default function InsuranceWidget({ vehicleId, vehicleLabel }: Props) {
             ))}
           </div>
 
-          <p className="text-center text-[10px] text-white/25">
+          <p className="text-center text-[10px] text-gray-400">
             EVGuide may earn a referral fee when you get a quote. This never affects our recommendations.
           </p>
         </div>

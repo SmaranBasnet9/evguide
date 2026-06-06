@@ -120,7 +120,7 @@ export default function FinanceRequestForwardButton({
         value={emailTo}
         onChange={(event) => setEmailTo(event.target.value)}
         placeholder="lender@example.com"
-        className="w-52 rounded-lg border border-white/15 px-2.5 py-1.5 text-xs text-white/80 focus:border-purple-400 focus:outline-none focus:ring-1 focus:ring-purple-200"
+        className="w-52 rounded-lg border border-gray-200 bg-white px-2.5 py-1.5 text-xs text-gray-700 focus:border-purple-400 focus:outline-none focus:ring-1 focus:ring-purple-200"
       />
       <a
         href={emailTo.trim() ? mailtoHref : undefined}

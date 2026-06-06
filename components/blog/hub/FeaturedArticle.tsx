@@ -10,7 +10,7 @@ interface FeaturedArticleProps {
 export default function FeaturedArticle({ article }: FeaturedArticleProps) {
   return (
     <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div className="group overflow-hidden rounded-[2rem] border border-[#E5E7EB] bg-white/90 shadow-[0_32px_90px_rgba(0,0,0,0.34)] backdrop-blur-xl transition duration-500 hover:border-emerald-400/20 hover:shadow-[0_32px_100px_rgba(16,185,129,0.12)]">
+      <div className="group overflow-hidden rounded-[2rem] border border-gray-200 bg-white shadow-sm transition duration-500 hover:border-emerald-400/20 hover:shadow-[0_32px_100px_rgba(16,185,129,0.12)]">
         <div className="grid lg:grid-cols-[1.2fr_0.8fr]">
           <div className="relative min-h-[320px] overflow-hidden border-b border-[#E5E7EB] lg:min-h-[420px] lg:border-b-0 lg:border-r">
             <Image
@@ -26,7 +26,7 @@ export default function FeaturedArticle({ article }: FeaturedArticleProps) {
           <div className="flex flex-col justify-between p-6 sm:p-8 lg:p-10">
             <div>
               <div className="flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.24em] text-[#6B7280]">
-                <span className="rounded-full border border-cyan-300/20 bg-cyan-400/10 px-3 py-1 text-cyan-100">
+                <span className="rounded-full border border-cyan-200 bg-cyan-50 px-3 py-1 text-cyan-700">
                   {article.category}
                 </span>
                 <span className="inline-flex items-center gap-1.5">
@@ -35,7 +35,7 @@ export default function FeaturedArticle({ article }: FeaturedArticleProps) {
                 </span>
               </div>
 
-              <h2 className="mt-6 max-w-xl text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+              <h2 className="mt-6 max-w-xl text-3xl font-semibold tracking-tight text-black sm:text-4xl">
                 {article.title}
               </h2>
               <p className="mt-5 max-w-xl text-base leading-8 text-[#6B7280]">
@@ -51,7 +51,7 @@ export default function FeaturedArticle({ article }: FeaturedArticleProps) {
 
               <Link
                 href={article.href}
-                className="inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/12 px-5 py-3 text-sm font-semibold text-emerald-100 transition duration-300 hover:border-emerald-300/40 hover:bg-emerald-400/18 hover:shadow-[0_0_24px_rgba(16,185,129,0.2)]"
+                className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-5 py-3 text-sm font-semibold text-emerald-700 transition duration-300 hover:bg-emerald-100"
               >
                 Read article
                 <ArrowRight className="h-4 w-4" />

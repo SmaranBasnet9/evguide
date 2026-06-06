@@ -32,7 +32,7 @@ export default function AdminDealerListingReviewButton({ listingId }: { listingI
           value={rejectionReason}
           onChange={(e) => setRejectionReason(e.target.value)}
           placeholder="Reason (shown to dealer)"
-          className="rounded-xl border border-white/10 bg-white/[0.06] px-3 py-2 text-sm text-white placeholder:text-white/40 focus:border-red-400 focus:outline-none"
+          className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-red-400 focus:outline-none"
         />
         <div className="flex gap-2">
           <button
@@ -43,7 +43,7 @@ export default function AdminDealerListingReviewButton({ listingId }: { listingI
             <XCircle className="h-4 w-4" />
             {loading === "reject" ? "Rejecting..." : "Confirm"}
           </button>
-          <button onClick={() => setShowRejectForm(false)} className="rounded-xl border border-white/10 px-4 py-2 text-sm text-white/60 transition hover:text-white">
+          <button onClick={() => setShowRejectForm(false)} className="rounded-xl border border-gray-200 px-4 py-2 text-sm text-gray-500 transition hover:text-gray-900">
             Cancel
           </button>
         </div>
@@ -64,7 +64,7 @@ export default function AdminDealerListingReviewButton({ listingId }: { listingI
       <button
         onClick={() => setShowRejectForm(true)}
         disabled={loading !== null}
-        className="flex items-center gap-1.5 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-2 text-sm font-semibold text-red-400 transition hover:bg-red-500/20 disabled:opacity-60"
+        className="flex items-center gap-1.5 rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-100 disabled:opacity-60"
       >
         <XCircle className="h-4 w-4" />
         Reject

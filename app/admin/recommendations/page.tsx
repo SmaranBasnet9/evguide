@@ -137,8 +137,8 @@ export default async function AdminRecommendationsPage() {
     <div className="space-y-8">
       <div>
         <p className="text-sm font-semibold text-blue-600">AI Engine</p>
-        <h1 className="mt-1 text-3xl font-extrabold text-white">Recommendations</h1>
-        <p className="mt-2 text-white/50">
+        <h1 className="mt-1 text-3xl font-extrabold text-gray-900">Recommendations</h1>
+        <p className="mt-2 text-gray-500">
           All recommendation engine runs — each triggered when a user completes the consultation wizard.
         </p>
       </div>
@@ -150,22 +150,22 @@ export default async function AdminRecommendationsPage() {
           { label: "Avg confidence score",  value: avgConfidence,   sub: "% match score" },
           { label: "With consultation",     value: recs.filter((r) => r.consultation_id).length, sub: "Linked records" },
         ].map((s) => (
-          <div key={s.label} className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 shadow-sm">
-            <p className="text-sm font-medium text-white/50">{s.label}</p>
-            <p className="mt-1 text-3xl font-extrabold text-white">{s.value}</p>
-            <p className="mt-1 text-xs text-white/40">{s.sub}</p>
+          <div key={s.label} className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+            <p className="text-sm font-medium text-gray-500">{s.label}</p>
+            <p className="mt-1 text-3xl font-extrabold text-gray-900">{s.value}</p>
+            <p className="mt-1 text-xs text-gray-400">{s.sub}</p>
           </div>
         ))}
       </div>
 
       {recs.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-white/10 py-16 text-center text-sm text-white/40">
+        <div className="rounded-2xl border border-dashed border-gray-200 py-16 text-center text-sm text-gray-400">
           No recommendations yet.
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-2xl border border-white/10 bg-white/[0.03] shadow-sm">
-          <table className="min-w-full divide-y divide-white/[0.06] text-sm">
-            <thead className="bg-white/[0.03] text-left text-xs font-semibold uppercase tracking-wider text-white/50">
+        <div className="overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-sm">
+          <table className="min-w-full divide-y divide-gray-200 text-sm">
+            <thead className="bg-gray-50 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
               <tr>
                 <th className="px-4 py-3">Session / Profile</th>
                 <th className="px-4 py-3">Consultation</th>
@@ -175,44 +175,44 @@ export default async function AdminRecommendationsPage() {
                 <th className="px-4 py-3">Generated</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/[0.06]">
+            <tbody className="divide-y divide-gray-200">
               {recs.map((rec) => {
                 const vehicles = extractTopVehicles(rec.recommendation_payload);
                 return (
-                  <tr key={rec.id} className="hover:bg-white/[0.03]">
-                    <td className="px-4 py-3 font-mono text-xs text-white/50">
+                  <tr key={rec.id} className="hover:bg-gray-50">
+                    <td className="px-4 py-3 font-mono text-xs text-gray-500">
                       <p>{rec.session_id?.slice(0, 14) ?? "—"}…</p>
                       {rec.profile_id && (
-                        <p className="text-white/40">user:{rec.profile_id.slice(0, 8)}…</p>
+                        <p className="text-gray-400">user:{rec.profile_id.slice(0, 8)}…</p>
                       )}
                     </td>
-                    <td className="px-4 py-3 text-white/60">
+                    <td className="px-4 py-3 text-gray-600">
                       {rec.consultation ? (
                         <div>
                           <p className="capitalize">
                             {rec.consultation.main_reason_for_ev?.replace(/_/g, " ") ?? "—"}
                           </p>
                           {rec.consultation.budget_max_gbp && (
-                            <p className="text-xs text-white/40">
+                            <p className="text-xs text-gray-400">
                               Budget £{rec.consultation.budget_max_gbp.toLocaleString()}
                             </p>
                           )}
                           {rec.consultation.daily_miles && (
-                            <p className="text-xs text-white/40">
+                            <p className="text-xs text-gray-400">
                               {rec.consultation.daily_miles} mi/day
                             </p>
                           )}
                         </div>
                       ) : (
-                        <span className="text-white/30">—</span>
+                        <span className="text-gray-400">—</span>
                       )}
                     </td>
                     <td className="px-4 py-3">
                       <ol className="list-decimal list-inside space-y-0.5">
                         {vehicles.map((v) => (
-                          <li key={v.rank} className="text-white/80">
+                          <li key={v.rank} className="text-gray-700">
                             {v.label}{" "}
-                            <span className="text-xs text-white/40">{v.score}%</span>
+                            <span className="text-xs text-gray-400">{v.score}%</span>
                           </li>
                         ))}
                       </ol>
@@ -220,24 +220,24 @@ export default async function AdminRecommendationsPage() {
                     <td className="px-4 py-3">
                       {rec.confidence_score !== null ? (
                         <div className="flex items-center gap-2">
-                          <div className="h-1.5 w-16 overflow-hidden rounded-full bg-white/[0.08]">
+                          <div className="h-1.5 w-16 overflow-hidden rounded-full bg-gray-100">
                             <div
                               className="h-full rounded-full bg-emerald-500"
                               style={{ width: `${rec.confidence_score}%` }}
                             />
                           </div>
-                          <span className="text-xs font-semibold text-white/80">
+                          <span className="text-xs font-semibold text-gray-700">
                             {rec.confidence_score}%
                           </span>
                         </div>
                       ) : (
-                        <span className="text-white/30 text-xs">—</span>
+                        <span className="text-gray-400 text-xs">—</span>
                       )}
                     </td>
-                    <td className="max-w-xs px-4 py-3 text-xs text-white/50">
+                    <td className="max-w-xs px-4 py-3 text-xs text-gray-500">
                       <p className="line-clamp-2">{rec.explanation ?? "—"}</p>
                     </td>
-                    <td className="px-4 py-3 text-xs text-white/40">
+                    <td className="px-4 py-3 text-xs text-gray-400">
                       {new Date(rec.created_at).toLocaleDateString("en-GB", { dateStyle: "medium" })}
                     </td>
                   </tr>

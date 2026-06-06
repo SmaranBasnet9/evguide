@@ -43,14 +43,14 @@ function Field({
 }) {
   return (
     <div>
-      <label className="mb-1.5 block text-sm font-medium text-white/80">{label}</label>
+      <label className="mb-1.5 block text-sm font-medium text-gray-700">{label}</label>
       <input
         type={type}
         name={name}
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className="w-full rounded-2xl border border-white/15 px-4 py-3 text-sm focus:border-blue-500 focus:outline-none"
+        className="w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
       />
     </div>
   );
@@ -152,23 +152,23 @@ export default function AdminBlogForm({ mode = "create", id, initialData }: Prop
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
-      <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 shadow-sm">
-        <h2 className="mb-5 text-base font-semibold text-white">Post Details</h2>
+      <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+        <h2 className="mb-5 text-base font-semibold text-gray-900">Post Details</h2>
         <div className="space-y-4">
           <Field label="Title *" name="title" value={formData.title} onChange={handleChange} placeholder="Why EVs are the future of driving" />
           <Field label="Category" name="category" value={formData.category} onChange={handleChange} placeholder="EV Insights, Finance, Charging..." />
           <Field label="Author" name="author" value={formData.author} onChange={handleChange} placeholder="EVGuide AI Editorial" />
           <Field label="Geo Location" name="geo_location" value={formData.geo_location} onChange={handleChange} placeholder="UK, London, Manchester..." />
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-white/80">Cover Image</label>
+            <label className="mb-1.5 block text-sm font-medium text-gray-700">Cover Image</label>
             <input
               type="file"
               accept="image/png,image/jpeg,image/webp"
               onChange={handleCoverUpload}
               disabled={uploadingCover}
-              className="w-full text-sm text-white/60 file:mr-4 file:rounded-xl file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:font-semibold file:text-blue-700 hover:file:bg-blue-100 disabled:opacity-60"
+              className="w-full text-sm text-gray-600 file:mr-4 file:rounded-xl file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:font-semibold file:text-blue-700 hover:file:bg-blue-100 disabled:opacity-60"
             />
-            <p className="mt-1 text-xs text-white/50">
+            <p className="mt-1 text-xs text-gray-500">
               {uploadingCover ? "Uploading..." : "PNG / JPG / WEBP, max 5 MB"}
             </p>
             {formData.cover_image && (
@@ -179,7 +179,7 @@ export default function AdminBlogForm({ mode = "create", id, initialData }: Prop
                   width={1200}
                   height={384}
                   unoptimized
-                  className="h-32 w-full rounded-xl border border-white/10 object-cover"
+                  className="h-32 w-full rounded-xl border border-gray-200 object-cover"
                 />
                 <input
                   type="text"
@@ -187,7 +187,7 @@ export default function AdminBlogForm({ mode = "create", id, initialData }: Prop
                   value={formData.cover_image}
                   onChange={handleChange}
                   placeholder="Or paste an image URL"
-                  className="mt-2 w-full rounded-2xl border border-white/15 px-4 py-2 text-xs focus:border-blue-500 focus:outline-none"
+                  className="mt-2 w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-2 text-xs text-gray-900 focus:border-blue-500 focus:outline-none"
                 />
               </div>
             )}
@@ -198,66 +198,66 @@ export default function AdminBlogForm({ mode = "create", id, initialData }: Prop
                 value={formData.cover_image}
                 onChange={handleChange}
                 placeholder="Or paste an image URL"
-                className="mt-2 w-full rounded-2xl border border-white/15 px-4 py-2 text-xs focus:border-blue-500 focus:outline-none"
+                className="mt-2 w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-2 text-xs text-gray-900 focus:border-blue-500 focus:outline-none"
               />
             )}
           </div>
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-white/80">Short Excerpt</label>
+            <label className="mb-1.5 block text-sm font-medium text-gray-700">Short Excerpt</label>
             <textarea
               name="excerpt"
               value={formData.excerpt}
               onChange={handleChange}
               rows={2}
               placeholder="A brief summary shown on blog listing..."
-              className="w-full rounded-2xl border border-white/15 px-4 py-3 text-sm focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
             />
           </div>
         </div>
       </section>
 
-      <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 shadow-sm">
-        <h2 className="mb-5 text-base font-semibold text-white">SEO & Discovery</h2>
+      <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+        <h2 className="mb-5 text-base font-semibold text-gray-900">SEO &amp; Discovery</h2>
         <div className="space-y-4">
           <Field label="Meta Title" name="meta_title" value={formData.meta_title} onChange={handleChange} placeholder="Best EV under £20k in the UK" />
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-white/80">Meta Description</label>
+            <label className="mb-1.5 block text-sm font-medium text-gray-700">Meta Description</label>
             <textarea
               name="meta_description"
               value={formData.meta_description}
               onChange={handleChange}
               rows={3}
               placeholder="SEO description for Google and social previews..."
-              className="w-full rounded-2xl border border-white/15 px-4 py-3 text-sm focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
             />
           </div>
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-white/80">Keywords</label>
+            <label className="mb-1.5 block text-sm font-medium text-gray-700">Keywords</label>
             <textarea
               name="keywords"
               value={formData.keywords}
               onChange={handleChange}
               rows={2}
               placeholder="best EV UK, EV finance UK, electric car buying guide"
-              className="w-full rounded-2xl border border-white/15 px-4 py-3 text-sm focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
             />
-            <p className="mt-1 text-xs text-white/50">Separate keywords with commas.</p>
+            <p className="mt-1 text-xs text-gray-500">Separate keywords with commas.</p>
           </div>
         </div>
       </section>
 
-      <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 shadow-sm">
-        <h2 className="mb-5 text-base font-semibold text-white">Content *</h2>
+      <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+        <h2 className="mb-5 text-base font-semibold text-gray-900">Content *</h2>
         <textarea
           name="content"
           value={formData.content}
           onChange={handleChange}
           rows={20}
           placeholder="Write your full blog post here..."
-          className="w-full rounded-2xl border border-white/15 px-4 py-3 text-sm focus:border-blue-500 focus:outline-none"
+          className="w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
           required
         />
-        <p className="mt-2 text-xs text-white/50">
+        <p className="mt-2 text-xs text-gray-500">
           {formData.content.length} characters
         </p>
       </section>
@@ -271,7 +271,7 @@ export default function AdminBlogForm({ mode = "create", id, initialData }: Prop
           {loading ? "Saving..." : mode === "edit" ? "Save Changes" : "Create Post"}
         </button>
 
-        <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-white/80">
+        <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-gray-700">
           <input
             type="checkbox"
             name="published"
@@ -286,7 +286,7 @@ export default function AdminBlogForm({ mode = "create", id, initialData }: Prop
           <button
             type="button"
             onClick={() => router.back()}
-            className="rounded-2xl border border-white/15 px-6 py-3 text-sm font-semibold text-white/80 hover:bg-white/[0.03]"
+            className="rounded-2xl border border-gray-200 px-6 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50"
           >
             Cancel
           </button>

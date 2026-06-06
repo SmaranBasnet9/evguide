@@ -9,31 +9,31 @@ export default function BlogHero({
   quickCategories,
 }: BlogHeroProps) {
   return (
-    <section className="relative overflow-hidden border-b border-white/8 pt-32">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(34,211,238,0.14),transparent_32%),radial-gradient(circle_at_20%_20%,rgba(16,185,129,0.18),transparent_26%),linear-gradient(180deg,rgba(255,255,255,0.02),transparent_60%)]" />
+    <section className="relative overflow-hidden border-b border-gray-200 bg-white pt-32">
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(31,191,159,0.08),transparent_62%)]" />
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-emerald-400/60 to-transparent" />
 
       <div className="relative mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8 lg:pb-20">
         <div className="mx-auto max-w-4xl text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.34em] text-white/50">
+          <p className="text-xs font-semibold uppercase tracking-[0.34em] text-black">
             Content hub for smarter EV decisions
           </p>
-          <h1 className="mt-6 text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl">
+          <h1 className="mt-6 text-4xl font-semibold tracking-tight text-black sm:text-5xl lg:text-6xl">
             EV guides, comparisons, and buying insights
           </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-base leading-7 text-white/50 sm:text-lg">
+          <p className="mx-auto mt-6 max-w-2xl text-base leading-7 text-black sm:text-lg">
             Make smarter EV decisions with expert content, comparisons, and cost breakdowns.
           </p>
 
-          <div className="mx-auto mt-10 max-w-3xl rounded-[2rem] border border-white/10 bg-white/[0.06] p-2 shadow-[0_24px_80px_rgba(0,0,0,0.45)] backdrop-blur-xl">
-            <label className="flex items-center gap-3 rounded-[1.4rem] border border-white/8 bg-white/[0.06] px-5 py-4 text-left transition focus-within:border-brand/30 focus-within:shadow-[0_0_0_1px_rgba(31,191,159,0.2)]">
-              <Search className="h-5 w-5 text-white/40" />
+          <div className="mx-auto mt-10 max-w-3xl rounded-[2rem] border border-gray-200 bg-white p-2 shadow-sm">
+            <label className="flex items-center gap-3 rounded-[1.4rem] border border-gray-200 bg-gray-50 px-5 py-4 text-left transition focus-within:border-brand/30 focus-within:shadow-[0_0_0_1px_rgba(31,191,159,0.2)]">
+              <Search className="h-5 w-5 text-black" />
               <input
                 value={query}
                 onChange={(event) => onQueryChange(event.target.value)}
                 type="search"
                 placeholder="Search buying guides, EV comparisons, charging advice..."
-                className="w-full bg-transparent text-sm text-white outline-none placeholder:text-white/40 sm:text-base"
+                className="w-full bg-transparent text-sm text-black outline-none placeholder:text-gray-500 sm:text-base"
                 aria-label="Search blog articles"
               />
             </label>
@@ -49,8 +49,8 @@ export default function BlogHero({
                   onClick={() => onCategoryChange(category)}
                   className={`rounded-full border px-4 py-2 text-sm font-medium transition duration-300 ${
                     active
-                      ? "border-cyan-300/50 bg-cyan-400/12 text-cyan-100 shadow-[0_0_24px_rgba(34,211,238,0.18)]"
-                      : "border-white/10 bg-white/[0.04] text-white/50 hover:border-brand/30 hover:bg-white/[0.08] hover:text-white"
+                      ? "border-brand/40 bg-brand/10 text-black shadow-sm"
+                      : "border-gray-200 bg-gray-50 text-black hover:border-brand/30 hover:bg-brand/10"
                   }`}
                 >
                   {category}

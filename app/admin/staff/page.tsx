@@ -84,8 +84,8 @@ export default async function StaffPage() {
     <div className="space-y-8">
       <div>
         <p className="text-sm font-semibold text-blue-600">Access Control</p>
-        <h1 className="mt-1 text-3xl font-extrabold text-white">Staff & Access</h1>
-        <p className="mt-2 max-w-2xl text-white/50">
+        <h1 className="mt-1 text-3xl font-extrabold text-gray-900">Staff & Access</h1>
+        <p className="mt-2 max-w-2xl text-gray-500">
           Manage your admin team, assign departments, and control who has access to the admin panel.
           Only the super admin can promote, demote, or reassign staff.
         </p>

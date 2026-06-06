@@ -42,8 +42,8 @@ export default async function DealerBidsAdminPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-white">Dealer Bid Requests</h1>
-        <p className="mt-1 text-sm text-white/50">
+        <h1 className="text-2xl font-bold text-gray-900">Dealer Bid Requests</h1>
+        <p className="mt-1 text-sm text-gray-500">
           Buyer quote requests ready to forward to verified dealers. Each lead generates £30–£80 revenue.
         </p>
       </div>
@@ -51,14 +51,14 @@ export default async function DealerBidsAdminPage() {
       {/* Stats */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         {[
-          { label: "Total requests", value: counts.total, color: "text-white" },
-          { label: "Pending action", value: counts.pending, color: "text-amber-400" },
+          { label: "Total requests",    value: counts.total,     color: "text-gray-900" },
+          { label: "Pending action",    value: counts.pending,   color: "text-amber-600" },
           { label: "Dealers contacted", value: counts.contacted, color: "text-brand" },
-          { label: "Resolved", value: counts.resolved, color: "text-white/50" },
+          { label: "Resolved",          value: counts.resolved,  color: "text-gray-500" },
         ].map((s) => (
-          <div key={s.label} className="rounded-2xl border border-white/8 bg-white/[0.04] px-5 py-4">
+          <div key={s.label} className="rounded-2xl border border-gray-200 bg-white px-5 py-4">
             <p className={`text-2xl font-bold ${s.color}`}>{s.value}</p>
-            <p className="mt-1 text-xs text-white/40">{s.label}</p>
+            <p className="mt-1 text-xs text-gray-400">{s.label}</p>
           </div>
         ))}
       </div>
@@ -66,10 +66,10 @@ export default async function DealerBidsAdminPage() {
       {/* Revenue projection */}
       <div className="rounded-2xl border border-brand/20 bg-brand/5 px-5 py-4">
         <p className="text-xs font-semibold uppercase tracking-wider text-brand">Revenue projection</p>
-        <p className="mt-2 text-2xl font-bold text-white">
+        <p className="mt-2 text-2xl font-bold text-gray-900">
           £{(counts.pending * 55).toLocaleString()} – £{(counts.pending * 80).toLocaleString()}
         </p>
-        <p className="mt-1 text-xs text-white/50">
+        <p className="mt-1 text-xs text-gray-500">
           Estimated from {counts.pending} pending requests at £55–£80 per qualified lead
         </p>
       </div>

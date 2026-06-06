@@ -39,16 +39,16 @@ export default async function EditBlogPostPage({
 
   return (
     <div className="mx-auto max-w-4xl">
-      <div className="flex items-center gap-2 text-sm text-white/50">
+      <div className="flex items-center gap-2 text-sm text-gray-500">
         <Link href="/admin/blog" className="hover:text-blue-600 hover:underline">
           Blog Posts
         </Link>
         <span>/</span>
-        <span className="font-medium text-white">{post.title}</span>
+        <span className="font-medium text-gray-900">{post.title}</span>
       </div>
 
-      <h1 className="mt-3 text-3xl font-bold text-white">Edit Post</h1>
-      <p className="mt-1 text-white/50">
+      <h1 className="mt-3 text-3xl font-bold text-gray-900">Edit Post</h1>
+      <p className="mt-1 text-gray-500">
         Changes are saved immediately. Toggle &quot;Publish immediately&quot; to show or hide on the public blog.
       </p>
 

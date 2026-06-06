@@ -46,13 +46,13 @@ function slugify(s: string) {
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-1.5">
-      <label className="text-xs font-semibold uppercase tracking-wide text-white/50">{label}</label>
+      <label className="text-xs font-semibold uppercase tracking-wide text-gray-500">{label}</label>
       {children}
     </div>
   );
 }
 
-const INPUT = "rounded-xl border border-white/10 bg-white/[0.05] px-3 py-2.5 text-sm text-white placeholder:text-white/25 focus:border-brand/50 focus:outline-none";
+const INPUT = "rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:border-brand/50 focus:outline-none";
 
 export default function AdminAccessoryForm({ mode, id, categories, initialData }: Props) {
   const router = useRouter();
@@ -140,17 +140,17 @@ export default function AdminAccessoryForm({ mode, id, categories, initialData }
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {error && (
-        <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
           {error}
         </div>
       )}
 
       {/* Image */}
-      <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-        <p className="mb-4 text-sm font-semibold text-white">Product Image</p>
+      <div className="rounded-2xl border border-gray-200 bg-white p-5">
+        <p className="mb-4 text-sm font-semibold text-gray-900">Product Image</p>
         <div className="flex items-start gap-4">
           {/* Preview */}
-          <div className="relative flex h-32 w-32 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-white/[0.04]">
+          <div className="relative flex h-32 w-32 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-gray-200 bg-gray-100">
             {form.image_url ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={form.image_url} alt="Product" className="h-full w-full object-cover" />
@@ -179,7 +179,7 @@ export default function AdminAccessoryForm({ mode, id, categories, initialData }
                   type="button"
                   onClick={() => fileRef.current?.click()}
                   disabled={imgUploading}
-                  className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.05] px-4 py-2 text-sm font-medium text-white hover:bg-white/10 disabled:opacity-50"
+                  className="flex items-center gap-2 rounded-xl border border-gray-200 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 disabled:opacity-50"
                 >
                   <Upload className="h-4 w-4" />
                   {form.image_url ? "Replace image" : "Upload image"}
@@ -189,7 +189,7 @@ export default function AdminAccessoryForm({ mode, id, categories, initialData }
                     type="button"
                     onClick={handleImageDelete}
                     disabled={imgDeleting}
-                    className="flex items-center gap-2 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-2 text-sm font-medium text-red-400 hover:bg-red-500/20 disabled:opacity-50"
+                    className="flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-100 disabled:opacity-50"
                   >
                     <X className="h-4 w-4" />
                     {imgDeleting ? "Removing…" : "Remove image"}
@@ -206,7 +206,7 @@ export default function AdminAccessoryForm({ mode, id, categories, initialData }
                 />
               </Field>
             )}
-            <p className="text-xs text-white/30">
+            <p className="text-xs text-gray-400">
               {mode === "new" ? "You can upload an image after creating the product." : "JPG, PNG or WebP. Max 5 MB."}
             </p>
           </div>
@@ -283,7 +283,7 @@ export default function AdminAccessoryForm({ mode, id, categories, initialData }
               className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
                 form.compatible_with.includes(tag)
                   ? "border-brand bg-brand/20 text-brand"
-                  : "border-white/10 bg-white/[0.04] text-white/50 hover:border-white/25"
+                  : "border-gray-200 bg-gray-100 text-gray-500 hover:border-gray-300"
               }`}
             >
               {tag}
@@ -301,17 +301,17 @@ export default function AdminAccessoryForm({ mode, id, categories, initialData }
           <label key={key} className="flex cursor-pointer items-center gap-2.5">
             <div
               onClick={() => set(key, !form[key as keyof typeof form])}
-              className={`relative h-5 w-9 rounded-full transition ${form[key as keyof typeof form] ? "bg-brand" : "bg-white/10"}`}
+              className={`relative h-5 w-9 rounded-full transition ${form[key as keyof typeof form] ? "bg-brand" : "bg-gray-200"}`}
             >
               <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-all ${form[key as keyof typeof form] ? "left-4" : "left-0.5"}`} />
             </div>
-            <span className="text-sm text-white/70">{label}</span>
+            <span className="text-sm text-gray-700">{label}</span>
           </label>
         ))}
       </div>
 
       {/* Submit */}
-      <div className="flex items-center gap-3 border-t border-white/[0.06] pt-5">
+      <div className="flex items-center gap-3 border-t border-gray-100 pt-5">
         <button
           type="submit"
           disabled={saving}
@@ -320,7 +320,7 @@ export default function AdminAccessoryForm({ mode, id, categories, initialData }
           {saving && <Loader2 className="h-4 w-4 animate-spin" />}
           {mode === "edit" ? "Save changes" : "Create product"}
         </button>
-        <a href="/admin/accessories" className="text-sm text-white/50 hover:text-white">
+        <a href="/admin/accessories" className="text-sm text-gray-500 hover:text-gray-900">
           Cancel
         </a>
       </div>

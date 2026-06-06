@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- MG octagonal badge -->
+  <polygon points="60,10 140,10 190,60 190,140 140,190 60,190 10,140 10,60" fill="#C00000"/>
+  <polygon points="65,20 135,20 180,65 180,135 135,180 65,180 20,135 20,65" fill="none" stroke="#FFD700" stroke-width="4"/>
+  <text x="100" y="128" font-family="Times New Roman,Georgia,serif" font-size="72" font-weight="900" fill="white" text-anchor="middle">MG</text>
+</svg>

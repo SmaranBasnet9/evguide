@@ -134,8 +134,8 @@ export default async function DataInsightsPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-white">Buyer Intent Data Insights</h1>
-        <p className="mt-1 text-sm text-white/50">
+        <h1 className="text-2xl font-bold text-gray-900">Buyer Intent Data Insights</h1>
+        <p className="mt-1 text-sm text-gray-500">
           Anonymised, aggregated buyer intent data — OEM partnership reporting.
           Target: 6 OEM partners at £5k–£25k/mo each.
         </p>
@@ -144,23 +144,23 @@ export default async function DataInsightsPage() {
       {/* Summary stats */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         {[
-          { label: "Total interactions",  value: displayTotal.toLocaleString(), color: "text-white" },
+          { label: "Total interactions",  value: displayTotal.toLocaleString(), color: "text-gray-900" },
           { label: "Last 30 days",        value: last30Days > 0 ? last30Days.toLocaleString() : "395", color: "text-brand" },
-          { label: "Overall conversion",  value: `${displayConversion}%`, color: "text-emerald-400" },
-          { label: "Revenue potential",   value: "£72k/mo", color: "text-amber-400" },
+          { label: "Overall conversion",  value: `${displayConversion}%`, color: "text-emerald-600" },
+          { label: "Revenue potential",   value: "£72k/mo", color: "text-amber-600" },
         ].map((s) => (
-          <div key={s.label} className="rounded-2xl border border-white/8 bg-white/[0.04] px-5 py-4">
+          <div key={s.label} className="rounded-2xl border border-gray-200 bg-white px-5 py-4">
             <p className={`text-2xl font-bold ${s.color}`}>{s.value}</p>
-            <p className="mt-1 text-xs text-white/40">{s.label}</p>
+            <p className="mt-1 text-xs text-gray-400">{s.label}</p>
           </div>
         ))}
       </div>
 
       {/* OEM revenue projection */}
-      <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 px-5 py-4">
-        <p className="text-xs font-semibold uppercase tracking-wider text-amber-400">OEM data partnership revenue projection</p>
-        <p className="mt-2 text-2xl font-bold text-white">£30,000 – £150,000/mo</p>
-        <p className="mt-1 text-xs text-white/50">
+      <div className="rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4">
+        <p className="text-xs font-semibold uppercase tracking-wider text-amber-700">OEM data partnership revenue projection</p>
+        <p className="mt-2 text-2xl font-bold text-gray-900">£30,000 – £150,000/mo</p>
+        <p className="mt-1 text-xs text-gray-600">
           6 target OEM partners (Hyundai, Kia, BYD, Polestar, Tesla, BMW) × £5k–£25k/mo.
           Sell: which models are matched but not converting, drop-off points, regional demand, finance preferences.
         </p>
@@ -169,30 +169,30 @@ export default async function DataInsightsPage() {
       <div className="grid gap-8 lg:grid-cols-2">
         {/* Lead source funnel */}
         <div>
-          <h2 className="mb-4 text-sm font-semibold uppercase tracking-widest text-white/40">Lead sources — all time</h2>
-          <div className="rounded-2xl border border-white/8 bg-white/[0.03] overflow-hidden">
+          <h2 className="mb-4 text-sm font-semibold uppercase tracking-widest text-gray-400">Lead sources — all time</h2>
+          <div className="rounded-2xl border border-gray-200 bg-white overflow-hidden">
             {displaySectors.map((s, i) => {
               const pct = Math.round((s.count / maxSector) * 100);
               const convRate = s.count > 0 ? Math.round((s.resolved / s.count) * 100) : 0;
               return (
                 <div
                   key={s.sector}
-                  className={`px-5 py-4 ${i < displaySectors.length - 1 ? "border-b border-white/[0.06]" : ""}`}
+                  className={`px-5 py-4 ${i < displaySectors.length - 1 ? "border-b border-gray-100" : ""}`}
                 >
                   <div className="flex items-center justify-between mb-2">
-                    <p className="text-sm font-medium text-white">{formatSector(s.sector)}</p>
+                    <p className="text-sm font-medium text-gray-900">{formatSector(s.sector)}</p>
                     <div className="flex items-center gap-3">
-                      <span className="text-xs text-white/40">{convRate}% conv.</span>
-                      <span className="text-sm font-bold text-white">{s.count}</span>
+                      <span className="text-xs text-gray-400">{convRate}% conv.</span>
+                      <span className="text-sm font-bold text-gray-900">{s.count}</span>
                     </div>
                   </div>
-                  <div className="h-1.5 w-full rounded-full bg-white/8 overflow-hidden">
+                  <div className="h-1.5 w-full rounded-full bg-gray-200 overflow-hidden">
                     <div className="h-full rounded-full bg-brand" style={{ width: `${pct}%` }} />
                   </div>
-                  <div className="mt-1.5 flex gap-3 text-[10px] text-white/30">
-                    <span className="text-amber-400">{s.pending} pending</span>
+                  <div className="mt-1.5 flex gap-3 text-[10px] text-gray-400">
+                    <span className="text-amber-600">{s.pending} pending</span>
                     <span className="text-brand">{s.contacted} contacted</span>
-                    <span className="text-white/40">{s.resolved} resolved</span>
+                    <span className="text-gray-400">{s.resolved} resolved</span>
                   </div>
                 </div>
               );
@@ -202,32 +202,32 @@ export default async function DataInsightsPage() {
 
         {/* Model interest */}
         <div>
-          <h2 className="mb-4 text-sm font-semibold uppercase tracking-widest text-white/40">Model interest vs conversion</h2>
-          <div className="rounded-2xl border border-white/8 bg-white/[0.03] overflow-hidden">
+          <h2 className="mb-4 text-sm font-semibold uppercase tracking-widest text-gray-400">Model interest vs conversion</h2>
+          <div className="rounded-2xl border border-gray-200 bg-white overflow-hidden">
             {displayModels.map((m, i) => {
               const interestPct = Math.round((m.total / maxModel) * 100);
               const convPct = m.conversion_rate;
               return (
                 <div
                   key={m.ev_model_label}
-                  className={`px-5 py-3.5 ${i < displayModels.length - 1 ? "border-b border-white/[0.06]" : ""}`}
+                  className={`px-5 py-3.5 ${i < displayModels.length - 1 ? "border-b border-gray-100" : ""}`}
                 >
                   <div className="flex items-center justify-between mb-1.5">
-                    <p className="text-sm text-white truncate max-w-[160px]">{m.ev_model_label}</p>
+                    <p className="text-sm text-gray-900 truncate max-w-[160px]">{m.ev_model_label}</p>
                     <div className="flex items-center gap-3 shrink-0">
-                      <span className={`text-xs font-semibold ${convPct >= 25 ? "text-emerald-400" : convPct >= 15 ? "text-brand" : "text-amber-400"}`}>
+                      <span className={`text-xs font-semibold ${convPct >= 25 ? "text-emerald-600" : convPct >= 15 ? "text-brand" : "text-amber-600"}`}>
                         {convPct}%
                       </span>
-                      <span className="text-xs text-white/40 w-8 text-right">{m.total}</span>
+                      <span className="text-xs text-gray-400 w-8 text-right">{m.total}</span>
                     </div>
                   </div>
                   <div className="flex gap-1 h-1.5">
                     <div className="rounded-l-full bg-brand/40 h-full" style={{ width: `${interestPct}%` }} />
                     <div className="rounded-r-full bg-emerald-500" style={{ width: `${convPct}%` }} />
                   </div>
-                  <div className="flex gap-3 mt-1 text-[10px] text-white/25">
+                  <div className="flex gap-3 mt-1 text-[10px] text-gray-400">
                     <span className="text-brand/60">interest</span>
-                    <span className="text-emerald-400/60">conversion</span>
+                    <span className="text-emerald-600/60">conversion</span>
                   </div>
                 </div>
               );
@@ -238,8 +238,8 @@ export default async function DataInsightsPage() {
 
       {/* Drop-off analysis */}
       <div>
-        <h2 className="mb-4 text-sm font-semibold uppercase tracking-widest text-white/40">Funnel drop-off analysis</h2>
-        <div className="rounded-2xl border border-white/8 bg-white/[0.03] p-5">
+        <h2 className="mb-4 text-sm font-semibold uppercase tracking-widest text-gray-400">Funnel drop-off analysis</h2>
+        <div className="rounded-2xl border border-gray-200 bg-white p-5">
           <div className="flex items-end gap-3 h-32">
             {[
               { label: "Page views",      value: 100, color: "bg-brand/20" },
@@ -249,31 +249,31 @@ export default async function DataInsightsPage() {
               { label: "Submits quote",   value: 11,  color: "bg-brand" },
             ].map(({ label, value, color }) => (
               <div key={label} className="flex flex-1 flex-col items-center gap-2">
-                <p className="text-xs font-bold text-white/60">{value}%</p>
+                <p className="text-xs font-bold text-gray-600">{value}%</p>
                 <div className={`w-full rounded-t-lg ${color}`} style={{ height: `${value}%` }} />
-                <p className="text-[10px] text-white/30 text-center leading-tight">{label}</p>
+                <p className="text-[10px] text-gray-400 text-center leading-tight">{label}</p>
               </div>
             ))}
           </div>
-          <p className="mt-4 text-xs text-white/30">
+          <p className="mt-4 text-xs text-gray-400">
             Biggest drop-off: Match completion → Dealer click (41% → 22%). Opportunity: strengthen vehicle detail page CTAs.
           </p>
         </div>
       </div>
 
       {/* OEM pitch */}
-      <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-5">
-        <p className="text-xs font-semibold uppercase tracking-wider text-amber-400 mb-2">OEM partnership pitch deck data</p>
+      <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
+        <p className="text-xs font-semibold uppercase tracking-wider text-amber-700 mb-2">OEM partnership pitch deck data</p>
         <div className="grid sm:grid-cols-3 gap-4">
           {[
             { metric: "Intent data depth",  value: "17 signals",   sub: "Per buyer interaction" },
             { metric: "Geographic coverage",value: "UK-wide",       sub: "Postcode-level demand" },
             { metric: "Data freshness",      value: "Real-time",    sub: "Streamed to OEM dashboard" },
           ].map((d) => (
-            <div key={d.metric} className="rounded-xl border border-white/8 bg-white/[0.04] p-4">
-              <p className="text-[10px] uppercase tracking-wider text-white/40">{d.metric}</p>
-              <p className="mt-1 text-lg font-bold text-white">{d.value}</p>
-              <p className="text-xs text-white/40">{d.sub}</p>
+            <div key={d.metric} className="rounded-xl border border-amber-200 bg-white p-4">
+              <p className="text-[10px] uppercase tracking-wider text-gray-400">{d.metric}</p>
+              <p className="mt-1 text-lg font-bold text-gray-900">{d.value}</p>
+              <p className="text-xs text-gray-500">{d.sub}</p>
             </div>
           ))}
         </div>

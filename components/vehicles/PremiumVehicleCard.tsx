@@ -58,7 +58,7 @@ export default function PremiumVehicleCard({ vehicle }: PremiumVehicleCardProps)
 
         {/* Image — always visible, click reveals description */}
         <div
-          className="relative aspect-[16/10] w-full cursor-pointer overflow-hidden"
+          className="relative aspect-[16/10] w-full cursor-pointer overflow-hidden bg-white"
           onClick={() => setDescOpen((v) => !v)}
         >
           <Image
@@ -69,9 +69,8 @@ export default function PremiumVehicleCard({ vehicle }: PremiumVehicleCardProps)
             alt={`${vehicle.brand} ${vehicle.model}`}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
-            className={`object-cover transition-transform duration-500 ${descOpen ? "scale-105" : "scale-100 group-hover:scale-105"}`}
+            className={`object-contain p-3 transition-transform duration-500 ${descOpen ? "scale-105" : "scale-100 group-hover:scale-105"}`}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
 
           {/* Deal badge — top left */}
           <div className="absolute left-3 top-3 z-10">

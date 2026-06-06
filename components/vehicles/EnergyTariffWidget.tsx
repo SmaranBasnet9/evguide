@@ -72,38 +72,38 @@ export default function EnergyTariffWidget({ batteryKWh, rangeKm }: Props) {
   const saving         = Math.round(standardAnnual - bestAnnual);
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-sm">
+    <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
       <button
         onClick={() => setOpen(!open)}
-        className="flex w-full items-center justify-between px-5 py-4 text-left transition-colors hover:bg-white/[0.03]"
+        className="flex w-full items-center justify-between px-5 py-4 text-left transition-colors hover:bg-gray-50"
         aria-expanded={open}
       >
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-teal-500/20 bg-teal-500/10">
-            <Zap className="h-4 w-4 text-teal-400" />
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-teal-200 bg-teal-50">
+            <Zap className="h-4 w-4 text-teal-700" />
           </div>
           <div>
-            <p className="font-semibold text-white">Energy tariff comparison</p>
-            <p className="text-sm text-white/50">
+            <p className="font-semibold text-gray-900">Energy tariff comparison</p>
+            <p className="text-sm text-gray-600">
               Right tariff saves up to{" "}
-              <span className="font-semibold text-teal-400">£{saving}/yr</span>
+              <span className="font-semibold text-teal-700">£{saving}/yr</span>
             </p>
           </div>
         </div>
         {open
-          ? <ChevronUp className="h-4 w-4 shrink-0 text-white/30" />
-          : <ChevronDown className="h-4 w-4 shrink-0 text-white/30" />}
+          ? <ChevronUp className="h-4 w-4 shrink-0 text-gray-400" />
+          : <ChevronDown className="h-4 w-4 shrink-0 text-gray-400" />}
       </button>
 
       {open && (
-        <div className="border-t border-white/[0.06] px-5 pb-5 pt-4 space-y-5">
+        <div className="border-t border-gray-100 px-5 pb-5 pt-4 space-y-5">
 
           {/* Postcode */}
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <MapPin className="h-3.5 w-3.5 text-white/40" />
-              <p className="text-sm font-medium text-white/70">Your postcode (optional)</p>
-              {region && <span className="text-xs text-teal-400">{region}</span>}
+              <MapPin className="h-3.5 w-3.5 text-gray-400" />
+              <p className="text-sm font-medium text-gray-700">Your postcode (optional)</p>
+              {region && <span className="text-xs text-teal-700">{region}</span>}
             </div>
             <input
               type="text"
@@ -115,23 +115,23 @@ export default function EnergyTariffWidget({ batteryKWh, rangeKm }: Props) {
                 const detected = detectRegion(e.target.value);
                 setRegion(detected);
               }}
-              className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2.5 text-sm text-white placeholder-white/30 focus:border-teal-400/40 focus:outline-none focus:ring-2 focus:ring-teal-400/20"
+              className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-teal-400/40 focus:outline-none focus:ring-2 focus:ring-teal-400/20"
             />
-            <p className="mt-1 text-[11px] text-white/25">Rates adjusted for your region&apos;s grid pricing</p>
+            <p className="mt-1 text-[11px] text-gray-400">Rates adjusted for your region&apos;s grid pricing</p>
           </div>
 
           {/* Mileage slider */}
           <div>
             <div className="mb-2 flex items-center justify-between">
-              <p className="text-sm font-medium text-white/70">Annual mileage</p>
-              <p className="text-sm font-bold text-white">{miles.toLocaleString()} mi</p>
+              <p className="text-sm font-medium text-gray-700">Annual mileage</p>
+              <p className="text-sm font-bold text-gray-900">{miles.toLocaleString()} mi</p>
             </div>
             <input
               type="range" min={3000} max={20000} step={500} value={miles}
               onChange={(e) => setMiles(Number(e.target.value))}
-              className="h-2 w-full rounded-full accent-teal-400"
+              className="h-2 w-full rounded-full accent-teal-600"
             />
-            <div className="mt-1 flex justify-between text-xs text-white/30">
+            <div className="mt-1 flex justify-between text-xs text-gray-400">
               <span>3,000</span><span>20,000</span>
             </div>
           </div>
@@ -148,26 +148,26 @@ export default function EnergyTariffWidget({ batteryKWh, rangeKm }: Props) {
                   key={t.name}
                   className={`flex items-center justify-between rounded-xl border px-4 py-3 ${
                     t.best
-                      ? "border-teal-500/25 bg-teal-500/8"
-                      : "border-white/[0.06] bg-white/[0.02]"
+                      ? "border-teal-200 bg-teal-50"
+                      : "border-gray-100 bg-gray-50"
                   }`}
                 >
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <p className="text-sm font-semibold text-white">{t.name}</p>
+                      <p className="text-sm font-semibold text-gray-900">{t.name}</p>
                       {t.best && (
-                        <span className="rounded-full border border-teal-500/20 bg-teal-500/15 px-2 py-0.5 text-[10px] font-semibold text-teal-400">
+                        <span className="rounded-full border border-teal-200 bg-teal-50 px-2 py-0.5 text-[10px] font-semibold text-teal-700">
                           Best deal
                         </span>
                       )}
                     </div>
-                    <p className="text-xs text-white/40">{t.ratePence}p/kWh · {t.note}</p>
+                    <p className="text-xs text-gray-500">{t.ratePence}p/kWh · {t.note}</p>
                   </div>
                   <div className="ml-4 shrink-0 text-right">
-                    <p className="text-sm font-bold text-white">£{Math.round(annual)}/yr</p>
-                    <p className="text-xs text-white/40">{(cpm * 100).toFixed(1)}p/mi</p>
+                    <p className="text-sm font-bold text-gray-900">£{Math.round(annual)}/yr</p>
+                    <p className="text-xs text-gray-500">{(cpm * 100).toFixed(1)}p/mi</p>
                     {tariffSaving > 0 && (
-                      <p className="text-xs font-semibold text-teal-400">Save £{tariffSaving}</p>
+                      <p className="text-xs font-semibold text-teal-700">Save £{tariffSaving}</p>
                     )}
                   </div>
                 </div>
@@ -176,24 +176,24 @@ export default function EnergyTariffWidget({ batteryKWh, rangeKm }: Props) {
           </div>
 
           {/* CTA */}
-          <div className="rounded-xl border border-teal-500/20 bg-teal-500/5 px-4 py-4">
-            <p className="text-sm font-semibold text-white">
+          <div className="rounded-xl border border-teal-200 bg-teal-50 px-4 py-4">
+            <p className="text-sm font-semibold text-gray-900">
               Switch to Intelligent Octopus Go — save £{saving}/yr
             </p>
-            <p className="mt-1 text-xs text-white/50">
+            <p className="mt-1 text-xs text-gray-600">
               Smart overnight charging finds cheapest rates automatically. Works with any home wallbox.
             </p>
             <a
               href="https://octopus.energy/smart/intelligent-octopus-go/"
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-3 inline-flex items-center gap-1.5 rounded-xl border border-teal-500/20 bg-teal-500/10 px-4 py-2 text-xs font-semibold text-teal-400 transition hover:bg-teal-500/20"
+              className="mt-3 inline-flex items-center gap-1.5 rounded-xl border border-teal-200 bg-white px-4 py-2 text-xs font-semibold text-teal-700 transition hover:bg-teal-100"
             >
               View tariff <ExternalLink className="h-3 w-3" />
             </a>
           </div>
 
-          <p className="text-[10px] text-white/25">
+          <p className="text-[10px] text-gray-400">
             Estimates based on {Math.round(batteryKWh)} kWh battery, {Math.round(rangeKm * 0.621371 * 0.82)} mi real-world range,{" "}
             {miles.toLocaleString()} mi/yr. Rates vary. Check with your supplier.
           </p>

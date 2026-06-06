@@ -28,17 +28,17 @@ export default function BlogCTASection({
       : "from-emerald-400/18 via-emerald-400/8 to-transparent";
   const primaryClass =
     accent === "cyan"
-      ? "border-cyan-300/25 bg-cyan-400/12 text-cyan-100 hover:border-cyan-200/35 hover:bg-cyan-400/18 hover:shadow-[0_0_28px_rgba(34,211,238,0.18)]"
-      : "border-emerald-400/25 bg-emerald-400/12 text-emerald-100 hover:border-emerald-300/35 hover:bg-emerald-400/18 hover:shadow-[0_0_28px_rgba(16,185,129,0.18)]";
+      ? "border-cyan-200 bg-cyan-50 text-cyan-700 hover:bg-cyan-100"
+      : "border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100";
 
   return (
-    <section className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04] p-8 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_24px_80px_rgba(0,0,0,0.45)] backdrop-blur-xl sm:p-10">
+    <section className="relative overflow-hidden rounded-[2rem] border border-gray-200 bg-white p-8 shadow-sm sm:p-10">
       <div className={`absolute inset-0 bg-gradient-to-r ${accentClass}`} />
       <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
         <div className="max-w-2xl">
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-white/50">{eyebrow}</p>
-          <h3 className="mt-4 text-3xl font-semibold tracking-tight text-white sm:text-4xl">{title}</h3>
-          <p className="mt-4 max-w-xl text-base leading-8 text-white/50">{text}</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-black">{eyebrow}</p>
+          <h3 className="mt-4 text-3xl font-semibold tracking-tight text-black sm:text-4xl">{title}</h3>
+          <p className="mt-4 max-w-xl text-base leading-8 text-black">{text}</p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
@@ -52,7 +52,7 @@ export default function BlogCTASection({
           {secondaryLabel && secondaryHref ? (
             <Link
               href={secondaryHref}
-              className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-5 py-3 text-sm font-semibold text-white/70 transition duration-300 hover:border-white/20 hover:bg-white/[0.08] hover:text-white"
+              className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-5 py-3 text-sm font-semibold text-black transition duration-300 hover:border-brand/30 hover:bg-brand/10"
             >
               {secondaryLabel}
             </Link>

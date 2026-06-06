@@ -6,8 +6,8 @@ import Link from "next/link";
 import { ArrowLeft, CheckCircle } from "lucide-react";
 
 const inputCls =
-  "w-full rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 text-sm text-white placeholder:text-white/30 focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20 transition";
-const labelCls = "mb-2 block text-sm font-medium text-white/70";
+  "w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20 transition";
+const labelCls = "mb-2 block text-sm font-medium text-gray-700";
 
 export default function AdminCreateDealerPage() {
   const router = useRouter();
@@ -57,20 +57,20 @@ export default function AdminCreateDealerPage() {
   if (created) {
     return (
       <div className="mx-auto max-w-lg">
-        <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-10 text-center">
+        <div className="rounded-2xl border border-gray-200 bg-white p-10 text-center">
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-brand/30 bg-brand/10">
             <CheckCircle className="h-8 w-8 text-brand" />
           </div>
-          <h2 className="mt-5 text-2xl font-bold text-white">Dealer created</h2>
-          <p className="mt-3 text-sm leading-7 text-white/60">
-            <span className="font-semibold text-white">{created.companyName}</span> has been created and their
+          <h2 className="mt-5 text-2xl font-bold text-gray-900">Dealer created</h2>
+          <p className="mt-3 text-sm leading-7 text-gray-600">
+            <span className="font-semibold text-gray-900">{created.companyName}</span> has been created and their
             account is active. They can log in at{" "}
             <span className="text-brand">{created.email}</span> with the password you set.
           </p>
           <div className="mt-8 flex justify-center gap-3">
             <Link
               href="/admin/dealers"
-              className="rounded-xl border border-white/10 bg-white/[0.04] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-white/[0.08]"
+              className="rounded-xl border border-gray-200 bg-gray-50 px-5 py-2.5 text-sm font-semibold text-gray-900 transition hover:bg-gray-100"
             >
               All Dealers
             </Link>
@@ -91,22 +91,22 @@ export default function AdminCreateDealerPage() {
     <div className="mx-auto max-w-3xl">
       <Link
         href="/admin/dealers"
-        className="mb-6 inline-flex items-center gap-2 text-sm text-white/50 transition hover:text-white"
+        className="mb-6 inline-flex items-center gap-2 text-sm text-gray-500 transition hover:text-gray-900"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to dealers
       </Link>
 
       <p className="text-sm font-semibold text-brand">Dealer Management</p>
-      <h1 className="mt-1 text-3xl font-bold text-white">Create Dealer</h1>
-      <p className="mt-1 text-white/50">
+      <h1 className="mt-1 text-3xl font-bold text-gray-900">Create Dealer</h1>
+      <p className="mt-1 text-gray-500">
         Create a dealer account. The dealer can immediately log in and start adding vehicles for your approval.
       </p>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-8">
         {/* Business info */}
-        <section className="rounded-2xl border border-white/10 bg-white/[0.02] p-6">
-          <h2 className="mb-5 text-sm font-semibold uppercase tracking-widest text-white/40">
+        <section className="rounded-2xl border border-gray-200 bg-white p-6">
+          <h2 className="mb-5 text-sm font-semibold uppercase tracking-widest text-gray-400">
             Business Information
           </h2>
           <div className="grid gap-5 sm:grid-cols-2">
@@ -150,8 +150,8 @@ export default function AdminCreateDealerPage() {
         </section>
 
         {/* Login credentials */}
-        <section className="rounded-2xl border border-white/10 bg-white/[0.02] p-6">
-          <h2 className="mb-5 text-sm font-semibold uppercase tracking-widest text-white/40">
+        <section className="rounded-2xl border border-gray-200 bg-white p-6">
+          <h2 className="mb-5 text-sm font-semibold uppercase tracking-widest text-gray-400">
             Login Credentials
           </h2>
           <div className="grid gap-5 sm:grid-cols-2">
@@ -170,7 +170,7 @@ export default function AdminCreateDealerPage() {
                 className={inputCls}
                 placeholder="Min. 8 characters — share this with the dealer"
               />
-              <p className="mt-2 text-xs text-white/40">
+              <p className="mt-2 text-xs text-gray-400">
                 Share these credentials with the dealer. They can change their password from their profile.
               </p>
             </div>
@@ -178,7 +178,7 @@ export default function AdminCreateDealerPage() {
         </section>
 
         {error ? (
-          <p className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+          <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
             {error}
           </p>
         ) : null}
@@ -193,7 +193,7 @@ export default function AdminCreateDealerPage() {
           </button>
           <Link
             href="/admin/dealers"
-            className="rounded-2xl border border-white/10 px-6 py-3 text-sm font-semibold text-white/60 transition hover:text-white"
+            className="rounded-2xl border border-gray-200 px-6 py-3 text-sm font-semibold text-gray-500 transition hover:text-gray-900"
           >
             Cancel
           </Link>

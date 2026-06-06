@@ -1,0 +1,17 @@
+node_modules
+.next
+.next-build
+.next-local
+.next-local-build
+.next-prod
+out
+build
+coverage
+.git
+.claude
+supabase/.temp
+public/uploads/exchange
+*.log
+*.tsbuildinfo
+.env*
+!.env.example

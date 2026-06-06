@@ -98,9 +98,9 @@ export default async function AdminLayout({ children }: AdminLayoutProps) {
   };
 
   return (
-    <div className="flex min-h-screen bg-surface-panel text-white">
+    <div className="flex min-h-screen bg-gray-50 text-gray-900">
       <AdminSidebar role={role!} department={department} pendingCounts={pendingCounts} />
-      <main className="flex-1 overflow-y-auto p-8">
+      <main className="flex-1 overflow-y-auto p-4 pt-[calc(3.5rem+1.25rem)] md:p-8 lg:p-8 lg:pt-8">
         {children}
       </main>
     </div>

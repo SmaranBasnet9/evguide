@@ -102,14 +102,14 @@ export default function AdminFeedbackModerationTable({ rows }: Props) {
   }
 
   return (
-    <div className="mt-8 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] shadow-sm">
+    <div className="mt-8 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
       {rows.length === 0 ? (
-        <p className="px-6 py-10 text-sm text-white/50">No feedback submitted yet.</p>
+        <p className="px-6 py-10 text-sm text-gray-500">No feedback submitted yet.</p>
       ) : (
         <>
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.06] bg-white/[0.03] px-4 py-3">
-            <p className="text-sm text-white/60">
-              Selected: <span className="font-semibold text-white">{selectedIds.length}</span>
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 bg-gray-50 px-4 py-3">
+            <p className="text-sm text-gray-600">
+              Selected: <span className="font-semibold text-gray-900">{selectedIds.length}</span>
             </p>
             <div className="flex flex-wrap items-center gap-2">
               <button
@@ -141,7 +141,7 @@ export default function AdminFeedbackModerationTable({ rows }: Props) {
 
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-white/[0.06] bg-white/[0.03] text-left">
+              <tr className="border-b border-gray-100 bg-gray-50 text-left">
                 <th className="px-4 py-3">
                   <input
                     type="checkbox"
@@ -150,17 +150,17 @@ export default function AdminFeedbackModerationTable({ rows }: Props) {
                     aria-label="Select all feedback"
                   />
                 </th>
-                <th className="px-6 py-3 font-semibold text-white/60">User</th>
-                <th className="px-6 py-3 font-semibold text-white/60">EV</th>
-                <th className="px-6 py-3 font-semibold text-white/60">Rating</th>
-                <th className="px-6 py-3 font-semibold text-white/60">Feedback</th>
-                <th className="px-6 py-3 font-semibold text-white/60">Status</th>
-                <th className="px-6 py-3 font-semibold text-white/60"></th>
+                <th className="px-6 py-3 font-semibold text-gray-500">User</th>
+                <th className="px-6 py-3 font-semibold text-gray-500">EV</th>
+                <th className="px-6 py-3 font-semibold text-gray-500">Rating</th>
+                <th className="px-6 py-3 font-semibold text-gray-500">Feedback</th>
+                <th className="px-6 py-3 font-semibold text-gray-500">Status</th>
+                <th className="px-6 py-3 font-semibold text-gray-500"></th>
               </tr>
             </thead>
             <tbody>
               {rows.map((row) => (
-                <tr key={row.id} className="border-b border-white/[0.06] align-top last:border-b-0">
+                <tr key={row.id} className="border-b border-gray-100 align-top last:border-b-0">
                   <td className="px-4 py-4">
                     <input
                       type="checkbox"
@@ -169,20 +169,20 @@ export default function AdminFeedbackModerationTable({ rows }: Props) {
                       aria-label={`Select feedback ${row.id}`}
                     />
                   </td>
-                  <td className="px-6 py-4 text-white/80">
-                    <p className="font-medium text-white">{row.owner_name?.trim() || "Unknown"}</p>
-                    <p className="text-xs text-white/50">{row.email}</p>
-                    <p className="mt-1 text-xs text-white/40">{new Date(row.created_at).toLocaleString()}</p>
+                  <td className="px-6 py-4 text-gray-700">
+                    <p className="font-medium text-gray-900">{row.owner_name?.trim() || "Unknown"}</p>
+                    <p className="text-xs text-gray-500">{row.email}</p>
+                    <p className="mt-1 text-xs text-gray-400">{new Date(row.created_at).toLocaleString()}</p>
                   </td>
-                  <td className="px-6 py-4 text-white/80">{row.evLabel}</td>
+                  <td className="px-6 py-4 text-gray-700">{row.evLabel}</td>
                   <td className="px-6 py-4 text-amber-700">{row.satisfaction_rating}/5</td>
-                  <td className="px-6 py-4 text-white/80">{row.feedback}</td>
+                  <td className="px-6 py-4 text-gray-700">{row.feedback}</td>
                   <td className="px-6 py-4">
                     <span
                       className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${
                         row.is_approved
                           ? "bg-emerald-100 text-emerald-700"
-                          : "bg-white/[0.05] text-white/60"
+                          : "bg-gray-100 text-gray-600"
                       }`}
                     >
                       {row.is_approved ? "Approved" : "Pending"}

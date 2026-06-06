@@ -58,7 +58,7 @@ export default function VehicleCard({ vehicle, priority = false }: Props) {
     <article className="group flex flex-col overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-slate-200/60">
       {/* Image */}
       <Link href={`/cars/${vehicle.id}`} onClick={onView} className="block shrink-0">
-        <div className="relative aspect-[16/10] overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200">
+        <div className="relative aspect-[16/10] overflow-hidden bg-white">
           <Image
             src={vehicle.heroImage}
             alt={`${vehicle.brand} ${vehicle.model}`}
@@ -66,7 +66,7 @@ export default function VehicleCard({ vehicle, priority = false }: Props) {
             unoptimized
             priority={priority}
             sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            className="object-contain transition-transform duration-500 group-hover:scale-105 p-3"
           />
           {/* Overlay badges */}
           <div className="absolute inset-x-0 top-0 flex items-start justify-between p-3">

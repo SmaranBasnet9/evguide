@@ -50,9 +50,9 @@ function formatGBP(n: number) {
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  active: "text-emerald-400 bg-emerald-500/8 border-emerald-500/20",
-  pending: "text-amber-400 bg-amber-500/8 border-amber-500/20",
-  sold: "text-white/40 bg-white/5 border-white/10",
+  active: "text-emerald-700 bg-emerald-50 border-emerald-200",
+  pending: "text-amber-700 bg-amber-50 border-amber-200",
+  sold: "text-gray-500 bg-gray-100 border-gray-200",
 };
 
 export default async function UsedListingsAdminPage() {
@@ -70,8 +70,8 @@ export default async function UsedListingsAdminPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-white">Used EV Listings</h1>
-        <p className="mt-1 text-sm text-white/50">
+        <h1 className="text-2xl font-bold text-gray-900">Used EV Listings</h1>
+        <p className="mt-1 text-sm text-gray-500">
           Manage the used EV marketplace. Review, approve, and publish listings.
         </p>
       </div>
@@ -79,14 +79,14 @@ export default async function UsedListingsAdminPage() {
       {/* Stats */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         {[
-          { label: "Total listings",  value: counts.total,   color: "text-white" },
-          { label: "Live",            value: counts.active,  color: "text-emerald-400" },
-          { label: "Pending review",  value: counts.pending, color: "text-amber-400" },
-          { label: "Sold",            value: counts.sold,    color: "text-white/50" },
+          { label: "Total listings",  value: counts.total,   color: "text-gray-900" },
+          { label: "Live",            value: counts.active,  color: "text-emerald-600" },
+          { label: "Pending review",  value: counts.pending, color: "text-amber-600" },
+          { label: "Sold",            value: counts.sold,    color: "text-gray-500" },
         ].map((s) => (
-          <div key={s.label} className="rounded-2xl border border-white/8 bg-white/[0.04] px-5 py-4">
+          <div key={s.label} className="rounded-2xl border border-gray-200 bg-white px-5 py-4">
             <p className={`text-2xl font-bold ${s.color}`}>{s.value}</p>
-            <p className="mt-1 text-xs text-white/40">{s.label}</p>
+            <p className="mt-1 text-xs text-gray-400">{s.label}</p>
           </div>
         ))}
       </div>
@@ -94,45 +94,45 @@ export default async function UsedListingsAdminPage() {
       {/* Revenue projection */}
       <div className="rounded-2xl border border-brand/20 bg-brand/5 px-5 py-4">
         <p className="text-xs font-semibold uppercase tracking-wider text-brand">Live inventory value</p>
-        <p className="mt-2 text-2xl font-bold text-white">{formatGBP(totalValue)}</p>
-        <p className="mt-1 text-xs text-white/50">
+        <p className="mt-2 text-2xl font-bold text-gray-900">{formatGBP(totalValue)}</p>
+        <p className="mt-1 text-xs text-gray-500">
           {counts.active} live listings · Listing fees: £{(counts.active * 25).toLocaleString()}–£{(counts.active * 75).toLocaleString()} earned
         </p>
       </div>
 
       {/* Table */}
-      <div className="overflow-hidden rounded-2xl border border-white/8">
+      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-white/8 bg-white/[0.03]">
+              <tr className="border-b border-gray-100 bg-gray-50">
                 {["Vehicle", "Price", "Mileage", "Location", "Seller", "Status", "Listed"].map((h) => (
-                  <th key={h} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-white/30">
+                  <th key={h} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
                     {h}
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/[0.05]">
+            <tbody className="divide-y divide-gray-100">
               {listings.map((l) => (
-                <tr key={l.id} className="transition hover:bg-white/[0.02]">
+                <tr key={l.id} className="transition hover:bg-gray-50">
                   <td className="px-4 py-3">
-                    <p className="font-semibold text-white">{l.year} {l.brand} {l.model}</p>
-                    <p className="text-xs text-white/40 capitalize">{l.seller_type}</p>
+                    <p className="font-semibold text-gray-900">{l.year} {l.brand} {l.model}</p>
+                    <p className="text-xs text-gray-400 capitalize">{l.seller_type}</p>
                   </td>
                   <td className="px-4 py-3 font-semibold text-brand">{formatGBP(l.price)}</td>
-                  <td className="px-4 py-3 text-white/70">{l.mileage.toLocaleString()} mi</td>
-                  <td className="px-4 py-3 text-white/70">{l.location}</td>
+                  <td className="px-4 py-3 text-gray-600">{l.mileage.toLocaleString()} mi</td>
+                  <td className="px-4 py-3 text-gray-600">{l.location}</td>
                   <td className="px-4 py-3">
-                    <p className="text-white/70">{l.seller_name}</p>
-                    <p className="text-xs text-white/30">{l.contact_email}</p>
+                    <p className="text-gray-700">{l.seller_name}</p>
+                    <p className="text-xs text-gray-400">{l.contact_email}</p>
                   </td>
                   <td className="px-4 py-3">
                     <span className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold capitalize ${STATUS_COLORS[l.status] ?? STATUS_COLORS.pending}`}>
                       {l.status}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-xs text-white/40">
+                  <td className="px-4 py-3 text-xs text-gray-400">
                     {new Date(l.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}
                   </td>
                 </tr>
