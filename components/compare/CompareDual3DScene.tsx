@@ -9,14 +9,12 @@ import * as THREE from "three";
 function StyledCar({
   color,
   position,
-  yOffset = 0,
   facingSign = 1,       // 1 = slight left-turn, -1 = slight right-turn
   floatSpeed = 0.5,
   floatOffset = 0,
 }: {
   color: string;
   position: [number, number, number];
-  yOffset?: number;
   facingSign?: number;
   floatSpeed?: number;
   floatOffset?: number;

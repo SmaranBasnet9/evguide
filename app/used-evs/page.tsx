@@ -42,6 +42,7 @@ async function getDealerListings(): Promise<DealerListing[]> {
       .from("dealer_listings")
       .select("id, brand, model, year, price, mileage, colour, images, range_km, battery_kwh, location, body_type, dealer_id")
       .eq("status", "live")
+      .eq("condition", "used")
       .order("created_at", { ascending: false })
       .limit(50);
     if (error) return [];

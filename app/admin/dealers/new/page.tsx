@@ -1,7 +1,6 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, CheckCircle } from "lucide-react";
 
@@ -10,7 +9,6 @@ const inputCls =
 const labelCls = "mb-2 block text-sm font-medium text-gray-700";
 
 export default function AdminCreateDealerPage() {
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState("");
   const [created, setCreated] = useState<{ companyName: string; email: string } | null>(null);
@@ -24,6 +22,9 @@ export default function AdminCreateDealerPage() {
     addressLine2: "",
     city:         "",
     postcode:     "",
+    companyRegistrationNumber: "",
+    vatNumber:    "",
+    tradingName:  "",
     fcaFrn:       "",
     website:      "",
     password:     "",
@@ -137,6 +138,18 @@ export default function AdminCreateDealerPage() {
             <div>
               <label className={labelCls}>Postcode *</label>
               <input type="text" value={form.postcode} onChange={set("postcode")} required className={inputCls} placeholder="SW1A 1AA" />
+            </div>
+            <div className="sm:col-span-2">
+              <label className={labelCls}>Company registration number</label>
+              <input type="text" value={form.companyRegistrationNumber} onChange={set("companyRegistrationNumber")} className={inputCls} placeholder="12345678" />
+            </div>
+            <div>
+              <label className={labelCls}>Trading name</label>
+              <input type="text" value={form.tradingName} onChange={set("tradingName")} className={inputCls} placeholder="EV Motors Manchester" />
+            </div>
+            <div>
+              <label className={labelCls}>VAT number</label>
+              <input type="text" value={form.vatNumber} onChange={set("vatNumber")} className={inputCls} placeholder="GB123456789" />
             </div>
             <div>
               <label className={labelCls}>FCA/FRN number</label>

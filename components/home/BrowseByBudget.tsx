@@ -86,7 +86,7 @@ export default function BrowseByBudget() {
           className="mt-8 flex gap-3 overflow-x-auto pb-2 sm:grid sm:grid-cols-3 sm:overflow-visible lg:grid-cols-6"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
-          {BUDGETS.map((b, i) => (
+          {BUDGETS.map((b) => (
             <div key={b.label} className="shrink-0 w-[155px] sm:w-auto">
               <Link
                 href={b.href}

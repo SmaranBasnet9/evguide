@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 export default function Footer() {
   const supabase = useMemo(() => createClient(), []);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isDealer, setIsDealer] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -14,20 +15,38 @@ export default function Footer() {
     async function loadAuth() {
       try {
         const { data } = await supabase.auth.getUser();
-        if (mounted) {
-          setIsLoggedIn(Boolean(data.user));
+        if (!mounted) return;
+        const user = data.user;
+        setIsLoggedIn(Boolean(user));
+        if (user) {
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("role, dealer_status")
+            .eq("id", user.id)
+            .single();
+          if (mounted) {
+            setIsDealer(profile?.role === "dealer" || profile?.dealer_status === "approved");
+          }
         }
       } catch {
-        if (mounted) {
-          setIsLoggedIn(false);
-        }
+        if (mounted) setIsLoggedIn(false);
       }
     }
 
     loadAuth();
 
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: sub } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (!mounted) return;
       setIsLoggedIn(Boolean(session?.user));
+      if (!session?.user) { setIsDealer(false); return; }
+      try {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("role, dealer_status")
+          .eq("id", session.user.id)
+          .single();
+        if (mounted) setIsDealer(profile?.role === "dealer" || profile?.dealer_status === "approved");
+      } catch { if (mounted) setIsDealer(false); }
     });
 
     return () => {
@@ -49,8 +68,18 @@ export default function Footer() {
           <Link href="/compare">Compare</Link>
           <Link href="/finance">Finance</Link>
           <Link href="/appointment">Reviews</Link>
-          {!isLoggedIn ? <Link href="/login">Sign In</Link> : null}
-          {!isLoggedIn ? <Link href="/signup">Sign Up</Link> : null}
+          {isDealer && (
+            <Link href="/dealer" className="font-semibold text-blue-600 hover:text-blue-700">
+              Dealer Portal
+            </Link>
+          )}
+          {!isLoggedIn && (
+            <Link href="/dealer-login" className="font-semibold text-blue-600 hover:text-blue-700">
+              Dealer Login
+            </Link>
+          )}
+          {!isLoggedIn && <Link href="/login">Sign In</Link>}
+          {!isLoggedIn && <Link href="/signup">Sign Up</Link>}
         </div>
 
         <p className="mt-6 text-xs text-slate-400">

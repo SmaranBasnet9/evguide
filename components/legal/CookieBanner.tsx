@@ -149,13 +149,17 @@ export default function CookieBanner() {
   const [isDismissed, setIsDismissed] = useState(() => hasDismissedCookieBanner());
   const [visible, setVisible] = useState(false);
 
-  // Sync drafts when settings panel opens
-  useEffect(() => {
+  // Sync drafts when settings panel opens — adjust state during render
+  // (react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes)
+  // rather than in an effect, to avoid an extra cascading render.
+  const [prevSettingsOpen, setPrevSettingsOpen] = useState(isSettingsOpen);
+  if (isSettingsOpen !== prevSettingsOpen) {
+    setPrevSettingsOpen(isSettingsOpen);
     if (isSettingsOpen) {
       setDraftAnalytics(preferences.analytics);
       setDraftPersonalization(preferences.personalization);
     }
-  }, [isSettingsOpen, preferences.analytics, preferences.personalization]);
+  }
 
   // Re-allow decision after settings re-open
   useEffect(() => {

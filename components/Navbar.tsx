@@ -16,6 +16,7 @@ export default function Navbar() {
   const supabase = useMemo(() => createClient(), []);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isDealer, setIsDealer] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -34,7 +35,19 @@ export default function Navbar() {
     async function loadAuth() {
       try {
         const { data } = await supabase.auth.getUser();
-        if (mounted) setIsLoggedIn(Boolean(data.user));
+        if (!mounted) return;
+        const user = data.user;
+        setIsLoggedIn(Boolean(user));
+        if (user) {
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("role, dealer_status")
+            .eq("id", user.id)
+            .single();
+          if (mounted) {
+            setIsDealer(profile?.role === "dealer" || profile?.dealer_status === "approved");
+          }
+        }
       } catch {
         if (mounted) setIsLoggedIn(false);
       } finally {
@@ -44,9 +57,21 @@ export default function Navbar() {
 
     loadAuth();
 
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: sub } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setIsLoggedIn(Boolean(session?.user));
       setAuthLoading(false);
+      if (!session?.user) {
+        setIsDealer(false);
+        return;
+      }
+      try {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("role, dealer_status")
+          .eq("id", session.user.id)
+          .single();
+        setIsDealer(profile?.role === "dealer" || profile?.dealer_status === "approved");
+      } catch { setIsDealer(false); }
     });
 
     return () => {
@@ -140,6 +165,15 @@ export default function Navbar() {
               Check EMI
             </Link>
 
+            {!authLoading && isLoggedIn && isDealer && (
+              <Link
+                href="/dealer"
+                className="inline-flex h-10 items-center rounded-xl border border-blue-200 bg-blue-50 px-4 text-sm font-semibold text-blue-700 shadow-sm transition-all duration-200 hover:-translate-y-px hover:bg-blue-100 hover:shadow-md active:translate-y-0"
+              >
+                Dealer Portal
+              </Link>
+            )}
+
             {!authLoading && isLoggedIn ? (
               <div className="relative" ref={profileRef}>
                 <button
@@ -148,7 +182,6 @@ export default function Navbar() {
                   onClick={() => setProfileOpen((o) => !o)}
                   className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 text-sm font-semibold text-white transition-all duration-200 hover:bg-slate-700 hover:shadow-md"
                 >
-                  {/* User silhouette icon */}
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
@@ -166,6 +199,15 @@ export default function Navbar() {
 
                 {profileOpen && (
                   <div className="absolute right-0 mt-2 w-48 rounded-2xl border border-slate-200 bg-white py-1.5 shadow-xl shadow-slate-200/60">
+                    {isDealer && (
+                      <Link
+                        href="/dealer"
+                        onClick={() => setProfileOpen(false)}
+                        className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-blue-600 transition-colors hover:bg-blue-50"
+                      >
+                        Dealer Portal
+                      </Link>
+                    )}
                     <div className="border-t border-slate-100" />
                     <button
                       type="button"
@@ -189,6 +231,15 @@ export default function Navbar() {
 
           {/* Mobile: Sign up/out + hamburger */}
           <div className="flex items-center gap-2 md:hidden">
+            {!authLoading && isLoggedIn && isDealer && (
+              <Link
+                href="/dealer"
+                onClick={() => setMenuOpen(false)}
+                className="inline-flex h-9 items-center rounded-xl border border-blue-200 bg-blue-50 px-3.5 text-sm font-semibold text-blue-700"
+              >
+                Dealer
+              </Link>
+            )}
             {!authLoading && !isLoggedIn ? (
               <Link
                 href="/signup"

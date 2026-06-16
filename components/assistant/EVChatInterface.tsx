@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -45,6 +46,27 @@ interface ChatMessage {
 
 const STORAGE_KEY = "evguide_chat_v2";
 const LEAD_SHOWN_KEY = "evguide_lead_shown";
+
+/** Reads and parses any previously saved chat session from localStorage. */
+function loadStoredChat(): { messages: ChatMessage[]; answers: Partial<MatchAnswers>; step: number; done: boolean } | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (!saved) return null;
+    const { messages: m, answers: a, step: s, done: d } =
+      JSON.parse(saved) as { messages: ChatMessage[]; answers: Partial<MatchAnswers>; step: number; done: boolean };
+    if (!m?.length) return null;
+    // Back-fill ids for messages saved before this version
+    return {
+      messages: m.map((msg, i) => ({ ...msg, id: msg.id ?? `restored_${i}` })),
+      answers: a ?? {},
+      step: s ?? 0,
+      done: d ?? false,
+    };
+  } catch {
+    return null;
+  }
+}
 
 const LANDING_STARTERS = [
   { label: "Best EV under £30k", answer: { budget: "under_30" as const } },
@@ -157,7 +179,7 @@ function TypingIndicator() {
 }
 
 function CarCard({ result }: { result: MatchResult }) {
-  const { model, matchScore, monthlyCost } = result;
+  const { model, matchScore } = result;
   const tag     = vehicleTag(model);
   const gradient = BRAND_COLORS[model.brand] ?? "from-slate-500 to-slate-700";
   const rangeM  = Math.round(model.rangeKm * 0.621);
@@ -333,11 +355,12 @@ interface EVChatInterfaceProps {
 }
 
 export default function EVChatInterface({ navOffset = 73 }: EVChatInterfaceProps) {
-  const [phase, setPhase]           = useState<"landing" | "chat">("landing");
-  const [messages, setMessages]     = useState<ChatMessage[]>([]);
-  const [answers, setAnswers]       = useState<Partial<MatchAnswers>>({});
-  const [step, setStep]             = useState(0);          // current question index
-  const [done, setDone]             = useState(false);      // all questions answered
+  const router = useRouter();
+  const [phase, setPhase]           = useState<"landing" | "chat">(() => (loadStoredChat() ? "chat" : "landing"));
+  const [messages, setMessages]     = useState<ChatMessage[]>(() => loadStoredChat()?.messages ?? []);
+  const [answers, setAnswers]       = useState<Partial<MatchAnswers>>(() => loadStoredChat()?.answers ?? {});
+  const [step, setStep]             = useState(() => loadStoredChat()?.step ?? 0);          // current question index
+  const [done, setDone]             = useState(() => loadStoredChat()?.done ?? false);      // all questions answered
   const [input, setInput]           = useState("");
   const [showLead, setShowLead]     = useState(false);
   const [isTyping, setIsTyping]     = useState(false);
@@ -359,22 +382,6 @@ export default function EVChatInterface({ navOffset = 73 }: EVChatInterfaceProps
       setTimeout(() => setTypingMessageId((cur) => (cur === msg.id ? null : cur)), 3000);
     }, 800);
   }
-
-  // Restore from localStorage
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        const { messages: m, answers: a, step: s, done: d } =
-          JSON.parse(saved) as { messages: ChatMessage[]; answers: Partial<MatchAnswers>; step: number; done: boolean };
-        if (m?.length) {
-          // Back-fill ids for messages saved before this version
-          const hydrated = m.map((msg, i) => ({ ...msg, id: msg.id ?? `restored_${i}` }));
-          setMessages(hydrated); setAnswers(a ?? {}); setStep(s ?? 0); setDone(d ?? false); setPhase("chat");
-        }
-      }
-    } catch { /* */ }
-  }, []);
 
   // Persist on change
   useEffect(() => {
@@ -510,7 +517,7 @@ export default function EVChatInterface({ navOffset = 73 }: EVChatInterfaceProps
     if (value === "__compare__") {
       const last = messages.findLast((m) => m.results);
       if (last?.results && last.results.length >= 2) {
-        window.location.href = `/compare?carA=${last.results[0]!.model.id}&carB=${last.results[1]!.model.id}`;
+        router.push(`/compare?carA=${last.results[0]!.model.id}&carB=${last.results[1]!.model.id}`);
       }
       return;
     }

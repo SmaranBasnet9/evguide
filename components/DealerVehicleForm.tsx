@@ -31,6 +31,7 @@ type DealerListingRow = {
   dc_charge_kw?: number | null;
   ac_charge_kw?: number | null;
   charge_to_80_mins?: number | null;
+  condition?: "new" | "used" | null;
 };
 
 type Props = {
@@ -40,6 +41,7 @@ type Props = {
 
 type FormData = {
   vin: string;
+  condition: "new" | "used";
   brand: string;
   model: string;
   year: string;
@@ -150,6 +152,7 @@ export default function DealerVehicleForm({ mode, listing }: Props) {
 
   const [form, setForm] = useState<FormData>({
     vin:              "",
+    condition:        listing?.condition         ?? "used",
     brand:            listing?.brand             ?? "",
     model:            listing?.model             ?? "",
     year:             String(listing?.year       ?? new Date().getFullYear()),
@@ -179,6 +182,8 @@ export default function DealerVehicleForm({ mode, listing }: Props) {
 
   // ── Payload builder ─────────────────────────────────────────────────────────
   const buildPayload = useCallback(() => ({
+    condition:         form.condition,
+    vin:               form.vin               || null,
     brand:             form.brand,
     model:             form.model,
     year:              Number(form.year),
@@ -365,6 +370,35 @@ export default function DealerVehicleForm({ mode, listing }: Props) {
       {/* ── Step 1: Basic Details ── */}
       {step === 1 && (
         <div className="space-y-5">
+          {/* New vs Used */}
+          <div>
+            <label className={labelCls}>Is this vehicle new or used? *</label>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setForm((p) => ({ ...p, condition: "new" }))}
+                className={`rounded-2xl border px-4 py-3 text-sm font-semibold transition ${
+                  form.condition === "new"
+                    ? "border-brand bg-brand/15 text-brand"
+                    : "border-white/10 bg-white/[0.04] text-white/60 hover:bg-white/[0.08]"
+                }`}
+              >
+                New — lists on Vehicles
+              </button>
+              <button
+                type="button"
+                onClick={() => setForm((p) => ({ ...p, condition: "used" }))}
+                className={`rounded-2xl border px-4 py-3 text-sm font-semibold transition ${
+                  form.condition === "used"
+                    ? "border-brand bg-brand/15 text-brand"
+                    : "border-white/10 bg-white/[0.04] text-white/60 hover:bg-white/[0.08]"
+                }`}
+              >
+                Used — lists on Used EVs
+              </button>
+            </div>
+          </div>
+
           {/* VIN decode row */}
           <div>
             <label className={labelCls}>VIN <span className="text-white/40">(optional)</span></label>

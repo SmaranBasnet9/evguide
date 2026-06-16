@@ -38,9 +38,16 @@ export async function POST(request: Request) {
   const postcode     = typeof body.postcode     === "string" ? body.postcode.trim()     : "";
   const fcaFrn       = typeof body.fcaFrn       === "string" ? body.fcaFrn.trim()       : null;
   const website      = typeof body.website      === "string" ? body.website.trim()      : null;
+  const companyRegistrationNumber =
+    typeof body.companyRegistrationNumber === "string" ? body.companyRegistrationNumber.trim() : "";
+  const vatNumber    = typeof body.vatNumber    === "string" ? body.vatNumber.trim()    : null;
+  const tradingName  = typeof body.tradingName  === "string" ? body.tradingName.trim()  : null;
 
   if (!companyName || !contactName || !email || !phone || !addressLine1 || !city || !postcode) {
     return NextResponse.json({ error: "Please fill in all required fields." }, { status: 400 });
+  }
+  if (!companyRegistrationNumber) {
+    return NextResponse.json({ error: "Company registration number is required for vendor verification." }, { status: 400 });
   }
 
   // Check they haven't already applied
@@ -60,7 +67,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: msg }, { status: 409 });
   }
 
-  const { error: insertError } = await supabase.from("dealer_profiles").insert({
+  const base = {
     user_id: user.id,
     company_name: companyName,
     contact_name: contactName,
@@ -73,7 +80,24 @@ export async function POST(request: Request) {
     fca_frn: fcaFrn,
     website,
     status: "pending_approval",
+  };
+
+  // Try with extended columns first; fall back if migration not yet applied
+  let insertError: { message: string } | null = null;
+  const ext = await supabase.from("dealer_profiles").insert({
+    ...base,
+    company_registration_number: companyRegistrationNumber,
+    vat_number: vatNumber,
+    trading_name: tradingName,
   });
+  if (ext.error) {
+    if (ext.error.message.includes("column")) {
+      const fallback = await supabase.from("dealer_profiles").insert(base);
+      insertError = fallback.error;
+    } else {
+      insertError = ext.error;
+    }
+  }
 
   if (insertError) {
     console.error("[dealer/register] insert error:", insertError.message);

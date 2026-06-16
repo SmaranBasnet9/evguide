@@ -51,6 +51,8 @@ export default async function AdminLayout({ children }: AdminLayoutProps) {
     { count: pendingFeedback },
     { count: pendingDealerAccounts },
     { count: pendingDealerListings },
+    { count: pendingVendorApplications },
+    { count: pendingVendorListings },
   ] = await Promise.all([
     supabase
       .from("consultation_requests")
@@ -84,17 +86,28 @@ export default async function AdminLayout({ children }: AdminLayoutProps) {
       .from("dealer_listings")
       .select("*", { count: "exact", head: true })
       .eq("status", "pending"),
+    adminClient
+      .from("vendors")
+      .select("*", { count: "exact", head: true })
+      .eq("status", "pending"),
+    adminClient
+      .from("vendor_listings")
+      .select("*", { count: "exact", head: true })
+      .eq("status", "pending_review")
+      .eq("is_deleted", false),
   ]);
 
   const pendingCounts = {
-    consultations:   pendingConsultations   ?? 0,
-    vehicleQueries:  newVehicleQueries      ?? 0,
-    leads:           newLeads               ?? 0,
-    financeRequests: newFinanceRequests     ?? 0,
-    exchange:        pendingExchange        ?? 0,
-    feedback:        pendingFeedback        ?? 0,
-    dealerAccounts:  pendingDealerAccounts  ?? 0,
-    dealerListings:  pendingDealerListings  ?? 0,
+    consultations:      pendingConsultations      ?? 0,
+    vehicleQueries:     newVehicleQueries         ?? 0,
+    leads:              newLeads                  ?? 0,
+    financeRequests:    newFinanceRequests        ?? 0,
+    exchange:           pendingExchange           ?? 0,
+    feedback:           pendingFeedback           ?? 0,
+    dealerAccounts:     pendingDealerAccounts     ?? 0,
+    dealerListings:     pendingDealerListings     ?? 0,
+    vendorApplications: pendingVendorApplications ?? 0,
+    vendorListings:     pendingVendorListings     ?? 0,
   };
 
   return (

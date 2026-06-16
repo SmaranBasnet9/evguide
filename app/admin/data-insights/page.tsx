@@ -102,7 +102,7 @@ function formatSector(s: string) {
 }
 
 export default async function DataInsightsPage() {
-  const { sectors, models, totalRequests, totalResolved, conversionRate, last30Days } = await getInsights();
+  const { sectors, models, totalRequests, conversionRate, last30Days } = await getInsights();
 
   // Static fallback for empty DB
   const displaySectors: SectorCount[] = sectors.length > 0 ? sectors : [

@@ -21,17 +21,19 @@ export default async function DealerLayout({ children }: { children: ReactNode }
     .eq("id", user.id)
     .single();
 
-  // Not a dealer at all — redirect home unless they have a pending/rejected application
-  if (
-    profile?.role !== "dealer" &&
-    profile?.dealer_status !== "pending_approval" &&
-    profile?.dealer_status !== "rejected"
-  ) {
+  const isApprovedDealer =
+    profile?.role === "dealer" ||
+    profile?.dealer_status === "approved" ||
+    profile?.dealer_status === "pending_approval" ||
+    profile?.dealer_status === "rejected";
+
+  // Not a dealer at all — redirect home
+  if (!isApprovedDealer) {
     redirect("/");
   }
 
   // Pending approval — show holding screen
-  if (profile?.dealer_status === "pending_approval" && profile?.role !== "dealer") {
+  if (profile?.dealer_status === "pending_approval" && profile?.role !== "dealer" && profile?.dealer_status !== "approved") {
     return <DealerPendingScreen />;
   }
 
@@ -69,7 +71,7 @@ export default async function DealerLayout({ children }: { children: ReactNode }
     .eq("is_read", false);
 
   return (
-    <div className="flex min-h-screen bg-surface-base text-white">
+    <div className="flex min-h-screen text-white" style={{ backgroundColor: "#0D0D0D" }}>
       <DealerSidebar
         companyName={dealerProfile.company_name}
         pendingEnquiries={pendingEnquiries ?? 0}

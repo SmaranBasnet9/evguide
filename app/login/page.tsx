@@ -30,7 +30,7 @@ function LoginForm() {
     setLoading(true);
     setMessage("");
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data: authData, error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
       setMessage(error.message);
@@ -44,7 +44,20 @@ function LoginForm() {
     }).catch(() => null);
 
     const nextPath = searchParams.get("next");
-    router.push(nextPath?.startsWith("/") ? nextPath : "/");
+    if (nextPath?.startsWith("/")) {
+      router.push(nextPath);
+      return;
+    }
+
+    // Auto-redirect dealers to their portal
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role, dealer_status")
+      .eq("id", authData.user.id)
+      .single();
+
+    const isDealer = profile?.role === "dealer" || profile?.dealer_status === "approved";
+    router.push(isDealer ? "/dealer" : "/");
   };
 
   const inputCls = "w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20 transition";

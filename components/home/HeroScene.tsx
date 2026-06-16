@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useMemo } from "react";
+import { useRef, useMemo, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 
@@ -327,17 +327,17 @@ const PARTICLE_COUNT = 32;
 function EnergyParticles() {
   const meshRef = useRef<THREE.InstancedMesh>(null);
 
-  const particles = useMemo(
-    () =>
-      Array.from({ length: PARTICLE_COUNT }, (_, i) => ({
-        x: (Math.random() - 0.5) * 16,
-        baseY: Math.random() * -3,
-        z: (Math.random() - 0.5) * 12,
-        speed: 0.22 + Math.random() * 0.45,
-        drift: (Math.random() - 0.5) * 0.35,
-        offset: (i / PARTICLE_COUNT) * Math.PI * 2,
-      })),
-    [],
+  // Lazy initial state: runs once on mount, the React-sanctioned escape hatch
+  // for impure (Math.random) one-time setup — see react.dev/reference/react/useState#avoiding-recreating-the-initial-state
+  const [particles] = useState(() =>
+    Array.from({ length: PARTICLE_COUNT }, (_, i) => ({
+      x: (Math.random() - 0.5) * 16,
+      baseY: Math.random() * -3,
+      z: (Math.random() - 0.5) * 12,
+      speed: 0.22 + Math.random() * 0.45,
+      drift: (Math.random() - 0.5) * 0.35,
+      offset: (i / PARTICLE_COUNT) * Math.PI * 2,
+    })),
   );
 
   const dummy = useMemo(() => new THREE.Object3D(), []);

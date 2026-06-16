@@ -1,15 +1,14 @@
 ﻿"use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { ArrowLeft, ArrowRight, CarFront, HandCoins, Sparkles, Bookmark } from "lucide-react";
+import { useState } from "react";
+import { ArrowRight, CarFront, HandCoins, Sparkles, Bookmark } from "lucide-react";
 import RecommendationCard from "./RecommendationCard";
 import type { MatchAnswers, MatchResult } from "./recommendationEngine";
 
 interface RecommendationResultsProps {
   results: MatchResult[];
   answers: MatchAnswers;
-  onReset: () => void;
 }
 
 const answerLabels = {
@@ -52,13 +51,10 @@ const answerLabels = {
 
 const STORAGE_KEY = "evguide_saved_match";
 
-export default function RecommendationResults({ results, answers, onReset }: RecommendationResultsProps) {
-  const [saved, setSaved] = useState(false);
-
-  useEffect(() => {
-    const existing = typeof window !== "undefined" ? window.localStorage.getItem(STORAGE_KEY) : null;
-    setSaved(Boolean(existing));
-  }, []);
+export default function RecommendationResults({ results, answers }: RecommendationResultsProps) {
+  const [saved, setSaved] = useState(() =>
+    typeof window !== "undefined" ? Boolean(window.localStorage.getItem(STORAGE_KEY)) : false,
+  );
 
   function saveMatch() {
     if (typeof window === "undefined") return;

@@ -84,16 +84,8 @@ export default function RecommendationForm() {
     }
   }
 
-  function handleReset() {
-    setStarted(false);
-    setStepIndex(0);
-    setAnswers(defaultAnswers);
-    setResults(null);
-    setLoading(false);
-  }
-
   if (results) {
-    return <RecommendationResults results={results} answers={answers} onReset={handleReset} />;
+    return <RecommendationResults results={results} answers={answers} />;
   }
 
   return (

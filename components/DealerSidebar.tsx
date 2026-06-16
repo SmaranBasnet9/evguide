@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Building2, Car, Plus, MessageSquare, LayoutDashboard, LogOut, BarChart2 } from "lucide-react";
+import { Building2, Car, Plus, MessageSquare, LayoutDashboard, LogOut, BarChart2, Settings } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 
@@ -12,6 +12,7 @@ const NAV = [
   { href: "/dealer/vehicles/new", label: "Add Vehicle",  icon: Plus },
   { href: "/dealer/enquiries",    label: "Enquiries",    icon: MessageSquare, badge: true },
   { href: "/dealer/analytics",    label: "Analytics",    icon: BarChart2 },
+  { href: "/dealer/settings",     label: "Settings",     icon: Settings },
 ];
 
 type Props = {

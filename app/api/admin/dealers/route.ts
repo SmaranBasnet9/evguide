@@ -39,6 +39,10 @@ export async function POST(request: Request) {
   const postcode     = typeof body.postcode     === "string" ? body.postcode.trim()     : "";
   const fcaFrn       = typeof body.fcaFrn       === "string" ? body.fcaFrn.trim()       : null;
   const website      = typeof body.website      === "string" ? body.website.trim()      : null;
+  const companyRegistrationNumber =
+    typeof body.companyRegistrationNumber === "string" ? body.companyRegistrationNumber.trim() : null;
+  const vatNumber    = typeof body.vatNumber    === "string" ? body.vatNumber.trim()    : null;
+  const tradingName  = typeof body.tradingName  === "string" ? body.tradingName.trim()  : null;
   const password     = typeof body.password     === "string" ? body.password            : "";
 
   if (!companyName || !contactName || !email || !phone || !addressLine1 || !city || !postcode) {
@@ -90,7 +94,10 @@ export async function POST(request: Request) {
   }
 
   // 3. Create dealer_profiles entry (pre-approved since admin created it)
-  const { error: dealerError } = await admin.from("dealer_profiles").insert({
+  // Extended columns (company_registration_number, vat_number, trading_name) are
+  // added by PENDING_MIGRATIONS.sql — omit them here so the insert succeeds
+  // even if that migration hasn't been applied yet.
+  const baseProfile: Record<string, unknown> = {
     user_id:       userId,
     company_name:  companyName,
     contact_name:  contactName,
@@ -105,10 +112,27 @@ export async function POST(request: Request) {
     status:        "approved",
     approved_at:   new Date().toISOString(),
     approved_by:   guard.userId,
+  };
+
+  // Try with extended columns first; fall back without them
+  let dealerError: { message: string } | null = null;
+  const extendedResult = await admin.from("dealer_profiles").insert({
+    ...baseProfile,
+    company_registration_number: companyRegistrationNumber,
+    vat_number: vatNumber,
+    trading_name: tradingName,
   });
+  if (extendedResult.error) {
+    // Extended columns not yet in DB — retry without them
+    if (extendedResult.error.message.includes("column")) {
+      const fallback = await admin.from("dealer_profiles").insert(baseProfile);
+      dealerError = fallback.error;
+    } else {
+      dealerError = extendedResult.error;
+    }
+  }
 
   if (dealerError) {
-    // Roll back auth user if dealer profile creation fails
     await admin.auth.admin.deleteUser(userId);
     console.error("[admin/dealers POST] dealer_profiles insert:", dealerError.message);
     return NextResponse.json({ error: "Failed to create dealer profile. Please try again." }, { status: 500 });

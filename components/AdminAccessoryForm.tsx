@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Upload, X, Loader2 } from "lucide-react";
 
@@ -320,9 +321,9 @@ export default function AdminAccessoryForm({ mode, id, categories, initialData }
           {saving && <Loader2 className="h-4 w-4 animate-spin" />}
           {mode === "edit" ? "Save changes" : "Create product"}
         </button>
-        <a href="/admin/accessories" className="text-sm text-gray-500 hover:text-gray-900">
+        <Link href="/admin/accessories" className="text-sm text-gray-500 hover:text-gray-900">
           Cancel
-        </a>
+        </Link>
       </div>
     </form>
   );

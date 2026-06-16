@@ -141,7 +141,7 @@ export default function EnquiryModal({ context, onClose }: EnquiryModalProps) {
                 {context?.vehicleLabel ?? "Get in Touch"}
               </h2>
               <p className="mt-0.5 text-sm text-white/40">
-                Fill in your details and we'll get back to you shortly.
+                Fill in your details and we&apos;ll get back to you shortly.
               </p>
             </div>
           </div>
@@ -151,7 +151,7 @@ export default function EnquiryModal({ context, onClose }: EnquiryModalProps) {
               <CheckCircle className="h-14 w-14 text-brand" />
               <p className="text-lg font-bold text-white">Enquiry received!</p>
               <p className="text-sm text-white/50">
-                Enquiry submitted. We'll be in touch{context?.vehicleLabel ? ` about the ${context.vehicleLabel}` : ""} within a few hours.
+                Enquiry submitted. We&apos;ll be in touch{context?.vehicleLabel ? ` about the ${context.vehicleLabel}` : ""} within a few hours.
               </p>
             </div>
           ) : (

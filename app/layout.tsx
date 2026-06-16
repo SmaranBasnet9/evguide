@@ -8,6 +8,7 @@ import TrackPageView from "@/components/tracking/TrackPageView";
 import TrackRepeatVisit from "@/components/tracking/TrackRepeatVisit";
 import PlatformSessionInit from "@/components/platform/PlatformSessionInit";
 import MobileBottomNav from "@/components/home/MobileBottomNav";
+import SuppressRealtimeErrors from "@/components/SuppressRealtimeErrors";
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
 
@@ -27,6 +28,7 @@ export default function RootLayout({
     <html lang="en" className={cn("h-full antialiased", "font-sans", geist.variable)}>
       <body suppressHydrationWarning className="min-h-full flex flex-col pb-20 md:pb-0">
         <CookieConsentProvider>
+          <SuppressRealtimeErrors />
           <PlatformSessionInit />
           <TrackPageView />
           <TrackEngagement />

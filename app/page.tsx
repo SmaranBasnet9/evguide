@@ -8,16 +8,15 @@ import BrowseByBudget from "@/components/home/BrowseByBudget";
 import FeaturedEVs from "@/components/home/FeaturedEVs";
 import dynamic from "next/dynamic";
 
-const UsedEVsSection           = dynamic(() => import("@/components/home/UsedEVsSection"));
-const DealerMarketplacePreview = dynamic(() => import("@/components/home/DealerMarketplacePreview"));
-const NewsletterSection        = dynamic(() => import("@/components/home/NewsletterSection"));
-const FinalCTA                 = dynamic(() => import("@/components/home/FinalCTA"));
-const PremiumFooter            = dynamic(() => import("@/components/home/PremiumFooter"));
+const UsedEVsSection    = dynamic(() => import("@/components/home/UsedEVsSection"));
+const NewsletterSection = dynamic(() => import("@/components/home/NewsletterSection"));
+const FinalCTA          = dynamic(() => import("@/components/home/FinalCTA"));
+const PremiumFooter     = dynamic(() => import("@/components/home/PremiumFooter"));
 
-import EVAccessories from "@/components/home/EVAccessories";
+import Testimonials from "@/components/home/Testimonials";
 import { getTopSellingEVs } from "@/lib/evs";
-import { getAllAccessoriesWithProducts } from "@/lib/accessories";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { mapDealerListingToUsedEV } from "@/lib/dealer/mapToUsedEVListing";
 
 export const revalidate = 1800;
 
@@ -33,25 +32,27 @@ async function HomeFeaturedEVsSection() {
   return <FeaturedEVs models={evModels} />;
 }
 
-async function HomeDealerPreviewSection() {
+// Live "used" dealer stock is folded into the Used EVs section below —
+// no separate "dealer marketplace" branding on the homepage.
+async function fetchLiveUsedDealerListings() {
   try {
     const supabase = createAdminClient();
     const { data: listings } = await supabase
       .from("dealer_listings")
-      .select("id, brand, model, year, price, mileage, images, location")
+      .select("id, brand, model, year, price, mileage, colour, description, images, range_km, battery_kwh, dc_charge_kw")
       .eq("status", "live")
+      .eq("condition", "used")
       .order("created_at", { ascending: false })
       .limit(6);
-    if (!listings || listings.length === 0) return null;
-    return <DealerMarketplacePreview listings={listings} />;
+    return (listings ?? []).filter((l) => l.images && l.images.length > 0);
   } catch {
-    return null;
+    return [];
   }
 }
 
-async function HomeAccessoriesSection() {
-  const data = await getAllAccessoriesWithProducts();
-  return <EVAccessories data={data} />;
+async function HomeUsedEVsSection() {
+  const listings = await fetchLiveUsedDealerListings();
+  return <UsedEVsSection extraListings={listings.map(mapDealerListingToUsedEV)} />;
 }
 
 // ── Skeleton ────────────────────────────────────────────────────────────────
@@ -96,18 +97,13 @@ export default function HomePage() {
         <HomeFeaturedEVsSection />
       </Suspense>
 
-      {/* 6 · Used EVs — hover-reveal portrait cards */}
-      <UsedEVsSection />
-
-      {/* 7 · Dealer Marketplace — live verified dealer stock */}
+      {/* 6 · Used EVs — hover-reveal portrait cards (incl. live dealer stock) */}
       <Suspense fallback={null}>
-        <HomeDealerPreviewSection />
+        <HomeUsedEVsSection />
       </Suspense>
 
-      {/* 8 · EV & Hybrid Accessories */}
-      <Suspense fallback={null}>
-        <HomeAccessoriesSection />
-      </Suspense>
+      {/* 8 · User Reviews — horizontal scroll with avatars */}
+      <Testimonials />
 
       {/* 9 · Newsletter — email signup */}
       <NewsletterSection />

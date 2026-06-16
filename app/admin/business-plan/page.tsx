@@ -510,7 +510,7 @@ export default function BusinessPlanPage() {
             <div style={{ background: "#00C89610", border: "1px solid #00C89630", borderRadius: "12px", padding: "16px" }}>
               <div style={{ fontSize: "12px", fontWeight: "600", color: "#00C896", marginBottom: "6px" }}>Strategic thesis</div>
               <p style={{ fontSize: "13px", color: "rgba(232,237,245,0.6)", margin: 0, lineHeight: "1.65" }}>
-                EVGuide's window is 12–18 months before AutoTrader builds EV depth. The goal isn't to be a smaller AutoTrader — it's to own the EV buyer journey so completely that by the time AutoTrader invests in EV-specific features, EVGuide already has the brand trust, the data moat, and the dealer network locked in.
+                EVGuide&apos;s window is 12–18 months before AutoTrader builds EV depth. The goal isn&apos;t to be a smaller AutoTrader — it&apos;s to own the EV buyer journey so completely that by the time AutoTrader invests in EV-specific features, EVGuide already has the brand trust, the data moat, and the dealer network locked in.
               </p>
             </div>
           </div>

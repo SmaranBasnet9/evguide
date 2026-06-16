@@ -3,7 +3,7 @@
 import { useState, useCallback } from "react";
 import { evModels } from "@/data/evModels";
 import type { UserRoute, Season, EVRangeFitResult } from "@/lib/range-fit/types";
-import { rankEVsForRoutes, getPostcodeDistanceMiles } from "@/lib/range-fit/engine";
+import { rankEVsForRoutes, getLocationDistanceMiles, resolveLocationFromCoords, searchLocationSuggestions } from "@/lib/range-fit/engine";
 import RouteStep from "./RouteStep";
 import RangeFitResults from "./RangeFitResults";
 
@@ -45,7 +45,9 @@ export default function RangeFitWizard() {
     <RouteStep
       onSubmit={handleAnalyse}
       loading={loading}
-      getDistance={getPostcodeDistanceMiles}
+      getDistance={getLocationDistanceMiles}
+      resolveCoords={resolveLocationFromCoords}
+      searchSuggestions={searchLocationSuggestions}
     />
   );
 }

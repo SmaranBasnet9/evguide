@@ -12,6 +12,7 @@ import HomeChargerCTA from "@/components/vehicles/HomeChargerCTA";
 import EnergyTariffWidget from "@/components/vehicles/EnergyTariffWidget";
 import VehicleQuoteButton from "@/components/vehicles/VehicleQuoteButton";
 import TestDriveButton from "@/components/vehicles/TestDriveButton";
+import RangeFitButton from "@/components/vehicles/RangeFitButton";
 import InsuranceWidget from "@/components/vehicles/InsuranceWidget";
 import { getEVById, getAllEVs } from "@/lib/evs";
 import { evModels } from "@/data/evModels";
@@ -167,6 +168,7 @@ export default async function VehicleDetailPage({
             {/* CTAs */}
             <div className="flex flex-col gap-2.5 pt-1">
               <VehicleQuoteButton vehicle={{ id: vehicle.id, brand: vehicle.brand, model: vehicle.model, price: vehicle.price }} />
+              <RangeFitButton vehicleId={vehicle.id} />
               <TestDriveButton vehicleId={vehicle.id} />
               <div className="flex gap-2.5">
                 <Link
@@ -206,22 +208,6 @@ export default async function VehicleDetailPage({
             <RangeConfidenceChecker rangeKm={vehicle.rangeKm} vehicleLabel={`${vehicle.brand} ${vehicle.model}`} />
             <TCOCalculator vehiclePrice={vehicle.price} batteryKWh={vehicle.batteryKWh} rangeKm={vehicle.rangeKm} />
           </div>
-        </div>
-
-        {/* Range Fit CTA */}
-        <div className="flex items-center justify-between gap-4 rounded-2xl border border-brand/20 bg-brand/5 p-5">
-          <div>
-            <p className="text-sm font-black text-gray-900">See exactly how this EV fits YOUR routes</p>
-            <p className="mt-0.5 text-xs text-gray-500">
-              Enter your real postcodes — we calculate charge stops, winter range, and your personal Range Confidence Score™
-            </p>
-          </div>
-          <a
-            href={`/range-fit?ev=${vehicle.id}`}
-            className="shrink-0 rounded-xl bg-brand px-5 py-2.5 text-sm font-bold text-white transition hover:bg-brand-hover whitespace-nowrap"
-          >
-            Try Range Fit →
-          </a>
         </div>
 
         {/* Energy tariff */}

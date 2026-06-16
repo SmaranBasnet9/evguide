@@ -37,7 +37,9 @@ EVGuide is a full-stack, production-grade electric vehicle marketplace for the U
 - **AI-powered recommendations** — Claude-driven EV matching based on buyer profile, budget, range needs, and lifestyle
 - **EV Intelligence** — range confidence checker, real-world TCO, charging cost calculator, energy tariff widget, home charger CTA
 - **Part-exchange** — AI-assisted vehicle valuation using Claude, guided wizard, admin review flow
-- **Dealer marketplace** — dealer application → approval → listing → lead routing → bid system
+- **Dealer marketplace** — self-service dealer registration → admin approval → login/logout → listing → lead routing → bid system
+- **Dealer account management** — admins create dealer accounts directly into `dealer_profiles`, dealers self-manage password via in-portal settings or "forgot password" flow
+- **AI listing inspection** — GPT-4o agent automatically reviews every dealer-submitted vehicle listing (vehicle identification, spec accuracy, data quality), auto-approves, rejects, or flags for human review
 - **Finance** — PCP / HP / Lease calculator, finance enquiry flow with lender forwarding
 - **Used EVs** — private seller listings with VIN decode, admin moderation
 - **SEO** — programmatic SEO pages, keyword management, geo targeting
@@ -173,7 +175,7 @@ Browser → Next.js Edge/Node server
 | `/blog` | Blog hub with buyer-journey sections |
 | `/blog/[slug]` | Article with inline EV cards, related articles, contextual CTAs |
 | `/appointment` | Appointment booking |
-| `/dealers` | Dealer directory |
+| `/dealers` | "Become a dealer" landing page — pitches listing stock on the EVGuide marketplace, links to `/dealer/register` and `/dealer-login` (previously an orphaned AI-Match-widget partner pitch; repurposed 2026-06-14) |
 | `/battery-health` | Battery health assessment tool |
 | `/fleet` | Fleet enquiry form |
 | `/accessories` | EV accessories marketplace (flat grid, dark theme) |
@@ -192,12 +194,20 @@ Browser → Next.js Edge/Node server
 | Route | Access | Description |
 |---|---|---|
 | `/dealer` | Approved dealers | Dashboard with leads summary and listing stats |
-| `/dealer/register` | Public | Dealer application form (rate-limited: 3/15 min) |
-| `/dealer/vehicles` | Approved dealers | Vehicle listing management |
-| `/dealer/vehicles/new` | Approved dealers | Create new listing |
-| `/dealer/vehicles/[id]/edit` | Approved dealers | Edit existing listing |
+| `/dealer/register` | Public | Standalone self-service dealer application form (account credentials, business details, verification document upload) — no login required |
+| `/dealer/settings` | Approved dealers | View business profile, change password (re-authenticates with current password) |
+| `/dealer/vehicles` | Approved dealers | Vehicle listing management (own listings only, enforced by `dealer_id` filter + RLS) — table includes a VIN column for inventory/logistics tracking, plus per-row View (live listings only, opens public page), Edit, Unapprove (live → draft), and Remove (non-live only) actions via `components/DealerVehicleActions.tsx` |
+| `/dealer/vehicles/new` | Approved dealers | Create new listing — choose **New** or **Used** condition (Step 1); submission triggers AI inspection |
+| `/dealer/vehicles/[id]/edit` | Approved dealers | Edit existing listing — update resets status to `pending` and re-triggers AI inspection |
 | `/dealer/enquiries` | Approved dealers | Lead inbox |
 | `/dealer/analytics` | Approved dealers | Listing and lead analytics |
+
+### Dealer Auth
+
+| Route | Description |
+|---|---|
+| `/dealer-login` | Email + password sign-in for dealers, with link to `/dealer/register` |
+| `/dealer-reset-password` | Dealer password reset completion (reads `token_hash`/`type=recovery` from URL, calls `verifyOtp()`) |
 
 ### Admin Panel (`/admin/`)
 
@@ -225,11 +235,11 @@ All admin pages require `role = admin` or `role = super_admin`. Department-based
 | `/admin/test-drives` | — | Test drive requests |
 | `/admin/fleet-enquiries` | — | Fleet enquiry requests |
 | `/admin/battery-reports` | — | Battery health reports |
-| `/admin/dealers` | `dealerAccounts` | Dealer account management |
+| `/admin/dealers` | `dealerAccounts` | Dealer account management — each dealer card shows how many vehicles they have listed |
 | `/admin/dealers/new` | — | Manually create dealer |
 | `/admin/dealers/[id]` | — | Dealer profile + status |
 | `/admin/dealer-applications` | `dealerAccounts` | Pending dealer applications |
-| `/admin/dealer-listings` | `dealerListings` | Dealer vehicle listing review |
+| `/admin/dealer-listings` | `dealerListings` | Dealer vehicle listing review — one table per dealer (so multi-dealer inventory can't get mixed up), each row with an Actions column: `pending` rows get Approve/Reject (`AdminDealerListingReviewButton.tsx`), `live`/`rejected` rows get View/Unapprove/Remove (`AdminDealerListingActions.tsx`). "Download CSV (all dealers)" link at the top of the page, plus a per-dealer "Download CSV" link on each dealer's table |
 | `/admin/dealer-bids` | — | Dealer bid management |
 | `/admin/used-listings` | — | Used EV listing moderation |
 | `/admin/feedback` | `feedback` | User feedback moderation |
@@ -342,6 +352,47 @@ Applied endpoints:
 | POST | `/api/consent` | Record GDPR consent |
 | POST | `/api/chat` | OpenAI-powered chat |
 | POST | `/api/vin-decode` | VIN lookup and decode |
+| POST | `/api/range-fit-chat` | "Ask about a route" range chatbot — see below |
+
+### Dealer account & listing endpoints
+
+| Method | Path | Auth | Description |
+|---|---|---|---|
+| POST | `/api/dealer/apply` | Public (rate-limited: 5/hour) | Self-service dealer registration — creates auth user, `profiles.dealer_status = pending_approval`, and `dealer_profiles` row |
+| POST | `/api/dealer/register` | Public (rate-limited: 3/15 min) | Legacy/admin-assisted dealer registration with same fallback insert pattern |
+| POST | `/api/dealer/documents` | Dealer session | Upload verification documents (PDF/JPEG/PNG/WebP, max 8MB) to `dealer_documents` |
+| POST | `/api/dealer/vehicles` | `requireDealer()` | Create listing — fires non-blocking AI inspection on submit |
+| PUT | `/api/dealer/vehicles/[id]` | `requireDealer()` | Update listing — resets to `pending`, clears prior AI decision, re-runs AI inspection |
+| PATCH | `/api/dealer/vehicles/[id]` | `requireDealer()` | `{ action: "withdraw" }` — pulls a `live` listing back to `draft` (removes it from public pages); rejects if the listing isn't currently `live` |
+| DELETE | `/api/dealer/vehicles/[id]` | `requireDealer()` | Remove a listing; rejects if the listing is currently `live` (withdraw first) |
+| POST | `/api/admin/dealers` | `requireAdmin()` | Admin creates a dealer account directly (auth user + `dealer_profiles`, status `approved`) |
+| POST | `/api/admin/dealers/[id]/reset-password` | `requireAdmin()` | Admin sets a dealer's password directly via `updateUserById`, or sends a recovery link as fallback |
+| POST | `/api/admin/dealer-listings/[id]/ai-inspect` | `requireAdmin()` | Manually re-trigger the AI inspection agent for a listing |
+| PUT | `/api/admin/dealer-listings/[id]` | `requireAdmin()` | `{ action: "approve" \| "reject" \| "unapprove" }` — approve/reject a pending listing, or pull a `live` listing back to `pending` for re-review |
+| DELETE | `/api/admin/dealer-listings/[id]` | `requireAdmin()` | Permanently remove a dealer listing, regardless of status |
+| GET | `/api/admin/dealer-listings/export` | `requireAdmin()` | Downloads a CSV of dealer listings (all statuses) with dealer name/email, vehicle details, price, mileage, and status. Optional `?dealerId=` filters to a single dealer for per-dealer CSV export |
+
+### "Ask about a route" range chatbot
+
+A floating chat popup (`components/range-fit/RangeFitChatPopup.tsx`) on the `/range-fit` page lets users ask, in plain English, how much battery a trip would use (e.g. *"From Manchester to Sheffield in a Kia EV6, there and back"*) — alongside the route-fit wizard. The `BookTestDriveWidget` floating button remains the global one shown on all other pages.
+
+`POST /api/range-fit-chat`:
+1. Uses a fully local, offline rule-based extractor (`lib/range-fit/localChatBrain.ts`, `extractTripLocally`) — no external AI API calls — to parse `{ origin, destination, roundTrip, vehicle }` from the message via regex/heuristics, matched against the EV catalogue. Minor spelling mistakes in place names (vs. a built-in list of major UK cities/towns) and vehicle names (vs. the EV catalogue) are auto-corrected via Levenshtein edit-distance matching (e.g. "Manchster" → "Manchester", "Tesla Modle Y" → "Tesla Model Y").
+2. Resolves the route distance via `getLocationDistanceMiles` (postcodes.io-based — same engine as the Range Fit wizard; this is the single seam where a Google Maps Distance Matrix integration could later be dropped in). When a place name (not a postcode) is given, its postcode is predicted by reverse-geocoding the resolved coordinates, and shown alongside the place name in the reply (e.g. "Manchester (M2 5PE) to Birmingham (B2 4DN)").
+3. Computes kWh used and % of battery via `getSummerRangeMiles`, and whether the trip fits on one charge. The reply also includes: estimated trip cost at the UK average home electricity rate (`DEFAULT_ENERGY_RATE_PENCE` from `lib/ev-intelligence.ts`), a winter-range caution if the trip only fits in summer (`getWinterRangeMiles`), and — if a charging stop is needed — the approximate 10–80% rapid-charge time (`getChargeTimeTo80`).
+4. **Memory**: checks `range_chat_logs` for prior identical-route/vehicle queries and notes if other drivers have asked the same thing, then logs the new query + answer for future recall (requires `PENDING_MIGRATIONS.sql` — degrades gracefully/no-ops if the table doesn't exist yet).
+
+Rate-limited to 15 requests / 10 minutes per IP.
+
+### AI listing inspection agent
+
+`lib/ai/listingInspector.ts` runs a GPT-4o pass (`response_format: json_object`, temperature 0.1) on every new or edited dealer listing:
+
+- **approved** → listing `status = "live"`, enriched specs applied, shown on public vehicle pages
+- **rejected** → `status = "rejected"`, `rejection_reason = "[AI] {summary} — {issues}"`
+- **flagged** → left as `pending` for manual admin review in `/admin/dealer-listings`
+
+Inspection runs non-blocking (`.catch()`-wrapped) so listing create/update API responses return immediately.
 
 ---
 
@@ -380,6 +431,18 @@ Department-based access: admins can be scoped to specific departments via `profi
 ### Security alerts
 
 Unauthorised admin access attempts trigger email notifications via Resend to the configured support email, with a 10-minute cooldown to prevent alert flooding. Implemented in `lib/security/alerts.ts`.
+
+### Security audit (2026-06-14)
+
+A full audit of API guards, RLS policies, and Supabase advisors was performed. Fixes applied live via Supabase migration:
+
+- **CRITICAL — fixed**: `handle_new_user()` (the trigger that provisions a `profiles` row on every `/signup`) was inserting `role = 'admin'`, granting **every new signup full admin-panel access**. Changed to `role = 'user'` (the column default). The 6 pre-existing `profiles` rows are all `role = 'admin'` — review whether all 6 are legitimate staff accounts.
+- **ERROR — fixed**: `crm_leads`, `crm_lead_notes`, `test_drive_bookings` had RLS **disabled**, exposing all rows via the PostgREST API to any client with the anon key. RLS enabled; `crm_leads`/`crm_lead_notes` are now service-role only (admin routes use `createAdminClient()`), `test_drive_bookings` allows public INSERT (booking form), owners can SELECT their own rows, service role has full access.
+- **WARN — fixed**: `lead_scores`, `user_car_interest`, `user_financial_profiles` had `INSERT`/`UPDATE` policies with `WITH CHECK (true)` / `USING (true)`, letting any caller write or overwrite **another user's row** (e.g. tamper with someone else's financial profile) by passing an arbitrary `user_id`. Tightened to `user_id IS NULL OR auth.uid() = user_id` (anon lead-capture rows remain writable; rows owned by a signed-in user are protected).
+- **WARN — fixed**: `set_dealer_profiles_updated_at()` / `set_dealer_listings_updated_at()` had mutable `search_path`; pinned to `''`.
+- **WARN — fixed**: `handle_new_user()` (SECURITY DEFINER) was callable directly via `/rest/v1/rpc/handle_new_user` by `anon`/`authenticated`; revoked EXECUTE from `PUBLIC`/`anon`/`authenticated` (trigger-only now).
+- **WARN — open**: Leaked-password protection (HaveIBeenPwned check) is disabled in Supabase Auth settings — needs to be toggled in the Supabase dashboard (not SQL-configurable).
+- API route guards (`requireAdmin`, `requireSuperAdmin`, `requireAdminForDepartments`, `requireDealer`) reviewed across `app/api/admin/**` and `app/api/dealer/**` — all routes either use the shared guards or have equivalent inline checks. Security headers (CSP, HSTS, X-Frame-Options, etc.) and rate limiting on public form endpoints were verified present.
 
 ---
 
@@ -428,8 +491,9 @@ Inbound form/API → Supabase table (status: pending/new)
 |---|---|
 | `profiles` | User profiles — extends Supabase auth.users with role, department |
 | `ev_models` | EV model catalogue (brand, specs, pricing, images) |
-| `dealer_profiles` | Dealer accounts with status, contact, address |
-| `dealer_listings` | Dealer vehicle listings with approval workflow |
+| `dealer_profiles` | Dealer accounts with status, contact, address — extended fields (`company_registration_number`, `vat_number`, `trading_name`) require `PENDING_MIGRATIONS.sql` |
+| `dealer_documents` | Dealer verification document uploads (requires `PENDING_MIGRATIONS.sql`) |
+| `dealer_listings` | Dealer vehicle listings with approval workflow — `condition` (`new`/`used`, default `used`), `variant`, `dc_charge_kw`, `ac_charge_kw`, `charge_to_80_mins`, `vin`, `ai_decision`, `ai_inspection_notes`, `ai_inspected_at` columns require `PENDING_MIGRATIONS.sql` (§8/§9). Until applied, `lib/dealer/conditionColumn.ts` probes which of these columns exist and strips/omits the missing ones on write/read, so the dealer portal stays functional in degraded mode. |
 | `dealer_bids` | Dealer bids on used EV exchange requests |
 | `used_ev_listings` | Private seller listings with moderation status |
 | `consultation_requests` | Consultation form submissions |
@@ -459,6 +523,7 @@ Inbound form/API → Supabase table (status: pending/new)
 | `financial_profiles` | User financial capability profiles |
 | `security_events` | Security alert log |
 | `audit_log` | Admin action audit trail |
+| `range_chat_logs` | "Ask about a route" chatbot memory — logs each query, resolved route, vehicle, and battery estimate (requires `PENDING_MIGRATIONS.sql`) |
 
 ### Row Level Security
 
@@ -477,6 +542,8 @@ Migrations are managed in two places:
 2. `supabase/manual/` — hand-written SQL for complex operations
 
 See `MIGRATIONS_TO_APPLY.md` for the ordered list of migrations to apply before first deployment.
+
+> **Outstanding migration**: `PENDING_MIGRATIONS.sql` (project root) consolidates all not-yet-applied migrations — `dealer_documents` table, extended `dealer_profiles` columns (`company_registration_number`, `vat_number`, `trading_name`, `verification_notes`), AI inspection columns on `dealer_listings`, `anonymous_visitors`/`user_sessions` analytics tables, `vendors`/`vendor_listings`, `profiles.vendor_status`, `range_chat_logs`, the `dealer_listings.condition` column (§8), and `dealer_listings.variant`/`dc_charge_kw`/`ac_charge_kw`/`charge_to_80_mins`/`vin` (§9). Until this is run in the Supabase SQL Editor, all affected API routes fall back gracefully (resilient insert/select patterns) but the related features remain disabled.
 
 ---
 
@@ -610,6 +677,12 @@ After signing in as admin, navigate to `/admin/evs` and use the "Seed vehicles" 
 - [ ] Vehicle history report integration (HPI / Motorway)
 - [ ] Insurance quote integration
 - [ ] Smart charging schedule optimiser
+
+---
+
+## Code Quality
+
+As of 2026-06-14, the full codebase is clean: `npx tsc --noEmit` and `npx eslint .` both report **0 errors, 0 warnings**. Remaining ESLint warnings (unused imports/vars, `<img>` → `next/image`, no-unused-expressions) were resolved across ~20 files, with all `<img>` tags now using `next/image` inside sized `relative` wrappers with `fill`.
 
 ---
 

@@ -31,6 +31,39 @@ export async function PUT(request: Request, { params }: Params) {
   const admin = createAdminClient();
 
   if (action === "approve") {
+    const { data: dealerProfile, error: dealerFetchError } = await admin
+      .from("dealer_profiles")
+      .select("company_registration_number")
+      .eq("id", id)
+      .single();
+
+    if (dealerFetchError || !dealerProfile) {
+      return NextResponse.json({ error: "Dealer profile not found." }, { status: 404 });
+    }
+
+    if (!dealerProfile.company_registration_number) {
+      return NextResponse.json(
+        { error: "Company registration number is required before vendor approval." },
+        { status: 400 },
+      );
+    }
+
+    const { data: documents } = await admin
+      .from("dealer_documents")
+      .select("document_type")
+      .eq("dealer_id", id);
+
+    const submitted = new Set((documents ?? []).map((doc) => doc.document_type));
+    const missing = ["company_registration", "proof_of_address", "motor_trade_insurance"]
+      .filter((type) => !submitted.has(type));
+
+    if (missing.length > 0) {
+      return NextResponse.json(
+        { error: "Required vendor verification documents are missing." },
+        { status: 400 },
+      );
+    }
+
     // Update dealer_profiles
     const { error: profileError } = await admin
       .from("dealer_profiles")

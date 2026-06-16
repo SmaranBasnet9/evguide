@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import {
   Truck, Zap, PoundSterling, Leaf, CheckCircle, Loader2,
   ChevronRight, BarChart3, Building2, Users, ArrowRight,

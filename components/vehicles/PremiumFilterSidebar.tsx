@@ -15,7 +15,15 @@ const RANGE_OPTIONS = [
   { label: "450+ km", value: 450 },
 ];
 
-const BODY_TYPES = ["SUV", "Sedan", "Hatchback"];
+const BODY_TYPE_LABELS: Record<string, string> = {
+  suv: "SUV",
+  sedan: "Sedan",
+  hatchback: "Hatchback",
+  crossover: "Crossover",
+  estate: "Estate",
+  mpv: "MPV",
+  coupe: "Coupe",
+};
 
 export default function PremiumFilterSidebar({ filters, onChange, vehicles }: PremiumFilterSidebarProps) {
   const budgetVal = filters.budgetMax === Number.POSITIVE_INFINITY ? 100000 : (filters.budgetMax ?? 100000);
@@ -115,12 +123,14 @@ export default function PremiumFilterSidebar({ filters, onChange, vehicles }: Pr
           <p className="text-sm font-semibold text-gray-900">Body Type</p>
         </div>
         <div className="space-y-1.5">
-          {BODY_TYPES.map((type) => {
-            const val = type.toLowerCase();
-            const active = filters.bodyType === val;
+          {[...new Set(
+            vehicles.map((v) => v.bodyType?.toLowerCase()).filter(Boolean) as string[]
+          )].sort().map((val) => {
+            const label = BODY_TYPE_LABELS[val] ?? (val.charAt(0).toUpperCase() + val.slice(1));
+            const active = filters.bodyType?.toLowerCase() === val;
             return (
               <button
-                key={type}
+                key={val}
                 onClick={() => onChange({ ...filters, bodyType: active ? null : val })}
                 className={`flex w-full items-center justify-between rounded-xl border px-4 py-2.5 text-sm transition-all ${
                   active
@@ -128,7 +138,7 @@ export default function PremiumFilterSidebar({ filters, onChange, vehicles }: Pr
                     : "border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-300 hover:bg-gray-100 hover:text-gray-900"
                 }`}
               >
-                {type}
+                {label}
                 {active && (
                   <span className="flex h-4 w-4 items-center justify-center rounded-full bg-brand text-[9px] font-bold text-white">
                     ✓

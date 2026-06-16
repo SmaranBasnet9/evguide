@@ -4,8 +4,8 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, Gauge, BatteryCharging, MapPin, Route, ShieldCheck, Car } from "lucide-react";
-import { usedEvListings } from "@/data/usedEvListings";
+import { ArrowRight, Gauge, BatteryCharging, MapPin, Route, ShieldCheck } from "lucide-react";
+import { usedEvListings, type UsedEVListing } from "@/data/usedEvListings";
 
 function formatGBP(value: number) {
   return new Intl.NumberFormat("en-GB", {
@@ -15,9 +15,7 @@ function formatGBP(value: number) {
   }).format(value);
 }
 
-const PREVIEW = usedEvListings.filter((l) => l.status === "active").slice(0, 6);
-
-function UsedEVCard({ listing, index }: { listing: typeof PREVIEW[number]; index: number }) {
+function UsedEVCard({ listing }: { listing: UsedEVListing }) {
   const [expanded, setExpanded] = useState(false);
 
   const specs = [
@@ -116,7 +114,9 @@ function UsedEVCard({ listing, index }: { listing: typeof PREVIEW[number]; index
   );
 }
 
-export default function UsedEVsSection() {
+export default function UsedEVsSection({ extraListings = [] }: { extraListings?: UsedEVListing[] }) {
+  const PREVIEW = [...extraListings, ...usedEvListings.filter((l) => l.status === "active")].slice(0, 6);
+
   return (
     <section className="bg-gray-50 py-12 sm:py-16 lg:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -138,8 +138,8 @@ export default function UsedEVsSection() {
 
         {/* 6-card portrait grid */}
         <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-          {PREVIEW.map((listing, i) => (
-            <UsedEVCard key={listing.id} listing={listing} index={i} />
+          {PREVIEW.map((listing) => (
+            <UsedEVCard key={listing.id} listing={listing} />
           ))}
         </div>
 

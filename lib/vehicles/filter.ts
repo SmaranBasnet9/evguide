@@ -23,7 +23,7 @@ export function filterVehicles(
     if (filters.budgetMax !== null && v.price > filters.budgetMax) return false;
     if (filters.rangeMin !== null && v.rangeKm < filters.rangeMin) return false;
     if (filters.brand !== null && v.brand !== filters.brand) return false;
-    if (filters.bodyType !== null && v.bodyType !== filters.bodyType) return false;
+    if (filters.bodyType !== null && v.bodyType?.toLowerCase() !== filters.bodyType.toLowerCase()) return false;
     if (filters.seats !== null && v.seats < filters.seats) return false;
     if (filters.batteryMin !== null && v.batteryKWh < filters.batteryMin) return false;
     if (filters.emiMax !== null && v.estimatedEmi > filters.emiMax) return false;

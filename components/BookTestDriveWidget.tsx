@@ -204,7 +204,7 @@ export default function BookTestDriveWidget() {
   const inputCls =
     "w-full rounded-xl border border-white/10 bg-[#1f2937] px-3.5 py-2.5 text-sm text-white placeholder:text-white/40 focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20 transition [color-scheme:dark] [&>option]:bg-[#1f2937] [&>option]:text-white";
 
-  if (pathname.startsWith("/admin") || pathname === "/vehicles") {
+  if (pathname.startsWith("/admin") || pathname === "/vehicles" || pathname.startsWith("/range-fit") || pathname.startsWith("/dealer")) {
     return null;
   }
 

@@ -15,7 +15,16 @@ async function getDealers() {
     console.error("[admin/dealers]", error.message);
     return [];
   }
-  return data ?? [];
+
+  const dealers = data ?? [];
+
+  const counts = await Promise.all(
+    dealers.map((dealer) =>
+      admin.from("dealer_listings").select("*", { count: "exact", head: true }).eq("dealer_id", dealer.id),
+    ),
+  );
+
+  return dealers.map((dealer, i) => ({ ...dealer, listingCount: counts[i].count ?? 0 }));
 }
 
 const STATUS_STYLES: Record<string, string> = {
@@ -80,6 +89,9 @@ export default async function AdminDealersPage() {
                         className={`rounded-full border px-2.5 py-0.5 text-xs font-semibold capitalize ${STATUS_STYLES[dealer.status] ?? STATUS_STYLES.pending_approval}`}
                       >
                         {dealer.status.replace(/_/g, " ")}
+                      </span>
+                      <span className="rounded-full border border-gray-200 bg-gray-50 px-2.5 py-0.5 text-xs font-semibold text-gray-600">
+                        {dealer.listingCount} {dealer.listingCount === 1 ? "vehicle" : "vehicles"} listed
                       </span>
                     </div>
                     <p className="mt-1 text-sm text-gray-600">

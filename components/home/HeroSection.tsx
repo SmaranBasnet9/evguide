@@ -45,7 +45,7 @@ const CHIPS = [
   { label: "Get Finance",   href: "/finance",                     icon: CreditCard,     accent: "text-white/50" },
 ] as const;
 
-export default function HeroSection({ featuredCard: _featuredCard }: HeroSectionProps) {
+export default function HeroSection({ featuredCard }: HeroSectionProps) {
   return (
     <section className="relative flex min-h-screen flex-col overflow-hidden pt-[72px]">
 
@@ -91,6 +91,13 @@ export default function HeroSection({ featuredCard: _featuredCard }: HeroSection
           <div className="anim-fade-up mt-6 w-full" style={{ animationDelay: "240ms" }}>
             <HeroSearchConsole />
           </div>
+
+          {/* Featured car card */}
+          {featuredCard && (
+            <div className="anim-fade-up mt-6 w-full" style={{ animationDelay: "300ms" }}>
+              {featuredCard}
+            </div>
+          )}
 
           {/* Stats trust strip */}
           <div className="anim-fade-up mt-8 flex items-center justify-center gap-5 sm:gap-10" style={{ animationDelay: "360ms" }}>

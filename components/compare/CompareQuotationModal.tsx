@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 import { ArrowRight, BadgeCheck, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { runFinanceEngine } from "@/lib/finance-engine";
@@ -31,7 +30,6 @@ function fmtDec(n: number) {
 }
 
 export default function CompareQuotationModal({ open, onClose, vehicle, modelA, modelB }: Props) {
-  const router = useRouter();
   const supabase = useMemo(() => createClient(), []);
   const overlayRef = useRef<HTMLDivElement>(null);
   const closeTimerRef = useRef<number | null>(null);

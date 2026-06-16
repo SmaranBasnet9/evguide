@@ -46,7 +46,7 @@ function getSavingLabel(model: EVModel): string | null {
 
 // ── Single deal card ──────────────────────────────────────────────────────────
 
-function DealCard({ model, index }: { model: EVModel; index: number }) {
+function DealCard({ model }: { model: EVModel }) {
   const saving = getSavingLabel(model);
   const monthly = estimateMonthlyCost(model.price);
 
@@ -70,12 +70,6 @@ function DealCard({ model, index }: { model: EVModel; index: number }) {
             </span>
           )}
         </div>
-
-        {saving && (
-          <div className="mt-3 inline-flex items-center rounded-full bg-gray-100 px-3 py-1.5">
-            <span className="text-xs font-bold text-gray-700">{saving}</span>
-          </div>
-        )}
       </div>
 
       {/* Car image — fixed aspect ratio ensures identical height across all cards */}
@@ -118,6 +112,11 @@ function DealCard({ model, index }: { model: EVModel; index: number }) {
           <p className="text-xs text-gray-400">
             or <span className="font-semibold text-gray-600">{formatGBP(monthly)}/mo</span> on finance
           </p>
+          {saving && (
+            <div className="mt-2 inline-flex items-center rounded-full bg-gray-100 px-3 py-1.5">
+              <span className="text-xs font-bold text-gray-700">{saving}</span>
+            </div>
+          )}
         </div>
 
         <Link
@@ -228,8 +227,8 @@ export default function FeaturedEVs({ models }: FeaturedEVsProps) {
           className="mt-6 flex gap-4 overflow-x-auto pb-2 sm:grid sm:grid-cols-3 sm:overflow-visible"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
-          {displayModels.map((model, i) => (
-            <DealCard key={model.id} model={model} index={i} />
+          {displayModels.map((model) => (
+            <DealCard key={model.id} model={model} />
           ))}
         </div>
 

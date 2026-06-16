@@ -30,6 +30,7 @@ export default function AdminDealerStatusButton({ dealerProfileId, userId, curre
   const [loading, setLoading] = useState<string | null>(null);
   const [showReason, setShowReason] = useState(false);
   const [reason, setReason] = useState("");
+  const [error, setError] = useState("");
 
   const actions = ACTIONS[currentStatus] ?? [];
 
@@ -39,6 +40,7 @@ export default function AdminDealerStatusButton({ dealerProfileId, userId, curre
       return;
     }
     setLoading(action);
+    setError("");
     const res = await fetch(`/api/admin/dealers/${dealerProfileId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -49,6 +51,9 @@ export default function AdminDealerStatusButton({ dealerProfileId, userId, curre
       setShowReason(false);
       setReason("");
       router.refresh();
+    } else {
+      const data = await res.json().catch(() => ({}));
+      setError(data.error ?? "Could not update vendor status.");
     }
   };
 
@@ -82,17 +87,20 @@ export default function AdminDealerStatusButton({ dealerProfileId, userId, curre
   }
 
   return (
-    <div className="flex gap-2">
-      {actions.map(({ label, next, cls }) => (
-        <button
-          key={next}
-          onClick={() => act(next)}
-          disabled={loading !== null}
-          className={`rounded-xl px-4 py-2 text-sm font-semibold transition disabled:opacity-60 ${cls}`}
-        >
-          {loading === next ? `${label}ing...` : label}
-        </button>
-      ))}
+    <div className="flex flex-col items-end gap-2">
+      <div className="flex gap-2">
+        {actions.map(({ label, next, cls }) => (
+          <button
+            key={next}
+            onClick={() => act(next)}
+            disabled={loading !== null}
+            className={`rounded-xl px-4 py-2 text-sm font-semibold transition disabled:opacity-60 ${cls}`}
+          >
+            {loading === next ? `${label}ing...` : label}
+          </button>
+        ))}
+      </div>
+      {error ? <p className="max-w-xs text-right text-xs text-red-600">{error}</p> : null}
     </div>
   );
 }

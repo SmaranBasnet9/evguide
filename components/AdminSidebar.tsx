@@ -32,6 +32,7 @@ import {
   DatabaseZap,
   Building2,
   CarFront,
+  Store,
   ExternalLink,
   LogOut,
   Menu,
@@ -41,14 +42,16 @@ import type { LucideIcon } from "lucide-react";
 import { useState } from "react";
 
 export type PendingCounts = {
-  consultations:   number;
-  vehicleQueries:  number;
-  leads:           number;
-  financeRequests: number;
-  exchange:        number;
-  feedback:        number;
-  dealerAccounts:  number;
-  dealerListings:  number;
+  consultations:      number;
+  vehicleQueries:     number;
+  leads:              number;
+  financeRequests:    number;
+  exchange:           number;
+  feedback:           number;
+  dealerAccounts:     number;
+  dealerListings:     number;
+  vendorApplications: number;
+  vendorListings:     number;
 };
 
 type NavLink = {
@@ -58,13 +61,14 @@ type NavLink = {
   exact?:  boolean;
   badge?:  keyof PendingCounts;
 };
-type NavSection = "general" | "content" | "vehicles" | "dealers" | "finance" | "platform";
+type NavSection = "general" | "content" | "vehicles" | "dealers" | "vendors" | "finance" | "platform";
 
 const SECTION_META: Record<NavSection, { label: string }> = {
   general:  { label: "General" },
   content:  { label: "Content" },
   vehicles: { label: "Vehicles & CRM" },
   dealers:  { label: "Dealer Management" },
+  vendors:  { label: "Vendor Marketplace" },
   finance:  { label: "Finance" },
   platform: { label: "Platform" },
 };
@@ -105,6 +109,11 @@ const SECTION_LINKS: Record<NavSection, NavLink[]> = {
     { href: "/admin/dealer-bids",          label: "Dealer Bids",     icon: Gavel },
     { href: "/admin/dealer-applications",  label: "Dealer Partners", icon: Code2 },
   ],
+  vendors: [
+    { href: "/admin/vendors",                  label: "All Vendors",       icon: Store,   badge: "vendorApplications" },
+    { href: "/admin/vendors/applications",     label: "Applications",      icon: UserCheck, badge: "vendorApplications" },
+    { href: "/admin/vendor-listings",          label: "Listing Moderation", icon: CarFront, badge: "vendorListings" },
+  ],
   finance: [
     { href: "/admin/finance-requests", label: "Finance Requests", icon: CreditCard, badge: "financeRequests" },
   ],
@@ -118,24 +127,24 @@ const SECTION_LINKS: Record<NavSection, NavLink[]> = {
 
 function getVisibleSections(role: string, department: string | null): NavSection[] {
   if (role === "super_admin") {
-    return ["general", "content", "vehicles", "dealers", "finance", "platform"];
+    return ["general", "content", "vehicles", "dealers", "vendors", "finance", "platform"];
   }
   if (department === "management") {
-    return ["general", "content", "vehicles", "dealers", "finance"];
+    return ["general", "content", "vehicles", "dealers", "vendors", "finance"];
   }
   switch (department) {
     case "sales":
     case "support":
-      return ["general", "vehicles", "dealers"];
+      return ["general", "vehicles", "dealers", "vendors"];
     case "operations":
-      return ["general", "vehicles", "dealers", "finance"];
+      return ["general", "vehicles", "dealers", "vendors", "finance"];
     case "finance":
       return ["general", "finance"];
     case "technical":
     case "marketing":
       return ["general", "content"];
     default:
-      return ["general", "content", "vehicles", "dealers", "finance"];
+      return ["general", "content", "vehicles", "dealers", "vendors", "finance"];
   }
 }
 

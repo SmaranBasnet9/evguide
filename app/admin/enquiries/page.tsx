@@ -32,12 +32,6 @@ const STATUS_ICONS: Record<string, React.ElementType> = {
   resolved:  CheckCircle,
 };
 
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("en-GB", {
-    day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit",
-  });
-}
-
 function formatDateGroup(iso: string) {
   return new Date(iso).toLocaleDateString("en-GB", {
     weekday: "long", day: "numeric", month: "long", year: "numeric",

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, BrainCircuit, Calculator, ChevronRight, Sparkles } from "lucide-react";
+import { BrainCircuit, Calculator, ChevronRight, Sparkles } from "lucide-react";
 
 const BANNERS = [
   {

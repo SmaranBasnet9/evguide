@@ -196,33 +196,145 @@ export function rankEVsForRoutes(
     .sort((a, b) => b.score - a.score);
 }
 
-// ── Postcode distance helper (calls postcodes.io) ────────────────────────────
+// ── Location resolution (postcode OR place name) ──────────────────────────────
+
+const UK_POSTCODE_RE = /^[A-Z]{1,2}\d{1,2}[A-Z]?\s*\d[A-Z]{2}$/i;
+
+async function resolveLocation(
+  input: string,
+): Promise<{ lat: number; lng: number; label: string; postcode: string | null } | null> {
+  const trimmed = input.trim();
+  if (!trimmed) return null;
+
+  if (UK_POSTCODE_RE.test(trimmed)) {
+    // Postcode lookup
+    const clean = encodeURIComponent(trimmed.replace(/\s+/g, "").toUpperCase());
+    const res = await fetch(`https://api.postcodes.io/postcodes/${clean}`).then((r) => r.json());
+    if (res.status !== 200) return null;
+    return {
+      lat: res.result.latitude,
+      lng: res.result.longitude,
+      label: res.result.postcode as string,
+      postcode: res.result.postcode as string,
+    };
+  }
+
+  // Place name lookup via postcodes.io /places
+  const res = await fetch(
+    `https://api.postcodes.io/places?q=${encodeURIComponent(trimmed)}&limit=1`,
+  ).then((r) => r.json());
+  if (res.status !== 200 || !res.result?.length) return null;
+  const place = res.result[0];
+  const lat = place.latitude as number;
+  const lng = place.longitude as number;
+
+  // Predict the postcode for this place by reverse-geocoding its coordinates.
+  const postcode = await resolveLocationFromCoords(lat, lng).then((r) => r?.postcode ?? null);
+
+  return {
+    lat,
+    lng,
+    label: (place.name_1 ?? trimmed) as string,
+    postcode,
+  };
+}
+
+export interface LocationSuggestion {
+  value: string;
+  label: string;
+  sub?: string;
+}
+
+const POSTCODE_PREFIX_RE = /^[A-Z]{1,2}\d/i;
+
+export async function searchLocationSuggestions(query: string): Promise<LocationSuggestion[]> {
+  const trimmed = query.trim();
+  if (trimmed.length < 2) return [];
+
+  try {
+    if (POSTCODE_PREFIX_RE.test(trimmed)) {
+      const res = await fetch(
+        `https://api.postcodes.io/postcodes/${encodeURIComponent(trimmed)}/autocomplete`,
+      ).then((r) => r.json());
+      if (res.status === 200 && res.result?.length) {
+        return (res.result as string[]).map((postcode) => ({
+          value: postcode,
+          label: postcode,
+          sub: "Postcode",
+        }));
+      }
+    }
+
+    const res = await fetch(
+      `https://api.postcodes.io/places?q=${encodeURIComponent(trimmed)}&limit=6`,
+    ).then((r) => r.json());
+    if (res.status !== 200 || !res.result?.length) return [];
+    return res.result.map((place: Record<string, unknown>) => ({
+      value: place.name_1 as string,
+      label: place.name_1 as string,
+      sub: [place.county_unitary, place.region].filter(Boolean).join(", ") || (place.country as string | undefined),
+    }));
+  } catch {
+    return [];
+  }
+}
+
+export async function resolveLocationFromCoords(
+  lat: number,
+  lng: number,
+): Promise<{ postcode: string; label: string } | null> {
+  try {
+    const res = await fetch(
+      `https://api.postcodes.io/postcodes?lon=${lng}&lat=${lat}&limit=1`,
+    ).then((r) => r.json());
+    if (res.status !== 200 || !res.result?.length) return null;
+    const p = res.result[0];
+    return {
+      postcode: p.postcode as string,
+      label: (p.admin_ward ?? p.parish ?? p.postcode) as string,
+    };
+  } catch {
+    return null;
+  }
+}
+
+function haversineRoadMiles(
+  lat1: number, lng1: number,
+  lat2: number, lng2: number,
+): number {
+  const R = 3958.8;
+  const dLat = (lat2 - lat1) * (Math.PI / 180);
+  const dLon = (lng2 - lng1) * (Math.PI / 180);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(lat1 * (Math.PI / 180)) *
+    Math.cos(lat2 * (Math.PI / 180)) *
+    Math.sin(dLon / 2) ** 2;
+  const crow = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return Math.round(crow * 1.27); // road ≈ crow-flies × 1.27
+}
 
 export async function getPostcodeDistanceMiles(
   from: string,
   to: string,
 ): Promise<number | null> {
+  return getLocationDistanceMiles(from, to).then((r) => r?.miles ?? null);
+}
+
+export async function getLocationDistanceMiles(
+  from: string,
+  to: string,
+): Promise<{ miles: number; fromLabel: string; toLabel: string; fromPostcode: string | null; toPostcode: string | null } | null> {
   try {
-    const clean = (p: string) => encodeURIComponent(p.replace(/\s+/g, "").toUpperCase());
-    const [r1, r2] = await Promise.all([
-      fetch(`https://api.postcodes.io/postcodes/${clean(from)}`).then((r) => r.json()),
-      fetch(`https://api.postcodes.io/postcodes/${clean(to)}`).then((r) => r.json()),
-    ]);
-    if (r1.status !== 200 || r2.status !== 200) return null;
-    const lat1 = r1.result.latitude,  lon1 = r1.result.longitude;
-    const lat2 = r2.result.latitude,  lon2 = r2.result.longitude;
-    // Haversine
-    const R = 3958.8;
-    const dLat = (lat2 - lat1) * (Math.PI / 180);
-    const dLon = (lon2 - lon1) * (Math.PI / 180);
-    const a =
-      Math.sin(dLat / 2) ** 2 +
-      Math.cos(lat1 * (Math.PI / 180)) *
-      Math.cos(lat2 * (Math.PI / 180)) *
-      Math.sin(dLon / 2) ** 2;
-    const crow = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    // Road distance ≈ crow-flies × 1.27 (UK average factor)
-    return Math.round(crow * 1.27);
+    const [loc1, loc2] = await Promise.all([resolveLocation(from), resolveLocation(to)]);
+    if (!loc1 || !loc2) return null;
+    return {
+      miles: haversineRoadMiles(loc1.lat, loc1.lng, loc2.lat, loc2.lng),
+      fromLabel: loc1.label,
+      toLabel: loc2.label,
+      fromPostcode: loc1.postcode,
+      toPostcode: loc2.postcode,
+    };
   } catch {
     return null;
   }

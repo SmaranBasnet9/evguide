@@ -4,7 +4,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
 import AdminDealerStatusButton from "@/components/AdminDealerStatusButton";
-import { ArrowLeft, Car, MessageSquare } from "lucide-react";
+import AdminDealerResetPassword from "@/components/admin/AdminDealerResetPassword";
+import { ArrowLeft, Car, FileText, MessageSquare, ShieldCheck } from "lucide-react";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -13,6 +14,21 @@ const STATUS_STYLES: Record<string, string> = {
   approved:         "border-brand/20 bg-brand/10 text-brand",
   rejected:         "border-red-200 bg-red-50 text-red-600",
   suspended:        "border-orange-200 bg-orange-50 text-orange-700",
+};
+
+const REQUIRED_DOCUMENTS = [
+  { key: "company_registration", label: "Company registration" },
+  { key: "proof_of_address", label: "Trading address proof" },
+  { key: "motor_trade_insurance", label: "Motor trade insurance" },
+];
+
+const DOCUMENT_LABELS: Record<string, string> = {
+  company_registration: "Company registration",
+  proof_of_address: "Trading address proof",
+  motor_trade_insurance: "Motor trade insurance",
+  vat_certificate: "VAT certificate",
+  fca_authorisation: "FCA authorisation",
+  stock_ownership: "Stock ownership proof",
 };
 
 export default async function AdminDealerDetailPage({ params }: Props) {
@@ -41,6 +57,17 @@ export default async function AdminDealerDetailPage({ params }: Props) {
     .eq("dealer_id", id)
     .order("created_at", { ascending: false })
     .limit(10);
+
+  // dealer_documents table may not exist yet (see PENDING_MIGRATIONS.sql)
+  const documentsResult = await admin
+    .from("dealer_documents")
+    .select("id, document_type, file_name, file_url, mime_type, file_size, status, created_at")
+    .eq("dealer_id", id)
+    .order("created_at", { ascending: false });
+  const documents = documentsResult.error ? null : documentsResult.data;
+
+  const submittedDocumentTypes = new Set((documents ?? []).map((doc) => doc.document_type));
+  const missingRequiredDocuments = REQUIRED_DOCUMENTS.filter((doc) => !submittedDocumentTypes.has(doc.key));
 
   const LISTING_STATUS: Record<string, string> = {
     draft:    "text-gray-400",
@@ -76,11 +103,14 @@ export default async function AdminDealerDetailPage({ params }: Props) {
             {dealer.fca_frn ? ` · FCA: ${dealer.fca_frn}` : ""}
           </p>
         </div>
-        <AdminDealerStatusButton
-          dealerProfileId={dealer.id}
-          userId={dealer.user_id}
-          currentStatus={dealer.status}
-        />
+        <div className="flex flex-col gap-3">
+          <AdminDealerStatusButton
+            dealerProfileId={dealer.id}
+            userId={dealer.user_id}
+            currentStatus={dealer.status}
+          />
+          <AdminDealerResetPassword dealerId={dealer.id} />
+        </div>
       </div>
 
       {/* Stats */}
@@ -99,6 +129,88 @@ export default async function AdminDealerDetailPage({ params }: Props) {
             <p className="mt-2 text-2xl font-bold text-gray-900">{value}</p>
           </div>
         ))}
+      </div>
+
+      {/* Verification */}
+      <div className="mt-10 grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
+        <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="h-5 w-5 text-brand" />
+            <h2 className="text-lg font-semibold text-gray-900">Vendor Verification</h2>
+          </div>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <div className="rounded-xl border border-gray-100 bg-gray-50 p-3">
+              <p className="text-[10px] uppercase tracking-wider text-gray-400">Company registration</p>
+              <p className="mt-1 text-sm font-semibold text-gray-900">
+                {dealer.company_registration_number || "Missing"}
+              </p>
+            </div>
+            <div className="rounded-xl border border-gray-100 bg-gray-50 p-3">
+              <p className="text-[10px] uppercase tracking-wider text-gray-400">VAT / trading name</p>
+              <p className="mt-1 text-sm font-semibold text-gray-900">
+                {[dealer.vat_number, dealer.trading_name].filter(Boolean).join(" | ") || "Not supplied"}
+              </p>
+            </div>
+          </div>
+          <div className="mt-5 space-y-3">
+            {REQUIRED_DOCUMENTS.map((doc) => {
+              const complete = submittedDocumentTypes.has(doc.key);
+              return (
+                <div key={doc.key} className="flex items-center justify-between rounded-xl border border-gray-100 bg-gray-50 px-4 py-3">
+                  <span className="text-sm font-medium text-gray-700">{doc.label}</span>
+                  <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${complete ? "bg-brand/10 text-brand" : "bg-amber-50 text-amber-700"}`}>
+                    {complete ? "Submitted" : "Missing"}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+          {missingRequiredDocuments.length > 0 ? (
+            <p className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
+              Approval is blocked until {missingRequiredDocuments.map((doc) => doc.label).join(", ")} are submitted.
+            </p>
+          ) : (
+            <p className="mt-4 rounded-xl border border-brand/20 bg-brand/10 px-4 py-3 text-sm text-brand">
+              Required documents are present. Admin can approve after manual checks.
+            </p>
+          )}
+        </section>
+
+        <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+          <div className="flex items-center gap-2">
+            <FileText className="h-5 w-5 text-brand" />
+            <h2 className="text-lg font-semibold text-gray-900">Submitted Documents</h2>
+          </div>
+          <div className="mt-5 space-y-3">
+            {!documents || documents.length === 0 ? (
+              <p className="rounded-xl border border-dashed border-gray-200 bg-gray-50 px-4 py-8 text-center text-sm text-gray-400">
+                No verification documents have been uploaded.
+              </p>
+            ) : (
+              documents.map((doc) => (
+                <a
+                  key={doc.id}
+                  href={doc.file_url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center justify-between gap-4 rounded-xl border border-gray-100 bg-gray-50 px-4 py-3 transition hover:border-brand/30 hover:bg-brand/5"
+                >
+                  <span className="min-w-0">
+                    <span className="block truncate text-sm font-semibold text-gray-900">
+                      {DOCUMENT_LABELS[doc.document_type] ?? doc.document_type}
+                    </span>
+                    <span className="block truncate text-xs text-gray-400">
+                      {doc.file_name} | {(Number(doc.file_size) / 1024 / 1024).toFixed(1)} MB
+                    </span>
+                  </span>
+                  <span className="shrink-0 rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold capitalize text-gray-500">
+                    {doc.status}
+                  </span>
+                </a>
+              ))
+            )}
+          </div>
+        </section>
       </div>
 
       {/* Listings */}

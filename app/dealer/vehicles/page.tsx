@@ -3,7 +3,9 @@ export const dynamic = "force-dynamic";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { Plus, Pencil } from "lucide-react";
+import { hasConditionColumn, hasVinColumn } from "@/lib/dealer/conditionColumn";
+import { Plus } from "lucide-react";
+import DealerVehicleActions from "@/components/DealerVehicleActions";
 
 const STATUS_STYLES: Record<string, string> = {
   draft:    "border-white/10 bg-white/[0.06] text-white/50",
@@ -25,13 +27,27 @@ export default async function DealerVehiclesPage() {
 
   if (!dealerProfile) redirect("/dealer");
 
+  const conditionCol = await hasConditionColumn();
+  const vinCol = await hasVinColumn();
   const { data: listings } = await supabase
     .from("dealer_listings")
-    .select("id, brand, model, year, price, mileage, status, created_at, rejection_reason")
+    .select(`id, brand, model, year, price, mileage, status,${conditionCol ? " condition," : ""}${vinCol ? " vin," : ""} created_at, rejection_reason`)
     .eq("dealer_id", dealerProfile.id)
     .order("created_at", { ascending: false });
 
-  const rows = listings ?? [];
+  const rows = (listings ?? []) as unknown as Array<{
+    id: string;
+    brand: string;
+    model: string;
+    year: number;
+    price: number;
+    mileage: number;
+    status: string;
+    condition?: "new" | "used" | null;
+    vin?: string | null;
+    created_at: string;
+    rejection_reason: string | null;
+  }>;
 
   return (
     <div className="mx-auto max-w-5xl">
@@ -66,6 +82,7 @@ export default async function DealerVehiclesPage() {
               <thead>
                 <tr className="border-b border-white/[0.06] text-left">
                   <th className="px-6 py-3 font-semibold text-white/50">Vehicle</th>
+                  <th className="px-6 py-3 font-semibold text-white/50">VIN</th>
                   <th className="px-6 py-3 font-semibold text-white/50">Price</th>
                   <th className="px-6 py-3 font-semibold text-white/50">Mileage</th>
                   <th className="px-6 py-3 font-semibold text-white/50">Status</th>
@@ -78,7 +95,11 @@ export default async function DealerVehiclesPage() {
                   <tr key={row.id} className="border-b border-white/[0.04] last:border-0 hover:bg-white/[0.02]">
                     <td className="px-6 py-4 font-medium text-white">
                       {row.year} {row.brand} {row.model}
+                      <span className="ml-2 inline-block rounded-full border border-white/10 bg-white/[0.06] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white/50">
+                        {row.condition === "new" ? "New" : "Used"}
+                      </span>
                     </td>
+                    <td className="px-6 py-4 font-mono text-xs text-white/40">{row.vin || "—"}</td>
                     <td className="px-6 py-4 text-white/70">£{Number(row.price).toLocaleString()}</td>
                     <td className="px-6 py-4 text-white/70">{Number(row.mileage).toLocaleString()} mi</td>
                     <td className="px-6 py-4">
@@ -97,13 +118,7 @@ export default async function DealerVehiclesPage() {
                       {new Date(row.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
                     </td>
                     <td className="px-6 py-4">
-                      <Link
-                        href={`/dealer/vehicles/${row.id}/edit`}
-                        className="flex items-center gap-1.5 text-xs font-medium text-white/50 transition hover:text-brand"
-                      >
-                        <Pencil className="h-3.5 w-3.5" />
-                        Edit
-                      </Link>
+                      <DealerVehicleActions id={row.id} status={row.status} condition={row.condition} />
                     </td>
                   </tr>
                 ))}
