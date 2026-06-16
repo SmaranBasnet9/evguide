@@ -6,7 +6,11 @@
 
 import OpenAI from "openai";
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+let _openai: OpenAI | null = null;
+function getOpenAI() {
+  if (!_openai) _openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  return _openai;
+}
 
 export type ListingForInspection = {
   id: string;
@@ -102,7 +106,7 @@ Return JSON with this exact schema:
   }
 }`;
 
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAI().chat.completions.create({
     model: "gpt-4o",
     messages: [
       { role: "system", content: SYSTEM_PROMPT },
