@@ -1,7 +1,19 @@
 "use client";
 
+import { Suspense } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
+
+function CarSkeleton({ glowRgb }: { glowRgb: string }) {
+  return (
+    <div className="absolute inset-0 flex items-center justify-center">
+      <div
+        className="h-12 w-24 animate-pulse rounded-lg opacity-30"
+        style={{ background: `rgba(${glowRgb},0.4)` }}
+      />
+    </div>
+  );
+}
 
 const Budget3DCar = dynamic(() => import("./Budget3DCar"), { ssr: false });
 
@@ -96,10 +108,12 @@ export default function BrowseByBudget() {
                       background: `radial-gradient(ellipse 70% 55% at 50% 65%, rgba(${b.glowRgb},0.55) 0%, transparent 75%)`,
                     }}
                   />
-                  {/* Three.js canvas */}
-                  <div className="absolute inset-0">
-                    <Budget3DCar color={b.accentColor} />
-                  </div>
+                  {/* Three.js canvas — pointer-events-none so Link receives clicks */}
+                  <Suspense fallback={<CarSkeleton glowRgb={b.glowRgb} />}>
+                    <div className="pointer-events-none absolute inset-0">
+                      <Budget3DCar color={b.accentColor} />
+                    </div>
+                  </Suspense>
                   {/* Subtle bottom fade into the card label area */}
                   <div className="pointer-events-none absolute inset-x-0 bottom-0 h-6 bg-gradient-to-t from-white/5 to-transparent" />
                 </div>

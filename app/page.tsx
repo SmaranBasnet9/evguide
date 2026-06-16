@@ -1,9 +1,6 @@
 import { Suspense } from "react";
 import PremiumNavbar from "@/components/home/PremiumNavbar";
 import HeroSection from "@/components/home/HeroSection";
-import HeroFeaturedCard, {
-  HeroFeaturedCardSkeleton,
-} from "@/components/home/HeroFeaturedCard";
 import BrowseByBudget from "@/components/home/BrowseByBudget";
 import FeaturedEVs from "@/components/home/FeaturedEVs";
 import dynamic from "next/dynamic";
@@ -21,11 +18,6 @@ import { mapDealerListingToUsedEV } from "@/lib/dealer/mapToUsedEVListing";
 export const revalidate = 1800;
 
 // ── Server data fetchers ────────────────────────────────────────────────────
-
-async function HomeHeroFeaturedCard() {
-  const evModels = await getTopSellingEVs();
-  return <HeroFeaturedCard model={evModels[0] ?? null} />;
-}
 
 async function HomeFeaturedEVsSection() {
   const evModels = await getTopSellingEVs();
@@ -81,13 +73,7 @@ export default function HomePage() {
       <PremiumNavbar />
 
       {/* 1 · Hero — full-screen search */}
-      <HeroSection
-        featuredCard={
-          <Suspense fallback={<HeroFeaturedCardSkeleton />}>
-            <HomeHeroFeaturedCard />
-          </Suspense>
-        }
-      />
+      <HeroSection />
 
       {/* 3 · Browse by Budget — Carwow-style horizontal budget cards */}
       <BrowseByBudget />

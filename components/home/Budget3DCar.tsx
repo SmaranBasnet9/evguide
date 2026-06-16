@@ -183,11 +183,12 @@ interface Budget3DCarProps {
 
 export default function Budget3DCar({ color }: Budget3DCarProps) {
   return (
+    // pointerEvents:none lets click events pass through to the parent <Link>
     <Canvas
       camera={{ position: [0, 1.2, 5.5], fov: 46 }}
       gl={{ antialias: true, alpha: true }}
       dpr={[1, 1]}
-      style={{ width: "100%", height: "100%" }}
+      style={{ width: "100%", height: "100%", pointerEvents: "none" }}
     >
       <Scene color={color} />
     </Canvas>

@@ -1,6 +1,5 @@
 "use client";
 
-import type { ReactNode } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import Image from "next/image";
@@ -11,9 +10,6 @@ import {
 
 const HeroSearchConsole = dynamic(() => import("./HeroSearchConsole"), { ssr: false });
 
-interface HeroSectionProps {
-  featuredCard?: ReactNode;
-}
 
 const BRANDS = [
   { label: "Tesla",    href: "/vehicles?q=Tesla",    logo: "tesla.svg",    logoW: 20, logoH: 24 },
@@ -45,7 +41,7 @@ const CHIPS = [
   { label: "Get Finance",   href: "/finance",                     icon: CreditCard,     accent: "text-white/50" },
 ] as const;
 
-export default function HeroSection({ featuredCard }: HeroSectionProps) {
+export default function HeroSection() {
   return (
     <section className="relative flex min-h-screen flex-col overflow-hidden pt-[72px]">
 
@@ -91,13 +87,6 @@ export default function HeroSection({ featuredCard }: HeroSectionProps) {
           <div className="anim-fade-up mt-6 w-full" style={{ animationDelay: "240ms" }}>
             <HeroSearchConsole />
           </div>
-
-          {/* Featured car card */}
-          {featuredCard && (
-            <div className="anim-fade-up mt-6 w-full" style={{ animationDelay: "300ms" }}>
-              {featuredCard}
-            </div>
-          )}
 
           {/* Stats trust strip */}
           <div className="anim-fade-up mt-8 flex items-center justify-center gap-5 sm:gap-10" style={{ animationDelay: "360ms" }}>
