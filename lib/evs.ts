@@ -9,7 +9,7 @@ async function fetchPublicEVRows(limit?: number) {
   const supabase = createPublicServerClient();
 
   if (!supabase) {
-    return [];
+    return limit ? evModels.slice(0, limit) : evModels;
   }
 
   let query = supabase
@@ -23,12 +23,17 @@ async function fetchPublicEVRows(limit?: number) {
 
   const { data, error } = await query;
 
-  if (error) {
-    console.error("Error fetching EVs:", error.message);
-    return [];
+  if (error || !data || data.length === 0) {
+    console.error("Error fetching EVs, falling back to static data:", error?.message ?? "empty");
+    return limit ? evModels.slice(0, limit) : evModels;
   }
 
-  return (data ?? []).map((item) => mapDbEV(item as DbEV));
+  // Merge: DB rows first, then fill remaining slots from static data for any brands not in DB
+  const dbRows = data.map((item) => mapDbEV(item as DbEV));
+  const dbIds = new Set(dbRows.map((m) => m.id));
+  const staticFill = evModels.filter((m) => !dbIds.has(m.id));
+  const merged = [...dbRows, ...staticFill];
+  return limit ? merged.slice(0, limit) : merged;
 }
 
 // New dealer stock (condition="new", status="live") is folded into the main
